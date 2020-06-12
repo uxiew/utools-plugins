@@ -1,0 +1,119 @@
+# FileBrowser 组件
+
+Props：
+| prop              | 描述                           | 默认值                    |
+| ----------------- | ------------------------------ | ------------------------- |
+| directory-listing | 必须传入的数据结构             | [Array] []                |
+| pkg-name          | root dir 文件名 或者是 pkgName | [string] ''               |
+| search            | 是否显示顶部搜索               | [boolean] false           |
+| @get-path         | 点击事件                       | [string] 当前点击项的路径 |
+
+
+# 数据结构
+
+支持传入数据结构为：
+
+```js
+['assets', [['growl', ['error.png', 'ok.png']]]]; // 表示 assets/growl/error.png， assets/growl/ok.png
+```
+
+1. 一个数组表示一个文件夹，第一项为字符串，为该文件夹的名称；
+2. 该结构中，文件夹总是比文件优先排列在前。
+
+示例：
+mocha v7.2.0 npm 库结构：
+
+```js
+private dir = [
+    ['assets', [['growl', ['error.png', 'ok.png']]]],
+    ['bin', ['_mocha', 'mocha']],
+    [
+      'lib',
+      [
+        ['browser', ['growl.js', 'progress.js', 'template.html', 'tty.js']],
+        [
+          'cli',
+          [
+            'cli.js',
+            'collect-files.js',
+            'commands.js',
+            'config.js',
+            'index.js',
+            'init.js',
+            'node-flags.js',
+            'one-and-dones.js',
+            'options.js',
+            'run-helpers.js',
+            'run-option-metadata.js',
+            'run.js',
+            'watch-run.js'
+          ]
+        ],
+        [
+          'interfaces',
+          [
+            'bdd.js',
+            'common.js',
+            'exports.js',
+            'index.js',
+            'qunit.js',
+            'tdd.js'
+          ]
+        ],
+        [
+          'reporters',
+          [
+            'base.js',
+            'doc.js',
+            'dot.js',
+            'html.js',
+            'index.js',
+            'json-stream.js',
+            'json.js',
+            'landing.js',
+            'list.js',
+            'markdown.js',
+            'min.js',
+            'nyan.js',
+            'progress.js',
+            'spec.js',
+            'tap.js',
+            'xunit.js'
+          ]
+        ],
+        'context.js',
+        'errors.js',
+        'esm-utils.js',
+        'growl.js',
+        'hook.js',
+        'mocha.js',
+        'mocharc.json',
+        'pending.js',
+        'runnable.js',
+        'runner.js',
+        'stats-collector.js',
+        'suite.js',
+        'test.js',
+        'utils.js'
+      ]
+    ],
+    'browser-entry.js',
+    'CHANGELOG.md',
+    'index.js',
+    'LICENSE',
+    'mocha.css',
+    'mocha.js',
+    'package.json',
+    'README.md'
+  ];
+```
+
+
+# TOOD
+1. # 原版 搜索功能 👍 ,例如：搜索 m d e a r ，依然可以搜索到，目前还没有做该功能😭，待闲暇时~
+
+
+# 参考
+
+想法来源于：
+[runkit](https://npm.runkit.com/typescript/)

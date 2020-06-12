@@ -1,0 +1,17 @@
+// === main-part ===
+.fb-viewer {
+  a {
+    text-decoration: none;
+    color: #333;
+  }
+  .fa-label {
+    display: inline-block;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    line-height: 2em;
+    transition: background 0.2s ease 0s;
+  }
+}
