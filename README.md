@@ -6,12 +6,3 @@
 
 按需加载组件
 
-## fa vue
-
-```
-npm i @yurderi/vue-fa
-```
-
-参考说明使用：[fontawesome-vue](https://github.com/sammcoe/fontawesome-vue)
-
-@yurderi/vue-fa 内部使用了： [@fortawesome/vue-fontawesome](https://github.com/FortAwesome/vue-fontawesome) 库
