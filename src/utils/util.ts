@@ -32,9 +32,11 @@ export function toThousands(n: string | numebr) {
 // 清理html结构，修复图片显示路径
 
 export function runkitCleanHTML(htmlText: string) {
+  if (!htmlText) return '❌Error Network！No Data Returned！';
   let fixHtml = htmlText
     .match(/body>([\s\S]*)<\/body/)[1] //获取body内容
-    .replace(/<script\b[^>]*>[\s\S]*<\/script>/, ''); //清除body内 script
+    .replace(/href\s*=\s*".+?"/g, 'href="#"') // 清楚 href 链接
+    .replace(/<script\b[^>]*>[\s\S]*<\/script>/g, ''); //清除body内 script
 
   if (/<div id="img">/.test(fixHtml))
     fixHtml = fixHtml.replace(
@@ -58,11 +60,14 @@ export function fetch(
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve(
-          new Response(`{"status":504,"data":null,"url":"${apiUrl}"}`, {
-            status: 504,
-            statusText: 'timeout2',
-            url: apiUrl
-          })
+          new Response(
+            `{"error":"504 搜索超时,请重试!","status":504,"data":null,"url":"${apiUrl}"}`,
+            {
+              status: 504,
+              statusText: 'timeout2',
+              url: apiUrl
+            }
+          )
         );
         controller.abort(); // 终止请求
       }, timeout);

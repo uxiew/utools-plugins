@@ -5,7 +5,7 @@
  */
 export const getFileIcon = (name: string) => {
   const textFiles = /\.txt|\.md|\.markdown|\.log/;
-  const codeFiles = /\.js|\.mjs|\.html|\.css|\.scss|\.sass|\.pug|\.ts|\.json/;
+  const codeFiles = /\.js|\.mjs|\.coffee|\.html|\.css|\.scss|\.sass|\.pug|\.ts|\.json/;
   const imageFiles = /\.png|\.jpg|\.gif|\.jpeg|\.bpm/;
 
   if (textFiles.test(name)) {

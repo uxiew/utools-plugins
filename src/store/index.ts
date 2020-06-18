@@ -1,5 +1,5 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import Vue from 'vue';
+import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
@@ -9,7 +9,7 @@ export interface State {
 
 export default new Vuex.Store({
   state: {
-    searchText: ""
+    searchText: ''
   },
   getters: {
     searchText(state: State) {
@@ -21,10 +21,10 @@ export default new Vuex.Store({
       { commit, state }: { commit: Function; state: State },
       paylod: any
     ) {
-      commit("changeSearchText", paylod);
+      commit('changeSearchText', paylod);
     },
     clearText({ commit }: { commit: Function; state: State }) {
-      commit("clearSearchText");
+      commit('clearSearchText');
     }
   },
   mutations: {
@@ -32,7 +32,7 @@ export default new Vuex.Store({
       state.searchText = searchText;
     },
     clearSearchText(state: State) {
-      state.searchText = "";
+      state.searchText = '';
     }
   }
 });

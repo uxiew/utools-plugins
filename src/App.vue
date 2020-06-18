@@ -5,11 +5,14 @@
       :directory-listing="dir"
     /> -->
     <!-- <router-link to="/HelloWorld">Go to HelloWorld</router-link> -->
-    <router-view />
+    <keep-alive :include='cashViews'>
+      <router-view />
+    </keep-alive>
   </div>
 </template>
 
 <script lang="ts">
+/* eslint-disable no-undef */
 import { Component, Vue } from 'vue-property-decorator';
 import 'vant/es/skeleton/style';
 import 'vant/es/empty/style';
@@ -23,93 +26,155 @@ import FileBrowser from './components/FileBrowser/index.vue';
   }
 })
 export default class App extends Vue {
-  /*   private getName(e: any) {
-    console.log("App on FileBrowser's Event:", e);
-  }
+  private cashViews!: string[]; //待优化，点击刷新
 
-  private s = false; */
-  /*private dir = [
-    ['assets', [['growl', ['error.png', 'ok.png']]]],
-    ['bin', ['_mocha', 'mocha']],
-    [
-      'lib',
-      [
-        ['browser', ['growl.js', 'progress.js', 'template.html', 'tty.js']],
-        [
-          'cli',
-          [
-            'cli',
-            'collect-files.js',
-            'commands.js',
-            'config.js',
-            'index.js',
-            'init.js',
-            'node-flags.js',
-            'one-and-dones.js',
-            'options.js',
-            'run-helpers.js',
-            'run-option-metadata.js',
-            'run.js',
-            'watch-run.js'
-          ]
-        ],
-        [
-          'interfaces',
-          [
-            'bdd.js',
-            'common.js',
-            'exports.js',
-            'index.js',
-            'qunit.js',
-            'tdd.js'
-          ]
-        ],
-        [
-          'reporters',
-          [
-            'base.js',
-            'doc.js',
-            'dot.js',
-            'html.js',
-            'index.js',
-            'json-stream.js',
-            'json.js',
-            'landing.js',
-            'list.js',
-            'markdown.js',
-            'min.js',
-            'nyan.js',
-            'progress.js',
-            'spec.js',
-            'tap.js',
-            'xunit.js'
-          ]
-        ],
-        'context.js',
-        'errors.js',
-        'esm-utils.js',
-        'growl.js',
-        'hook.js',
-        'mocha.js',
-        'mocharc.json',
-        'pending.js',
-        'runnable.js',
-        'runner.js',
-        'stats-collector.js',
-        'suite.js',
-        'test.js',
-        'utils.js'
-      ]
-    ],
-    'browser-entry.js',
-    'CHANGELOG.md',
-    'index.js',
-    'LICENSE',
-    'mocha.css',
-    'mocha.js',
-    'package.json',
-    'README.md'
-  ];*/
+  /* 
+    beforeCreate
+    constructor
+    created
+  */
+  created() {
+    this.cashViews = ['List', 'Detail']; //待优化，点击刷新
+
+    // 按键监听
+    // idea 参考 https://hub.fastgit.org/fofolee/uTools-Manuals/blob/4c264bafc537d7a5971b14345c0f58dd097cc1c7/src/assets/index.js#L149
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      // const text = this.$store.state.searchText;
+      const {
+        $router,
+        $route: { name }
+      } = this;
+
+      const selectText = document.getSelection()!.toString();
+      switch (e.keyCode) {
+        case 9:
+          // TAB 键切换视图
+          if (name === 'Detail') {
+            $router.push({
+              name: 'List',
+              params: { tabKey: true }
+            } as any);
+          } else {
+            $router.push({
+              name: 'Detail',
+              params: { tabKey: true }
+            } as any);
+          }
+          break;
+
+        case 13 || 108:
+          // enter键
+          if (name === 'List') {
+            const pkgNameEl = (e.target as HTMLElement).querySelector(
+              '.selected .pkg-name'
+            );
+            // 回车执行查询
+            pkgNameEl &&
+              this.$router.push({
+                name: 'Detail',
+                params: { name: pkgNameEl.innerHTML }
+              });
+          } else {
+            utools.findInPage(this.$store.state.searchText);
+            selectText &&
+              $router.push({
+                name: 'List',
+                params: { enterKey: true, selectText }
+              } as any);
+          }
+          break;
+        case 114:
+          // F3 键
+          if (name === 'Detail') {
+            utools.findInPage(this.$store.state.searchText);
+          }
+          break;
+        // 上
+        case 38:
+          if (
+            name === 'List' &&
+            (e.target as HTMLElement)!.querySelector('.selected')
+          ) {
+            const selectedTarget = (e.target as HTMLElement)!.querySelector(
+              '.selected'
+            );
+
+            if (selectedTarget && selectedTarget.previousElementSibling) {
+              selectedTarget.previousElementSibling!.classList.add('selected');
+              selectedTarget.classList.remove('selected');
+
+              if (
+                (selectedTarget.previousElementSibling as HTMLElement)
+                  .offsetTop >
+                document.documentElement.clientHeight / 2
+              ) {
+                document.documentElement.scrollTop =
+                  (selectedTarget.previousElementSibling as HTMLElement)
+                    .offsetTop -
+                  document.documentElement.clientHeight / 2;
+              }
+            }
+          }
+          break;
+        // 下
+        case 40:
+          if (name === 'List') {
+            const selectedTarget = (e.target as HTMLElement)!.querySelector(
+              '.selected'
+            );
+            if (selectedTarget && selectedTarget.nextElementSibling) {
+              selectedTarget.nextElementSibling!.classList.add('selected');
+              selectedTarget.classList.remove('selected');
+
+              if (
+                (selectedTarget.nextElementSibling as HTMLElement).offsetTop >
+                document.documentElement.clientHeight / 2
+              ) {
+                document.documentElement.scrollTop =
+                  (selectedTarget.nextElementSibling as HTMLElement).offsetTop -
+                  document.documentElement.clientHeight / 2;
+              }
+            }
+          }
+          break;
+        // 划词翻译
+        case 84:
+          /* if ($('#mainlist').is(':hidden') && $('#manual').is(':visible')) {
+            let text = window.getSelection().toString();
+            if (text) {
+              // if (/[\u4e00-\u9fa5]/.test(text)){
+              // utools.showNotification('中文你还看不懂嘛！', clickFeatureCode = null, silent = true)
+              // } else {
+              let enText = encodeURIComponent(text);
+              $('#infopannel')
+                .html('在线翻译中...')
+                .fadeIn(300);
+              $.get(
+                'http://fanyi.youdao.com/translate?&doctype=json&type=EN2ZH_CN&i=' +
+                  enText,
+                data => {
+                  let result = data.translateResult;
+                  let cnText = '';
+                  // 每段
+                  for (var r of result) {
+                    // 每句
+                    for (var a of r) {
+                      cnText += a.tgt;
+                    }
+                    cnText += '<br>';
+                  }
+                  $('#infopannel').html(cnText);
+                }
+              );
+              // }
+            }
+          } */
+          break;
+        default:
+          break;
+      }
+    });
+  }
 }
 </script>
 
@@ -141,7 +206,8 @@ export default class App extends Vue {
 html,
 body {
   margin: 0;
-  font-size: 16px;
+  padding: 0;
+  // font-size: 16px;
   font-family: Roboto Mono, monospace, system-ui, -apple-system,
     BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: #f5f4f9;

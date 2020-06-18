@@ -56,10 +56,9 @@ export default class List extends Vue {
   @Prop({ type: Boolean, default: false }) activeSub!: boolean;
   @Prop({ type: String, default: '' }) path!: string;
 
-  private currentItem!: any;
+  private fullPath!: string;
   private showSub = false;
   private static allPathArray: string[] = [];
-  private fullPath = '';
 
   constructor() {
     super();
@@ -70,7 +69,6 @@ export default class List extends Vue {
     if (this.fullPath !== '' && type === 'file')
       List.allPathArray.push(this.fullPath);
     //  可以想办法 更换为 vscode icons
-    // console.log('Fileslist dir', this.fullPath);
   }
 
   // === 点击显示子目录及文件 ,传递到外部===
@@ -113,6 +111,10 @@ export default class List extends Vue {
 
   mounted() {
     this.$emit('dom-mounted', List.allPathArray);
+  }
+
+  beforeDestroy() {
+    List.allPathArray = [];
   }
 }
 </script>

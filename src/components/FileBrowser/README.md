@@ -14,7 +14,7 @@ Props：
 支持传入数据结构为：
 
 ```js
-['assets', [['growl', ['error.png', 'ok.png']]]]; // 表示 assets/growl/error.png， assets/growl/ok.png
+['assets', [['growl', ['error.png', 'ok.png']]]]; // 表示 /assets/growl/error.png， /assets/growl/ok.png
 ```
 
 1. 一个数组表示一个文件夹，第一项为字符串，为该文件夹的名称；
@@ -112,6 +112,10 @@ private dir = [
 # TOOD
 1. # 原版 搜索功能 👍 ,例如：搜索 m d e a r ，依然可以搜索到，目前还没有做该功能😭，待闲暇时~
 
+
+# Fix
+* 可能需要修复一个页面多组件所带来的搜索文件重复问题~🙃
+* 增加对其他传入数据格式的支持，目前只能按照，以上数据格式形式传入~
 
 # 参考
 

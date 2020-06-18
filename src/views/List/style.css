@@ -6,11 +6,11 @@
 } */
 
 .list {
-  position: fixed;
-  top: 0;
-  left: 0;
+  /* position: fixed; */
+  /* top: 0;
+  left: 0; */
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
   overflow-y: auto;
   overflow-x: hidden;
   user-select: none;
@@ -25,14 +25,13 @@
   display: flex;
   width: 100%;
   /* height: 48px; */
-  cursor: pointer;
   padding-right: 60px;
-  box-sizing: border-box; 
-  margin:6px 0 6px 10px;
+  box-sizing: border-box;
+  padding: 6px 0 6px 10px;
   border-top: 1px solid #ccc;
 }
 .list .list-item:first-child {
-    border-top:none;
+  border-top: none;
 }
 
 .list .list-item-selected {
@@ -48,26 +47,27 @@
   max-width: 32px;
   vertical-align: middle;
 }
-.list-item .hint{
-    color: #666;
-    font-size: 14px;
-    padding-left: 10px;
+.list-item .hint {
+  color: #666;
+  font-size: 14px;
+  padding-left: 8px;
 }
 
 .list .list-item-content {
   flex: 1;
   width: 0;
 }
-.list .list-item-content > div {
+.list .list-item-content > * {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .list .list-item-content .list-item-title {
+  cursor: pointer;
   color: #212121;
-  padding-top: 2px;
-  height: 28px;
-  line-height: 28px;
+  padding: 0.4rem 0;
+  /* height: 34px;
+  line-height: 34px; */
   font-size: 20px;
 }
 .list .list-item-content .list-item-description {
@@ -86,7 +86,7 @@
   font-weight: 200;
 }
 .list .quick-index-identity > div {
-    height: 60px;
-    line-height: 60px;
+  height: 60px;
+  line-height: 60px;
   text-align: center;
 }

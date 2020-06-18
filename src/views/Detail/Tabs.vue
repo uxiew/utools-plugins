@@ -119,7 +119,7 @@
               {{ key }}
             </a>
             <p class="version-date">
-              {{ value | timeAgo }}
+              {{ value  }}
             </p>
           </div>
         </div>
@@ -137,7 +137,7 @@ import { timeAgo } from '../../utils/util';
   name: 'Tabs'
 })
 export default class Tabs extends Vue {
-  @Prop({ type: Array, default: [] }) keywords!: [];
+  @Prop({ type: Array, default: [] }) keywords: [] = [];
   @Prop({ type: Array, default: [] }) dependents!: [];
   @Prop({ type: Array, default: [] }) dependencies!: [];
   @Prop({ type: Object, default: {} }) versions!: {
@@ -163,7 +163,7 @@ export default class Tabs extends Vue {
   searchKeyWords(keyword: string) {
     this.$router.replace({
       name: 'List',
-      params: { type: 'keyword', word: keyword }
+      params: { type: 'keyword', keyword: 'keywords:' + keyword }
     });
     // await getKeyWordList(keyword);
   }

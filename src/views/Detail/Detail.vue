@@ -100,7 +100,7 @@
                   >
                     github
                   </a>
-                  <a v-else>-</a>
+                  <span v-else>-</span>
                 </div>
               </div>
               <div class="post-table-cell">
@@ -120,7 +120,12 @@
             @click="openUrl($event)"
             v-html="pkgDetail.readme"
           ></div>
-
+          <!-- 生成TOC -->
+          <AutoMenu
+            v-if="!skeLoading"
+            level-tags="h1,h2,h3,h4"
+            selector=".markdown"
+          />
           <!-- 弹出源码区 -->
           <van-popup
             v-model="showSourceViewer"
@@ -161,6 +166,7 @@ import { timeAgo, toThousands, runkitCleanHTML } from '../../utils/util';
 import marked from 'marked';
 import prism from 'prismjs';
 import FileBrowser from '../../components/FileBrowser/index.vue';
+import AutoMenu from '../../components/AutoMenu/index.vue';
 import Tabs from './Tabs.vue';
 
 interface PkgDataType {
@@ -189,7 +195,7 @@ interface PkgSourceInfo {
   packageName?: string | null;
 }
 
-const BigFileCache: {
+let BigFileCache: {
   [prop: string]: string;
 } = {};
 /* eslint-disable no-undef */
@@ -197,19 +203,16 @@ const BigFileCache: {
   name: 'Detail',
   components: {
     FileBrowser,
+    AutoMenu,
     Tabs
   },
   filters: {
-    timeAgo: (val: string) => {
-      return timeAgo(val);
-    },
-
     convertToThousands: (val: string | number = '-') => {
       return toThousands(val);
     }
   }
 })
-export default class Main extends Vue {
+export default class Detail extends Vue {
   private skeLoading: boolean = true;
   private pkgDetail: PkgDataType = {
     name: '',
@@ -219,21 +222,13 @@ export default class Main extends Vue {
     dependencies: []
   };
   private pkgSourceDirList!: [];
-  private pkgSourceUnavailable: boolean = false;
-  private showSourceBrowser!: boolean;
-  private showSourceViewer!: boolean;
   private sourceHTML!: string;
 
-  constructor() {
-    super();
-    this.showSourceBrowser = false;
-    this.showSourceViewer = false;
+  private pkgSourceUnavailable: boolean = false;
+  private showSourceBrowser: boolean = false;
+  private showSourceViewer: boolean = false;
 
-    import('prismjs/components/index').then(module => {
-      module.default(['typescript', 'jsx', 'css', 'bash', 'json']);
-      module.silent = true;
-    });
-
+  created() {
     marked.setOptions({
       highlight: function(code, lang) {
         if (prism.languages[lang]) {
@@ -243,6 +238,16 @@ export default class Main extends Vue {
         }
       }
     });
+
+    this.utoolSetInput();
+  }
+
+  private utoolSetInput() {
+    utools.setSubInput(({ text }) => {
+      utools.findInPage(text);
+      this.$store.dispatch('changeText', { searchText: text });
+      // highlightManual('#manualBody', text);
+    }, '搜索全文，选中文本回车键查询，T翻译；Tab切换界面');
   }
 
   get queryPkgName() {
@@ -267,9 +272,10 @@ export default class Main extends Vue {
   }
 
   get repoUrl() {
-    let url = this.pkgDetail.repository!.url || '';
+    let url =
+      (this.pkgDetail.repository && this.pkgDetail.repository.url) || '';
     if (url) {
-      url = url.replace(/git@|git\+|\.git/g, '');
+      url = url.replace(/git@|git\+|git:\/\/|\.git/g, '');
       url = url.indexOf('http') >= 0 ? url : 'https://' + url;
     }
     return url;
@@ -297,11 +303,19 @@ export default class Main extends Vue {
   }
 
   // ===============
+
+  resetDetail() {
+    this.skeLoading = true;
+    this.pkgSourceUnavailable = false;
+    this.showSourceBrowser = false;
+    this.showSourceViewer = false;
+  }
   async ajaxInfo(params: string) {
+    this.resetDetail();
     this.pkgDetail = await getPkgInfo(params as string);
     this.skeLoading = false;
     this.pkgDetail.readme = marked.parse(
-      this.pkgDetail.readme || '错误❌: 没有找到 README 文件！'
+      this.pkgDetail.readme || '错误❌: 没有找到 README 文件！😢'
     );
     // -
     const elTarget = document.querySelector('#post_top');
@@ -309,31 +323,21 @@ export default class Main extends Vue {
   }
 
   async mounted() {
-    document.addEventListener('keydown', (event: KeyboardEvent) => {
-      const text = this.$store.state.searchText;
-      if (event.keyCode === 13) {
-        // 回车执行查询
-        utools.setSubInputValue(text);
-      }
-    });
-
     utools.setExpendHeight(700);
     await this.ajaxInfo(
       (this.queryPkgName as string) || (this.pkgDetail.name as string)
     );
-
-    console.log('Detail', this.pkgSourceDirList, this.pkgDetail);
   }
 
   // dbClick pkg name to show source directory
   async showPkgFBrowser() {
     const {
-      pkgSourceDirList,
+      pkgSourceDirList = [],
       pkgDetail: { name, version },
       pkgSourceUnavailable
     } = this;
     if (pkgSourceUnavailable) return;
-    if (!pkgSourceDirList) {
+    if (!pkgSourceDirList.length) {
       const { directoryListing = [], unavailable } = await getPkgSourceInfo(
         name,
         version!
@@ -342,9 +346,11 @@ export default class Main extends Vue {
       this.pkgSourceDirList = directoryListing;
     }
     // 切换显示
-    this.showSourceBrowser = pkgSourceUnavailable
-      ? false
-      : !this.showSourceBrowser;
+
+    this.showSourceBrowser =
+      this.pkgSourceDirList.length && !pkgSourceUnavailable
+        ? !this.showSourceBrowser
+        : false;
   }
 
   /*   parseToDOM(str: string) {
@@ -353,7 +359,6 @@ export default class Main extends Vue {
     return div.childNodes;
   } */
 
-  // TODO: 缓存处理
   async getFileSource(path: string) {
     const {
       pkgDetail: { name }
@@ -387,6 +392,10 @@ export default class Main extends Vue {
   copyFileSource(target: HTMLElement) {
     const el = target.querySelector('#src .code') as HTMLElement;
     utools.copyText(el ? el.innerText : '😢不能复制!');
+  }
+
+  beforeDestroy() {
+    BigFileCache = {}; // 清空缓存
   }
 
   // loader-bar
@@ -428,8 +437,8 @@ export default class Main extends Vue {
 
 // .source-viewer
 .copy-button {
+  // position: fixed;
   color: #dd6546;
-  position: fixed;
   right: 6vw;
   top: 2vw;
   border: 1px #c5c5c5 solid;
