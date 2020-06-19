@@ -30,6 +30,9 @@
   padding: 6px 0 6px 10px;
   border-top: 1px solid #ccc;
 }
+.list .list-item:hover{
+background-color: #e4e4e4;
+}
 .list .list-item:first-child {
   border-top: none;
 }

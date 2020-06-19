@@ -5,12 +5,13 @@ import router from './router';
 import store from './store';
 import { timeAgo } from './utils/util';
 import cacheCtrlMixin from './mixin';
-import { Empty, Skeleton, Popup } from 'vant';
+import { Empty, Skeleton, Notify, Popup } from 'vant';
 import { Component } from 'vue-property-decorator';
 
 Vue.use(Empty);
 Vue.use(Skeleton);
 Vue.use(Popup);
+Vue.use(Notify);
 
 Component.registerHooks([
   'beforeRouteEnter',

@@ -17,7 +17,9 @@ import { Component, Vue } from 'vue-property-decorator';
 import 'vant/es/skeleton/style';
 import 'vant/es/empty/style';
 import 'vant/es/popup/style';
+import 'vant/es/notify/style';
 import FileBrowser from './components/FileBrowser/index.vue';
+import { translateYD } from './utils/API';
 
 @Component({
   name: 'App',
@@ -35,6 +37,16 @@ export default class App extends Vue {
   */
   created() {
     this.cashViews = ['List', 'Detail']; //待优化，点击刷新
+
+    // 右键单击手册，退出手册; 中键发送文本
+    document.addEventListener('mousedown', (e: MouseEvent) => {
+      if (3 == e.which) {
+        // 右键
+      } else if (1 == e.which) {
+        // 左键
+        this.$notify.clear();
+      }
+    });
 
     // 按键监听
     // idea 参考 https://hub.fastgit.org/fofolee/uTools-Manuals/blob/4c264bafc537d7a5971b14345c0f58dd097cc1c7/src/assets/index.js#L149
@@ -139,36 +151,17 @@ export default class App extends Vue {
           break;
         // 划词翻译
         case 84:
-          /* if ($('#mainlist').is(':hidden') && $('#manual').is(':visible')) {
-            let text = window.getSelection().toString();
-            if (text) {
-              // if (/[\u4e00-\u9fa5]/.test(text)){
-              // utools.showNotification('中文你还看不懂嘛！', clickFeatureCode = null, silent = true)
-              // } else {
-              let enText = encodeURIComponent(text);
-              $('#infopannel')
-                .html('在线翻译中...')
-                .fadeIn(300);
-              $.get(
-                'http://fanyi.youdao.com/translate?&doctype=json&type=EN2ZH_CN&i=' +
-                  enText,
-                data => {
-                  let result = data.translateResult;
-                  let cnText = '';
-                  // 每段
-                  for (var r of result) {
-                    // 每句
-                    for (var a of r) {
-                      cnText += a.tgt;
-                    }
-                    cnText += '<br>';
-                  }
-                  $('#infopannel').html(cnText);
-                }
-              );
-              // }
-            }
-          } */
+          if (name === 'Detail' && selectText) {
+            translateYD(selectText)
+              .then(tran => {
+                this.$notify({
+                  message: tran,
+                  color: '#000',
+                  background: '#f5f5f9',
+                  duration: 0
+                });
+              })
+          }
           break;
         default:
           break;

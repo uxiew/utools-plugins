@@ -12,6 +12,7 @@ const algoliaUrl = 'https://ofcncog2cu-3.algolia.net/1/indexes/*/queries'; // 3æ
 const npmioUrl = 'https://npm.io/api';
 const runkitUrl = 'https://runkit.com/api';
 const npmjsUrl = 'https://www.npmjs.com/search';
+const youdaoApi = 'http://dict.youdao.com';
 const githubUrl = 'https://api.github.com'; //https://api.github.com/repos/bitinn/node-fetch
 const per_page = 10;
 
@@ -156,9 +157,10 @@ export const getKeyWordList = async (keyword: string) => {
   });
 
   let tempArray: any[] = [];
-  list.objects.forEach((item: any) => {
-    tempArray.push(item.package);
-  });
+  list &&
+    list.objects.forEach((item: any) => {
+      tempArray.push(item.package);
+    });
   return tempArray;
 };
 
@@ -212,6 +214,18 @@ export async function getPkgFileSource(pkgName: string, pkgFilePath: string) {
   );
 }
 
-// export const getList = (getSuggestionList) as (
-//   arg: string
-// ) => ListData[];
+//
+export const translateYD = async (selectText: string): Promise<any> => {
+  const notAWord = /\s+/.test(selectText.trim());
+
+  const { data,result, fanyi } = await fetch(
+    notAWord
+      ? `${youdaoApi}/jsonapi?jsonversion=2&client=mobile&dicts=${encodeURIComponent(
+          '{"count":99,"dicts":[["fanyi"]]}'
+        )}&q=${selectText}`
+      : `${youdaoApi}/suggest?q=${selectText}&le=eng&num=1&doctype=json`
+  ).then(res => {
+    return res.json();
+  });
+  return data&&result.code ===200 ? data.entries[0].explain : fanyi ? fanyi.tran : selectText;
+};

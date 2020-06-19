@@ -1,6 +1,8 @@
-# utools 非模板插件的开发
+# npm 插件
+快捷的查询 npm 库
 
-该项目主要是为了方便开发 utools 插件！
+![npm 插件](./demo/2020-06-18_173702.jpg)
+
 
 使用了 vue + vant + typescript 进行项目开发
 
