@@ -30,7 +30,6 @@ export function toThousands(n: string | numebr) {
 }
 
 // 清理html结构，修复图片显示路径
-
 export function runkitCleanHTML(htmlText: string) {
   if (!htmlText) return '❌Error Network！No Data Returned！';
   let fixHtml = htmlText
@@ -46,6 +45,74 @@ export function runkitCleanHTML(htmlText: string) {
 
   return fixHtml.match(/views">([\s\S]*)<\/div>/)![1]; // 匹配小组内容
 }
+
+function filterATag(msg: string) {
+    return msg.replace(/<a[\W\w]*?>/gim, '').replace(/<\/a>|\s+|<li>/ig, '').replace(/<\/li>/ig, '\n');
+}
+
+// youdaoFanyi
+export function getTrans ( htmlText: string ){
+	let transResult =  '';
+	//读音 英/美
+	const reg_ecContentWrp = /_contentWrp"[\W\w]*<ul>([\W\w]*?)<\/ul/im;  
+	const reg_fanyiContentWrp = /翻译结果[\W\w]*?trans-container[\W\w]*?<p>[\W\w]*?<\/p>\s*\n*<p>([\W\w]*?)<\/p>/im;  
+	const str_ecCcontentWrp = reg_ecContentWrp.exec(htmlText)
+	const str_fanyiContentWrp = reg_fanyiContentWrp.exec(htmlText)
+	if( str_ecCcontentWrp != null){
+        transResult += filterATag( str_ecCcontentWrp[1] );  // 单词翻译
+	}
+	if( str_fanyiContentWrp != null){
+		transResult += str_fanyiContentWrp[1];     //长句翻译
+	}
+	return transResult.indexOf('<licl') ===0 ? htmlText : transResult;
+}
+
+export function getTransAudio (htmlText: string, text:string){
+		let phonetic = '';
+        //读音 英/美
+        const reg_audio = /英[\W\w]*?phonetic">([\W\w]*?)<\/span[\W\w]*?data-rel="([\W\w]*?)"[\W\w]*?美[\W\w]*?phonetic">([\W\w]*?)<\/span[\W\w]*?data-rel="([\W\w]*?)"/im;
+        const str_audio = reg_audio.exec(htmlText)
+       
+        if(str_audio === null){
+			//读音 单个读音
+			let reg_audio = /phonetic">([\W\w]*?)<\/span[\W\w]*?data-rel="([\W\w]*?)"/im;
+			let str_audio = reg_audio.exec(htmlText)
+			if(str_audio != null){
+			  return {
+				KK:{
+					phonetic:str_audio[1],
+					audio:str_audio[2]
+				 },
+				BE:{
+					phonetic:'',
+					audio:''
+				}
+			 }
+			}else{
+				return {
+					KK:{
+						phonetic:'',
+						audio:`https://dict.youdao.com/dictvoice?audio=${text}`
+					 },
+					BE:{
+						phonetic:'',
+						audio:'' 
+					}
+				}
+			}
+		}
+		
+		return {
+			BE:{
+				phonetic:str_audio[1],
+				audio:str_audio[2]
+			},
+			KK:{
+				phonetic:str_audio[3],
+				audio:str_audio[4]
+			}
+		}
+ }
 
 export function fetch(
   apiUrl: string,

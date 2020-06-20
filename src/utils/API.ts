@@ -5,14 +5,17 @@
  * 其他带参考：https://openbase.io/、https://www.algolia.com/、https://api.npms.io
  *
  */
-
-import { _debounce, fetch } from './util';
+ 
+import  createPlayer from 'audio-player'
+	
+import { _debounce, fetch, getTrans ,getTransAudio } from './util';
 
 const algoliaUrl = 'https://ofcncog2cu-3.algolia.net/1/indexes/*/queries'; // 3比较快速
 const npmioUrl = 'https://npm.io/api';
 const runkitUrl = 'https://runkit.com/api';
 const npmjsUrl = 'https://www.npmjs.com/search';
-const youdaoApi = 'http://dict.youdao.com';
+const youdaoApi = 'https://m.youdao.com/dict?le=eng&q=';
+//const youdaoApi = 'http://dict.youdao.com';
 const githubUrl = 'https://api.github.com'; //https://api.github.com/repos/bitinn/node-fetch
 const per_page = 10;
 
@@ -30,13 +33,13 @@ async function ajax(apiUrl: string, options?: object) {
   });
 }
 
-export const commonKeywords = async (): Promise<{ name: string }[]> => {
+export const commonKeywords = async (): Promise<[]> => {
   const { list } = await fetch(
     `${npmioUrl}/v1/keywords?page=1&per_page=90`
   ).then(res => {
     return res.json();
   });
-  return list;
+  return list || [];
 };
 
 /**
@@ -214,10 +217,26 @@ export async function getPkgFileSource(pkgName: string, pkgFilePath: string) {
   );
 }
 
-//
+// =======翻译查询====== 
+export const translateYD = async (selectText: string): Promise<any> => {
+	const text = selectText.trim();
+	if(!text) return;
+	const data = await fetch(
+	   youdaoApi + text
+	  ).then(res => {
+		return res.text();
+	});
+	
+	const { KK, BE } = getTransAudio(data, text)
+	const player =  new createPlayer()
+	// 直接播放语音
+	player.play(BE.audio ? BE.audio : KK.audio)
+	return (BE.phonetic? `英${BE.phonetic} 美${KK.phonetic} \n` : KK.phonetic ? `美${KK.phonetic} \n` : '') + getTrans(data)
+}
+
+/**
 export const translateYD = async (selectText: string): Promise<any> => {
   const notAWord = /\s+/.test(selectText.trim());
-
   const { data,result, fanyi } = await fetch(
     notAWord
       ? `${youdaoApi}/jsonapi?jsonversion=2&client=mobile&dicts=${encodeURIComponent(
@@ -229,3 +248,4 @@ export const translateYD = async (selectText: string): Promise<any> => {
   });
   return data&&result.code ===200 ? data.entries[0].explain : fanyi ? fanyi.tran : selectText;
 };
+*/

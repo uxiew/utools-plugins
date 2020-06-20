@@ -15,9 +15,12 @@
 4. 输入框提示 -- 完成
 5. 搜索列表 上下按键选择  -- 完成
 6. 详情页面搜索 -- 完成
-7. esc 键关闭打开，或者点击其他处关闭
+7. 详情页面翻译 -- 完成
+8. esc 键关闭打开，或者点击其他处关闭
+9. package.json 文件分析
 
 # 参考
 
 移植了 : https://hub.fastgit.org/fofolee/uTools-Manuals/tree/master/src 的一些功能为 Vue 组件!
+单词翻译部分：https://github.com/vst93/myDictionary-uToolsPlugin/
 

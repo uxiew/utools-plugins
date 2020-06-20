@@ -154,7 +154,7 @@ export default class App extends Vue {
           if (name === 'Detail' && selectText) {
             translateYD(selectText)
               .then(tran => {
-                this.$notify({
+                 tran && this.$notify({
                   message: tran,
                   color: '#000',
                   background: '#f5f5f9',
@@ -249,5 +249,8 @@ u {
     color: #cc5e5e;
     line-height: initial;
   }
+}
+.van-notify{
+	text-align:left;
 }
 </style>

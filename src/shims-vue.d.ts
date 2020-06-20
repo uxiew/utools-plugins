@@ -7,6 +7,7 @@ declare module '*.png';
 declare module '*.jpg';
 
 declare module 'prismjs/components/index';
+declare module 'audio-player'
 
 /*
 declare module "vue/types/vue" {
