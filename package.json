@@ -1,6 +1,6 @@
 {
   "name": "npm_search",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "A convenient and quick utool's plugin for Npm's pkg Search",
   "private": true,
   "scripts": {

@@ -5,10 +5,10 @@
  * 其他带参考：https://openbase.io/、https://www.algolia.com/、https://api.npms.io
  *
  */
- 
-import  createPlayer from 'audio-player'
-	
-import { _debounce, fetch, getTrans ,getTransAudio } from './util';
+
+import createPlayer from 'audio-player';
+
+import { _debounce, fetch, getTrans, getTransAudio } from './util';
 
 const algoliaUrl = 'https://ofcncog2cu-3.algolia.net/1/indexes/*/queries'; // 3比较快速
 const npmioUrl = 'https://npm.io/api';
@@ -217,22 +217,32 @@ export async function getPkgFileSource(pkgName: string, pkgFilePath: string) {
   );
 }
 
-// =======翻译查询====== 
+// =======翻译查询======
 export const translateYD = async (selectText: string): Promise<any> => {
-	const text = selectText.trim();
-	if(!text) return;
-	const data = await fetch(
-	   youdaoApi + text
-	  ).then(res => {
-		return res.text();
-	});
-	
-	const { KK, BE } = getTransAudio(data, text)
-	const player =  new createPlayer()
-	// 直接播放语音
-	player.play(BE.audio ? BE.audio : KK.audio)
-	return (BE.phonetic? `英${BE.phonetic} 美${KK.phonetic} \n` : KK.phonetic ? `美${KK.phonetic} \n` : '') + getTrans(data)
-}
+  const text = selectText.trim();
+  // 英文校验规则
+  // -------------！！！注意：转义特殊字符'-'
+  // const regEn = /[`~!@#$%^&*_?()<->:"{},.\\/;'[\]]/im
+  // 中文校验规则
+  const regCn = /[·！#￥（——）：；“”‘、，|《。》？、【】[\]]/im;
+
+  if (!text || regCn.test(text)) return;
+  const data = await fetch(youdaoApi + text).then(res => {
+    return res.text();
+  });
+
+  const { KK, BE } = getTransAudio(data, text);
+  const player = new createPlayer();
+  // 直接播放语音
+  player.play(BE.audio ? BE.audio : KK.audio);
+  return (
+    (BE.phonetic
+      ? `英${BE.phonetic} 美${KK.phonetic} \n`
+      : KK.phonetic
+      ? `美${KK.phonetic} \n`
+      : '') + getTrans(data, text)
+  );
+};
 
 /**
 export const translateYD = async (selectText: string): Promise<any> => {

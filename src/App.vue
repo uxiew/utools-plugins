@@ -152,15 +152,15 @@ export default class App extends Vue {
         // 划词翻译
         case 84:
           if (name === 'Detail' && selectText) {
-            translateYD(selectText)
-              .then(tran => {
-                 tran && this.$notify({
+            translateYD(selectText).then(tran => {
+              tran &&
+                this.$notify({
                   message: tran,
                   color: '#000',
                   background: '#f5f5f9',
                   duration: 0
                 });
-              })
+            });
           }
           break;
         default:
@@ -250,7 +250,7 @@ u {
     line-height: initial;
   }
 }
-.van-notify{
-	text-align:left;
+.van-notify {
+  text-align: left;
 }
 </style>

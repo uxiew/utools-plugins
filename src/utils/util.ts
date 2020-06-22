@@ -51,20 +51,21 @@ function filterATag(msg: string) {
 }
 
 // youdaoFanyi
-export function getTrans ( htmlText: string ){
+export function getTrans ( htmlText: string , text:string){
 	let transResult =  '';
 	//读音 英/美
 	const reg_ecContentWrp = /_contentWrp"[\W\w]*<ul>([\W\w]*?)<\/ul/im;  
 	const reg_fanyiContentWrp = /翻译结果[\W\w]*?trans-container[\W\w]*?<p>[\W\w]*?<\/p>\s*\n*<p>([\W\w]*?)<\/p>/im;  
 	const str_ecCcontentWrp = reg_ecContentWrp.exec(htmlText)
 	const str_fanyiContentWrp = reg_fanyiContentWrp.exec(htmlText)
+	
 	if( str_ecCcontentWrp != null){
         transResult += filterATag( str_ecCcontentWrp[1] );  // 单词翻译
 	}
 	if( str_fanyiContentWrp != null){
 		transResult += str_fanyiContentWrp[1];     //长句翻译
 	}
-	return transResult.indexOf('<licl') ===0 ? htmlText : transResult;
+	return transResult.indexOf('<licl') ===0 ? text : transResult;
 }
 
 export function getTransAudio (htmlText: string, text:string){
@@ -92,6 +93,7 @@ export function getTransAudio (htmlText: string, text:string){
 				return {
 					KK:{
 						phonetic:'',
+						// audio:`https://translate.google.cn/translate_tts?idx=0&client=t&ttsspeed=1&tl=en&tk=572383.975253&q=${text}`
 						audio:`https://dict.youdao.com/dictvoice?audio=${text}`
 					 },
 					BE:{

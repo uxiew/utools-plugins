@@ -271,6 +271,7 @@ export default class Detail extends Vue {
     return `npm i ${this.pkgDetail.name}`;
   }
 
+  // 处理一下
   get repoUrl() {
     let url =
       (this.pkgDetail.repository && this.pkgDetail.repository.url) || '';
@@ -297,6 +298,7 @@ export default class Detail extends Vue {
         if (e.target.tagName === 'A') {
           const { href } = e.target;
           href.startsWith('http') && utools.shellOpenExternal(href);
+          !href.startsWith('http') && href.toLocaleLowerCase().endsWith('.md') && utools.shellOpenExternal(`${this.repoUrl}/blob/master/${href.replace(/file.*\//,'')}`);
         }
         break;
     }

@@ -18,9 +18,13 @@
 7. 详情页面翻译 -- 完成
 8. esc 键关闭打开，或者点击其他处关闭
 9. package.json 文件分析
+10. 是否可以考虑记录一下最近的5个查询，好方便回找
 
 # 参考
 
 移植了 : https://hub.fastgit.org/fofolee/uTools-Manuals/tree/master/src 的一些功能为 Vue 组件!
 单词翻译部分：https://github.com/vst93/myDictionary-uToolsPlugin/
 
+
+# Bug
+翻译点号会出现问题~
