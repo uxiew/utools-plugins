@@ -87,7 +87,7 @@
               <div class="post-table-cell">
                 <span>License</span>
                 <div class="post-table-content">
-                  {{ pkgDetail.license || '-' }}
+                  {{ (pkgDetail.license || '-') | truncate}}
                 </div>
               </div>
               <div class="post-table-cell">
@@ -209,6 +209,12 @@ let BigFileCache: {
   filters: {
     convertToThousands: (val: string | number = '-') => {
       return toThousands(val);
+    },
+    truncate: (text: string )=>{
+		const maxwidth = 20;
+		if(text.length> maxwidth)
+		  return text.substring(0,maxwidth)+'...';
+		return text
     }
   }
 })

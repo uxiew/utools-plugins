@@ -1,8 +1,8 @@
 /**
  * 接口来自多个网站！
- * 列表建议：https://yarnpkg.com/?q=babel&p=1、https://www.npmjs.com 、https://runkit.com/api
+ * 列表建议：https://yarnpkg.com/?q=babel&p=1、https://www.npmjs.com 、https://runkit.com/api https://npms.io https://github.com/nodesource/npmsearch
  * 内容：npm.io
- * 其他带参考：https://openbase.io/、https://www.algolia.com/、https://api.npms.io
+ * 其他带参考：https://openbase.io/  https://www.algolia.com/ 
  *
  */
 

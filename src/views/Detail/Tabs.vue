@@ -30,9 +30,8 @@
     />
     <nav>
       <ul class="package-tabs-list">
-        <li class="tab0">
+        <li class="tab0" v-if="keywords.length">
           <label
-            v-if="keywords.length"
             for="tab0"
           >{{ getTabTitle('keyword')}}</label>
         </li>
@@ -137,10 +136,10 @@ import { timeAgo } from '../../utils/util';
   name: 'Tabs'
 })
 export default class Tabs extends Vue {
-  @Prop({ type: Array, default: [] }) keywords: [] = [];
-  @Prop({ type: Array, default: [] }) dependents!: [];
-  @Prop({ type: Array, default: [] }) dependencies!: [];
-  @Prop({ type: Object, default: {} }) versions!: {
+  @Prop({ type: Array}) keywords!: [];
+  @Prop({ type: Array}) dependents!: [];
+  @Prop({ type: Array}) dependencies!: [];
+  @Prop({ type: Object}) versions!: {
     [prop: string]: string;
     created: string;
     modified: string;
