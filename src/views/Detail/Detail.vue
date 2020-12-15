@@ -282,8 +282,9 @@ export default class Detail extends Vue {
     let url =
       (this.pkgDetail.repository && this.pkgDetail.repository.url) || '';
     if (url) {
-      url = url.replace(/git@|git\+|git:\/\/|\.git/g, '');
-      url = url.indexOf('http') >= 0 ? url : 'https://' + url;
+      url = url.replace(/(git.*github|\.git)/g, (match, p1, index)=>{
+	  return index === 0 ? 'https://github' : ''
+	});
     }
     return url;
   }
