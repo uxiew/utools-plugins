@@ -1,5 +1,15 @@
 # npm 插件
-快捷的查询 npm 库
+
+## 目录结构
+```
+---....
+---upxs		# 插件合集
+---src	    # npm helper 源码
+---....
+```
+
+
+快捷的查询 npm 库（npm helper）
 
 ![npm 插件](./demo/2020-06-18_173702.jpg)
 
@@ -28,3 +38,11 @@
 
 # Bug
 翻译点号会出现问题~
+
+
+# 数据来源：
+https://snyk.io/advisor/
+https://www.jsdelivr.com/
+https://npm.runkit.com/fs-extra
+
+

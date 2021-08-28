@@ -14,7 +14,9 @@ Props：
 支持传入数据结构为：
 
 ```js
-['assets', [['growl', ['error.png', 'ok.png']]]]; // 表示 /assets/growl/error.png， /assets/growl/ok.png
+['assets', [['growl', ['error.png', 'ok.png']]]]; 
+
+// 表示 /assets/growl/error.png，/assets/growl/ok.png
 ```
 
 1. 一个数组表示一个文件夹，第一项为字符串，为该文件夹的名称；

@@ -2,22 +2,22 @@
  * 接口来自多个网站！
  * 列表建议：https://yarnpkg.com/?q=babel&p=1、https://www.npmjs.com 、https://runkit.com/api https://npms.io https://github.com/nodesource/npmsearch
  * 内容：npm.io
- * 其他带参考：https://openbase.io/  https://www.algolia.com/ 
+ * 其他带参考：https://openbase.io/  https://www.algolia.com/
  *
  */
 
-import createPlayer from 'audio-player';
+import createPlayer from 'audio-player'
 
-import { _debounce, fetch, getTrans, getTransAudio } from './util';
+import { _debounce, fetch, getTrans, getTransAudio } from './util'
 
-const algoliaUrl = 'https://ofcncog2cu-3.algolia.net/1/indexes/*/queries'; // 3比较快速
-const npmioUrl = 'https://npm.io/api';
-const runkitUrl = 'https://runkit.com/api';
-const npmjsUrl = 'https://www.npmjs.com/search';
-const youdaoApi = 'https://m.youdao.com/dict?le=eng&q=';
+const algoliaUrl = 'https://ofcncog2cu-3.algolia.net/1/indexes/*/queries' // 3比较快速
+const npmioUrl = 'https://npm.io/api'
+const runkitUrl = 'https://runkit.com/api'
+const npmjsUrl = 'https://www.npmjs.com/search'
+const youdaoApi = 'https://m.youdao.com/dict?le=eng&q='
 //const youdaoApi = 'http://dict.youdao.com';
-const githubUrl = 'https://api.github.com'; //https://api.github.com/repos/bitinn/node-fetch
-const per_page = 10;
+const githubUrl = 'https://api.github.com' //https://api.github.com/repos/bitinn/node-fetch
+const per_page = 10
 
 async function ajax(apiUrl: string, options?: object) {
   const opts =
@@ -27,41 +27,36 @@ async function ajax(apiUrl: string, options?: object) {
           headers: {
             'x-spiferack': '1'
           }
-        };
+        }
   return await fetch(apiUrl, opts, 3000).then(res => {
-    return res.json(); // maybe:ok: false  status: 504
-  });
+    return res.json() // maybe:ok: false  status: 504
+  })
 }
 
 export const commonKeywords = async (): Promise<[]> => {
-  const { list } = await fetch(
-    `${npmioUrl}/v1/keywords?page=1&per_page=90`
-  ).then(res => {
-    return res.json();
-  });
-  return list || [];
-};
+  const { list } = await fetch(`${npmioUrl}/v1/keywords?page=1&per_page=90`).then(res => {
+    return res.json()
+  })
+  return list || []
+}
 
 /**
  * @description 优先使用 npmjsUrl,若没有数据返回，再使用 runkitUrl 搜索！不使用竞速方式 `Promise.all()`
  * @param npmPkgStr
  */
-export const getSuggestionList = async (
-  npmPkgStr: string,
-  url?: string
-): Promise<any[] | {}> => {
-  const NODATA = { error: true };
-  if (!npmPkgStr) return NODATA;
-  const searchStr = npmPkgStr.trim().replace('/', '-');
+export const getSuggestionList = async (npmPkgStr: string, url?: string): Promise<any[] | {}> => {
+  const NODATA = { error: true }
+  if (!npmPkgStr) return NODATA
+  const searchStr = npmPkgStr.trim().replace('/', '-')
 
   /**
    * 优先使用 algoliaUrl
    * 注意 npmjsApi 单个字母搜索出来会是确定的github上单个项目
    */
-  let api = `${algoliaUrl}?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%20(lite)%203.27.1%3Breact-instantsearch%205.2.0-beta.2%3BJS%20Helper%202.26.1&x-algolia-api-key=f54e21fa3a2a0160595bb058179bfb1e&x-algolia-application-id=OFCNCOG2CU`;
-  const npmjsApi = `${npmjsUrl}?q=${searchStr}&size=${per_page}&ranking=popularity`;
-  const runUrl = `${runkitUrl}/search/modules/${searchStr}?page=1&size=${per_page}`;
-  const npmioApi = `${npmioUrl}/v1/search?query=${searchStr}&page=1&per_page=${per_page}`;
+  let api = `${algoliaUrl}?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%20(lite)%203.27.1%3Breact-instantsearch%205.2.0-beta.2%3BJS%20Helper%202.26.1&x-algolia-api-key=f54e21fa3a2a0160595bb058179bfb1e&x-algolia-application-id=OFCNCOG2CU`
+  const npmjsApi = `${npmjsUrl}?q=${searchStr}&size=${per_page}&ranking=popularity`
+  const runUrl = `${runkitUrl}/search/modules/${searchStr}?page=1&size=${per_page}`
+  const npmioApi = `${npmioUrl}/v1/search?query=${searchStr}&page=1&per_page=${per_page}`
 
   const options = {
     method: 'POST',
@@ -77,73 +72,60 @@ export const getSuggestionList = async (
         }
       ]
     })
-  };
+  }
 
-  let data = await ajax(url ? url : api, options);
+  let data = await ajax(url ? url : api, options)
 
-  let tempArray: any = [];
+  let tempArray: any = []
 
   //  超时，直接结束了？data === undefined
   // npmjs 出错，比如查询了特殊字符，返回带有 error
   if (data.status == 504 || !data || data.error) {
     if (data.url === api) {
-      return (tempArray = await getSuggestionList(npmPkgStr, npmjsApi));
+      return (tempArray = await getSuggestionList(npmPkgStr, npmjsApi))
     }
     if (data.url === npmjsApi) {
-      return (tempArray = await getSuggestionList(npmPkgStr, runUrl));
+      return (tempArray = await getSuggestionList(npmPkgStr, runUrl))
     }
     if (data.url === runUrl) {
-      return (tempArray = await getSuggestionList(npmPkgStr, npmioApi));
+      return (tempArray = await getSuggestionList(npmPkgStr, npmioApi))
     } else {
-      return NODATA;
+      return NODATA
     }
   }
 
-  let res: any[] =
-    data.results && data.results[0]
-      ? data.results[0].hits
-      : data.objects
-      ? data.objects
-      : data.items
-      ? data.items
-      : data.list;
+  let res: any[] = data.results && data.results[0] ? data.results[0].hits : data.objects ? data.objects : data.items ? data.items : data.list
 
   // @italk/test1  copy webpak
   if (res && !res.length) {
-    api = data.results
-      ? npmjsApi
-      : data.objects
-      ? runUrl
-      : data.items
-      ? npmioApi
-      : '';
-    if (!api) return NODATA;
-    api && (tempArray = await getSuggestionList(npmPkgStr, api));
+    api = data.results ? npmjsApi : data.objects ? runUrl : data.items ? npmioApi : ''
+    if (!api) return NODATA
+    api && (tempArray = await getSuggestionList(npmPkgStr, api))
   } else {
     if (data.results && data.results[0]) {
       // alg
-      tempArray = res;
+      tempArray = res
     } else if (data.list) {
       // npmio
-      tempArray = data.list;
+      tempArray = data.list
     } else if (data.objects) {
       // npmjs
       res.forEach((item: any) => {
-        tempArray.push(item.package);
-      });
+        tempArray.push(item.package)
+      })
     } else if (data.package) {
       // npmjs 直接精确对应返回项目
-      tempArray.push(data.packageVersion);
+      tempArray.push(data.packageVersion)
     } else {
       //runkit
       res.forEach((item: any) => {
-        tempArray.push(item._source);
-      });
+        tempArray.push(item._source)
+      })
     }
   }
   // =======返回前，添加 空数据标识======
-  return tempArray.length ? tempArray : NODATA;
-};
+  return tempArray.length ? tempArray : NODATA
+}
 
 /**
  *  搜索关键词 按流行度排序
@@ -156,30 +138,30 @@ export const getKeyWordList = async (keyword: string) => {
       'x-spiferack': '1'
     }
   }).then(res => {
-    return res.ok && res.json();
-  });
+    return res.ok && res.json()
+  })
 
-  let tempArray: any[] = [];
+  let tempArray: any[] = []
   list &&
     list.objects.forEach((item: any) => {
-      tempArray.push(item.package);
-    });
-  return tempArray;
-};
+      tempArray.push(item.package)
+    })
+  return tempArray
+}
 
 // 获取包信息
 export async function getPkgInfo(npmPkgStr: string): Promise<any> {
   const res = await fetch(`${npmioUrl}/v1/package/${npmPkgStr}`).then(
     res => {
       // https://npm.io/api/v1/package/test0515
-      return res.json();
+      return res.json()
     },
     err => {
       // console.log("错误！", err);
-      return Promise.reject({ error: err.status });
+      return Promise.reject({ error: err.status })
     }
-  );
-  return res;
+  )
+  return res
 }
 
 /*
@@ -192,57 +174,48 @@ export async function getPkgInfo(npmPkgStr: string): Promise<any> {
 //===== from runkit  info ====
 
 export async function getPkgSourceInfo(packageName: string, version: string) {
-  return await fetch(
-    `${runkitUrl}/npm/info/${packageName}?version=${version}`
-  ).then(
+  return await fetch(`${runkitUrl}/npm/info/${packageName}?version=${version}`).then(
     res => {
-      return res.json();
+      return res.json()
     },
     err => {
-      return Promise.reject({ error: err.status });
+      return Promise.reject({ error: err.status })
     }
-  );
+  )
 }
-export async function getPkgFileSource(pkgName: string, pkgFilePath: string) {
-  return await fetch(
-    `https://source.runkitcdn.com/npm/${pkgName +
-      pkgFilePath}?engine=10.x.x&t=${new Date().getTime()}`
-  ).then(
+export async function getPkgFileSource(pkg: any, pkgFilePath: string) {
+  const { name, version } = pkg
+  const api = `https://cdn.jsdelivr.net/npm/${name}@${version}${pkgFilePath}`
+  return await fetch(api).then(
     res => {
-      return res.text();
+      return res.text()
     },
     err => {
-      return Promise.reject({ error: err.status });
+      return Promise.reject({ error: err.status })
     }
-  );
+  )
 }
 
 // =======翻译查询======
 export const translateYD = async (selectText: string): Promise<any> => {
-  const text = selectText.trim();
+  const text = selectText.trim()
   // 英文校验规则
   // -------------！！！注意：转义特殊字符'-'
   // const regEn = /[`~!@#$%^&*_?()<->:"{},.\\/;'[\]]/im
   // 中文校验规则
-  const regCn = /[·！#￥（——）：；“”‘、，|《。》？、【】[\]]/im;
+  const regCn = /[·！#￥（——）：；“”‘、，|《。》？、【】[\]]/im
 
-  if (!text || regCn.test(text)) return;
+  if (!text || regCn.test(text)) return
   const data = await fetch(youdaoApi + text).then(res => {
-    return res.text();
-  });
+    return res.text()
+  })
 
-  const { KK, BE } = getTransAudio(data, text);
-  const player = new createPlayer();
+  const { KK, BE } = getTransAudio(data, text)
+  const player = new createPlayer()
   // 直接播放语音
-  player.play(BE.audio ? BE.audio : KK.audio);
-  return (
-    (BE.phonetic
-      ? `英${BE.phonetic} 美${KK.phonetic} \n`
-      : KK.phonetic
-      ? `美${KK.phonetic} \n`
-      : '') + getTrans(data, text)
-  );
-};
+  player.play(BE.audio ? BE.audio : KK.audio)
+  return (BE.phonetic ? `英${BE.phonetic} 美${KK.phonetic} \n` : KK.phonetic ? `美${KK.phonetic} \n` : '') + getTrans(data, text)
+}
 
 /**
 export const translateYD = async (selectText: string): Promise<any> => {
