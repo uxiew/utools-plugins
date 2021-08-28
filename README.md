@@ -41,8 +41,20 @@
 
 
 # 数据来源：
-https://snyk.io/advisor/
-https://www.jsdelivr.com/
+https://www.npmjs.com
+https://runkit.com/api
 https://npm.runkit.com/fs-extra
+https://npms.io
+
+
+https://www.jsdelivr.com/
+
+https://snyk.io/advisor/
+
+https://yarnpkg.com/?q=babel&p=1
+
+https://github.com/nodesource/npmsearch
+https://openbase.io/
+https://www.algolia.com/
 
 
