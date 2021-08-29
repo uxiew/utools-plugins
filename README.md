@@ -4,10 +4,18 @@
 ```
 ---....
 ---upxs		# 插件合集
----src	    # npm helper 源码
----....
+---npm-helper	# npm helper 源码
+---dev-docs		# dev-docs 源码
+---README.md	# 说明文档
 ```
 
+# development
+plugin.json 中加入开发模式热重载：
+```
+  "development": {
+    "main": "http://localhost:8080"
+  },
+```
 
 快捷的查询 npm 库（npm helper）
 
@@ -54,7 +62,8 @@ https://snyk.io/advisor/
 https://yarnpkg.com/?q=babel&p=1
 
 https://github.com/nodesource/npmsearch
-https://openbase.io/
+https://openbase.com/
+
 https://www.algolia.com/
 
 

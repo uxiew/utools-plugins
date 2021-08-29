@@ -87,6 +87,7 @@
 
           <!-- 底部关键字和相关库 -->
           <Tabs
+            :pkgname="pkgDetail.name"
             :keywords="pkgDetail.keywords"
             :dependents="pkgDetail.dependents"
             :dependencies="pkgDetail.dependencies"
@@ -104,6 +105,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import { getPkgInfo, getPkgSourceInfo, getPkgFileSource } from '../../utils/API'
 import { timeAgo, toThousands } from '../../utils/util'
+//@ts-ignore
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/theme/mdn-like.css' // 这里引入的是主题样式，根据设置的theme的主题引入，一定要引入！！
 require('codemirror/mode/javascript/javascript') // 这里引入模式的js，根据设置的mode引入，一定要引入！！
@@ -287,6 +289,7 @@ export default class Detail extends Vue {
 
   async mounted() {
     utools.setExpendHeight(700)
+    console.log(this)
     await this.ajaxInfo((this.queryPkgName as string) || (this.pkgDetail.name as string))
   }
 

@@ -5,7 +5,6 @@ import dayjs from 'dayjs'
 //导相对时间插件
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { RequestHeaders } from 'electron'
-//导国际化插件i18n
 dayjs.extend(relativeTime)
 
 // dayjs,moment 作用：快捷转换时间格式，dayjs更轻量

@@ -1,6 +1,8 @@
 .DS_Store
+**/.DS_Store
 inspect.out.json
 node_modules
+**/node_modules
 dist
 
 # local env files

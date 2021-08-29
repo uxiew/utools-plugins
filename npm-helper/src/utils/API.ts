@@ -145,7 +145,6 @@ export const getKeyWordList = async (keyword: string) => {
 export async function getPkgInfo(npmPkgStr: string): Promise<any> {
   const res = await fetch(`${npmioUrl}/v1/package/${npmPkgStr}`).then(
     res => {
-      // https://npm.io/api/v1/package/test0515
       return res.json()
     },
     err => {
