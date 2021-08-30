@@ -10,8 +10,12 @@
 
 
 # 技术架构
-react
-material UI
+svelte
+svelte material UI
+
+# utools 插件地址
+https://u.tools/docs/developer/api.html#%E7%94%A8%E6%88%B7
+https://sveltematerialui.com/demo/list/
 
 
 # TODO
