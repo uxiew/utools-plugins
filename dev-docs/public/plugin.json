@@ -1,0 +1,52 @@
+{
+  "pluginName": "Dev开发文档",
+  "author": "ChandlerVer5",
+  "homepage": "https://www.kancloud.cn/@chandler",
+  "folder": "https://www.kancloud.cn/@chandler",
+  "description": "在快捷舒适的输入框中搜索 编程文档、Cheat Sheets、工具、pacakges 等各类资源",
+  "version": "0.1.2",
+  "main": "index.html",
+  "preload": "preload.js",
+  "logo": "logo.png",
+  "platform": [
+	"win32",
+	"darwin",
+	"linux"
+  ],
+  "development": {
+	"main": "http://localhost:5000/index.html"
+  },
+  "pluginSetting": {
+	"single": true,
+	"height": 0
+  },
+  "features": [
+	{
+	  "code": "devdocs",
+	  "explain": "查询开发文档",
+	  "platform": [
+		"win32",
+		"darwin",
+		"linux"
+	  ],
+	  "cmds": [
+		"doc",
+		"文档",
+		{
+		  "type": "regex",
+		  "label": "文本正则匹配",
+		  "match": "/xxx/i",
+		  "minLength": 1,
+		  "maxLength": 1
+		},
+		{
+		  "type": "over",
+		  "label": "无匹配时",
+		  "exclude": "/xxx/i",
+		  "minLength": 1,
+		  "maxLength": 1
+		}
+	  ]
+	}
+  ]
+}

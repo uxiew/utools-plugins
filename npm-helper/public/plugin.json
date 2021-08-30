@@ -1,0 +1,23 @@
+{
+  "pluginName": "npm 库查询",
+  "author": "ChandlerVer5",
+  "homepage": "https://www.kancloud.cn/@chandler",
+  "description": "方便快捷地查询某个 npm 库的相关用法",
+  "version": "0.1.2",
+  "logo": "logo.png",
+  "main": "index.html",
+  "preload": "preload.js",
+  "pluginSetting": {
+    "single": true
+  },
+  "features": [
+    {
+      "code": "npm_search",
+      "explain": "查询某个 npm 库的用法",
+      "cmds": ["npm","node",{
+        "type":"over",
+        "label":"npm查询"
+      }]
+    }
+  ]
+}
