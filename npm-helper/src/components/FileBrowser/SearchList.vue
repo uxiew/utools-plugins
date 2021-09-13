@@ -1,48 +1,29 @@
 <template>
   <div>
-    <div
-      v-if="needSearch"
-      class="browser-top-container"
-    >
-      <input
-        v-model="searchText"
-        type="text"
-        placeholder="搜索文件..."
-        @input="inputChange"
-      />
+    <div v-if="needSearch" class="browser-top-container">
+      <input v-model="searchText" type="text" placeholder="搜索文件..." @input="inputChange" />
     </div>
-    <ul
-      v-if="searchText"
-      style="position: relative; max-height: 40vh; width: 100%; overflow: auto;"
-      class="fb-viewer"
-      @scroll="onScroll"
-    >
+    <ul v-if="searchText" style="position: relative; max-height: 40vh; width: 100%; overflow: auto;" class="fb-viewer" @scroll="onScroll">
       <!-- 搜索列表 -->
-      <li
-        v-if="!searchedList.length"
-        class="no-results"
-      >
+      <li v-if="!searchedList.length" class="no-results">
         没有相关文件
       </li>
 
-      <li
-        v-for="({filename, filepath}, i) in searchedList"
-        v-else
-        :key="filename + i"
-      >
-        <a
-          href="/touchui-wx-cli/lib/class/CLIExample.d.ts?t=1591757011309"
-          style="padding: 12px 22px;display:block;line-height: 1.3em;"
-          :title="filename"
-        >
-          <i :class="`icon
-            icon-${fileIcon(filename)}`"></i>
+      <li v-for="({ filename, filepath }, i) in searchedList" v-else :key="filename + i">
+        <a href="/touchui-wx-cli/lib/class/CLIExample.d.ts?t=1591757011309" style="padding: 12px 22px;display:block;line-height: 1.3em;" :title="filename">
+          <i
+            :class="
+              `icon
+            icon-${fileIcon(filename)}`
+            "
+          ></i>
           <div style="overflow: hidden; text-overflow: ellipsis;">
-            <span class='filename'>
-              <span v-html="highlightify(filename)"></span><br />
+            <span class="filename">
+              <span v-html="highlightify(filename)"></span>
+              <br />
             </span>
-            <span class='filepath'>
-              <span> <span v-html="highlightify(filepath)"></span></span>
+            <span class="filepath">
+              <span><span v-html="highlightify(filepath)"></span></span>
             </span>
           </div>
         </a>
@@ -52,35 +33,35 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
-import { getFileIcon } from './helper';
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import { getFileIcon } from './helper'
 
 interface ResultList {
-  filename: string;
-  filepath: string;
+  filename: string
+  filepath: string
 }
 @Component({
   name: 'SearchList'
 })
 export default class SearchList extends Vue {
-  @Prop({ type: Boolean, default: false }) needSearch!: boolean;
-  @Prop({ type: Array, default: [] }) filesList!: string[];
-  private searchText: string = '';
-  private searchedList: ResultList[] = [];
-  private wrapperEl!: HTMLElement;
+  @Prop({ type: Boolean, default: false }) needSearch!: boolean
+  @Prop({ type: Array, default: [] }) filesList!: string[]
+  private searchText: string = ''
+  private searchedList: ResultList[] = []
+  private wrapperEl!: HTMLElement
 
   // TODO: 高亮显示文件  类似 `r e a d` 也可以搜索 `README.md` 文件
   private highlightify(fileStr: string) {
-    const { searchText } = this;
-    const reg = new RegExp(searchText.trim(), 'ig');
+    const { searchText } = this
+    const reg = new RegExp(searchText.trim(), 'ig')
     return fileStr.replace(reg, match => {
-      return `<span style="color: rgb(255, 147, 54);">${match}</span>`; // 返回会被用于替换的字符串
-    });
+      return `<span style="color: rgb(255, 147, 54);">${match}</span>` // 返回会被用于替换的字符串
+    })
   }
 
   // 文件图标
   fileIcon(filename: string) {
-    return getFileIcon(filename);
+    return getFileIcon(filename)
   }
 
   /**
@@ -88,51 +69,48 @@ export default class SearchList extends Vue {
    * 使用 cacheList 缓存搜索栈，避免每次从头检索
    */
   private searchFiles(list: any[], searchStr: string): ResultList[] {
-    const tmpArr: ResultList[] = [];
-    const text = searchStr.trim();
+    const tmpArr: ResultList[] = []
+    const text = searchStr.trim()
 
     for (const path of list) {
-      const filename = path.replace(/\/.*\//, '').replace(/^\//, '');
-      const filepath = path.replace(/^\//, '');
+      const filename = path.replace(/\/.*\//, '').replace(/^\//, '')
+      const filepath = path.replace(/^\//, '')
       if (filename.toLowerCase().includes(text.toLowerCase())) {
         tmpArr.push({
           filename,
           filepath
-        });
+        })
       }
     }
-    return tmpArr;
+    return tmpArr
   }
 
   private inputChange() {
-    const { searchText, filesList, searchFiles, wrapperEl } = this;
-    this.searchedList = searchFiles(filesList, searchText);
-    this.$emit('show-result', !!searchText.length); // 显示文件列表吗？
-    this.isScrolled(wrapperEl);
+    const { searchText, filesList, searchFiles, wrapperEl } = this
+    this.searchedList = searchFiles(filesList, searchText)
+    this.$emit('show-result', !!searchText.length) // 显示文件列表吗？
+    this.isScrolled(wrapperEl)
     // console.log('搜索到的文件数：', this.searchedList);
   }
 
   private isScrolled({ scrollTop }: HTMLElement) {
     if (scrollTop > 0) {
-      this.wrapperEl.classList.add('scroll');
+      this.wrapperEl.classList.add('scroll')
     } else {
-      this.wrapperEl.classList.remove('scroll');
+      this.wrapperEl.classList.remove('scroll')
     }
   }
 
   // 监听 scroll
   private onScroll({ target }: Event) {
-    this.isScrolled(target as HTMLElement);
+    this.isScrolled(target as HTMLElement)
   }
 
   mounted() {
-    this.wrapperEl = this.$el.querySelector(
-      '.browser-top-container'
-    ) as HTMLElement;
+    this.wrapperEl = this.$el.querySelector('.browser-top-container') as HTMLElement
   }
 }
 </script>
-
 
 <style lang="scss" scoped>
 @import './style.scss';
@@ -160,8 +138,7 @@ input[type='text'] {
   padding: 0px 1em;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 2px 0 rgba(0, 0, 0, 0.16);
   &:focus {
-    box-shadow: 0 0 0 1px #7dc8ff, 0 0 0 3px rgba(125, 200, 255, 0.5),
-      0 2px 2px 0 rgba(0, 0, 0, 0.16);
+    box-shadow: 0 0 0 1px #7dc8ff, 0 0 0 3px rgba(125, 200, 255, 0.5), 0 2px 2px 0 rgba(0, 0, 0, 0.16);
     outline: none;
   }
 }

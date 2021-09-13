@@ -1,27 +1,56 @@
 <template>
   <section id="post_top" class="post-single">
-    <FileBrowser v-if="showSourceBrowser" search="true" :directory-listing="pkgSourceDirList" @get-path="getFileSource($event)"></FileBrowser>
+    <FileBrowser
+      v-if="showSourceBrowser"
+      :search="true"
+      :directory-listing="pkgSourceDirList"
+      @get-path="getFileSource($event)"
+    ></FileBrowser>
     <van-skeleton title :row="10" :loading="skeLoading">
-      <van-empty v-if="pkgDetail.error" image="error" :description="pkgDetail.error" />
-      <div v-else class="article post-content">
+      <van-empty
+        v-if="pkgDetail.error"
+        image="error"
+        :description="pkgDetail.error"
+      />
+      <div v-else class="article post-content" @click="closeSourceBrowser">
         <div class="post-content-top">
           <!-- 头部 -->
           <header class="post-title">
-            <div class="date">
+            <div class="header-text">
+              <van-icon v-if="isCollected" name="star" size="12" color="#f00" />
               {{ titleDate }}
             </div>
             <h1 class="header header__primary" @dblclick="showPkgFBrowser">
-              {{ title }}
+              <van-popover
+                v-model="showPopAction"
+                trigger="click"
+                :close-on-click-outside="true"
+                :actions="actions"
+                @select="onPopSelect"
+              >
+                <template #reference>
+                  {{ title }}
+                </template>
+              </van-popover>
             </h1>
           </header>
           <div class="post-copy">
             <label for="install-input">Install</label>
             <div class="post-copy__input">
-              <input id="install-input" type="text" readonly="" :value="installDesc" />
+              <input
+                id="install-input"
+                type="text"
+                readonly=""
+                :value="installDesc"
+              />
               <a class="post-copy-link" @click.prevent="copyInstall()" />
             </div>
             <div class="runkit-btn">
-              <a class="truncate" rel="noopener noreferrer nofollow" @click.prevent="runInRunKit()">
+              <a
+                class="truncate"
+                rel="noopener noreferrer nofollow"
+                @click.prevent="runInRunKit()"
+              >
                 <svg
                   aria-hidden="true"
                   focusable="false"
@@ -45,9 +74,9 @@
           <div class="post-table statistics">
             <div class="post-table-head">
               <div class="post-table-cell">
-                <span>Weekly downloads</span>
+                <span>monthly downloads</span>
                 <div class="post-table-content">
-                  {{ pkgDetail.downloads | convertToThousands }}
+                  {{ pkgDetail.downloadsLast30Days | convertToThousands }}
                 </div>
               </div>
               <div class="post-table-cell">
@@ -59,7 +88,11 @@
               <div class="post-table-cell">
                 <span>Repository</span>
                 <div class="post-table-content">
-                  <a v-if="repoUrl" :href="repoUrl" @click.prevent="openUrl(repoUrl)">
+                  <a
+                    v-if="repoUrl"
+                    :href="repoUrl"
+                    @click.prevent="openUrl(repoUrl)"
+                  >
                     github
                   </a>
                   <span v-else>-</span>
@@ -76,12 +109,29 @@
         </div>
         <article class="post-content">
           <!-- ✓ GOOD -->
-          <div class="markdown" eslint-disable-next-line @click="openUrl($event)" v-html="pkgDetail.readme"></div>
+          <div
+            class="markdown"
+            eslint-disable-next-line
+            @click="openUrl($event)"
+            v-html="pkgDetail.readme"
+          ></div>
           <!-- 生成TOC -->
-          <AutoMenu v-if="!skeLoading" level-tags="h1,h2,h3,h4" selector=".markdown" />
+          <AutoMenu
+            v-if="!skeLoading"
+            level-tags="h1,h2,h3,h4"
+            selector=".markdown"
+          />
           <!-- 弹出源码区 -->
-          <van-popup v-model="showSourceViewer" closeable position="right" :style="{ width: '90vw' }">
-            <button class="copy-button">Copy</button>
+          <van-popup
+            v-model="showSourceViewer"
+            closeable
+            position="bottom"
+            @closed="closeSourceViewer"
+          >
+            <div class="actions">
+              <button class="copy-button">复制</button>
+              <button class="copy-button">运行代码</button>
+            </div>
             <codemirror ref="cmEditor" :value="code" :options="cmOptions" />
           </van-popup>
 
@@ -89,10 +139,9 @@
           <Tabs
             :pkgname="pkgDetail.name"
             :keywords="pkgDetail.keywords"
-            :dependents="pkgDetail.dependents"
             :dependencies="pkgDetail.dependencies"
             :versions="pkgDetail.versions"
-            :get-info="ajaxInfo"
+            :get-info="fetchPkgOtherInfo"
           />
         </article>
       </div>
@@ -102,195 +151,309 @@
 
 <script lang="ts">
 // https://github.com/vst93/myDictionary-uToolsPlugin/blob/master/assets/index.js
-import { Vue, Component } from 'vue-property-decorator'
-import { getPkgInfo, getPkgSourceInfo, getPkgFileSource } from '../../utils/API'
-import { timeAgo, toThousands } from '../../utils/util'
+import { Vue, Component } from 'vue-property-decorator';
+import {
+  getPkgDetail,
+  getSourceStructure,
+  getPkgFileSource,
+  getGhFile,
+  getNpmioDetail
+} from '../../utils/API';
+import { timeAgo, toThousands } from '../../utils/util';
 //@ts-ignore
-import { codemirror } from 'vue-codemirror'
-import 'codemirror/theme/mdn-like.css' // 这里引入的是主题样式，根据设置的theme的主题引入，一定要引入！！
-require('codemirror/mode/javascript/javascript') // 这里引入模式的js，根据设置的mode引入，一定要引入！！
-require('codemirror/mode/python/python.js')
-require('codemirror/addon/fold/foldcode.js')
-require('codemirror/addon/fold/foldgutter.js')
-require('codemirror/addon/fold/brace-fold.js')
-require('codemirror/addon/fold/xml-fold.js')
-require('codemirror/addon/fold/indent-fold.js')
-require('codemirror/addon/fold/markdown-fold.js')
-require('codemirror/addon/fold/comment-fold.js')
+import { codemirror } from 'vue-codemirror';
+import 'codemirror/theme/mdn-like.css'; // 这里引入的是主题样式，根据设置的theme的主题引入，一定要引入！！
+require('codemirror/mode/javascript/javascript'); // 这里引入模式的js，根据设置的mode引入，一定要引入！！
+require('codemirror/mode/python/python.js');
+require('codemirror/addon/fold/foldcode.js');
+require('codemirror/addon/fold/foldgutter.js');
+require('codemirror/addon/fold/brace-fold.js');
+require('codemirror/addon/fold/xml-fold.js');
+require('codemirror/addon/fold/indent-fold.js');
+require('codemirror/addon/fold/markdown-fold.js');
+require('codemirror/addon/fold/comment-fold.js');
 
-import marked from 'marked'
-import prism from 'prismjs'
-import FileBrowser from '../../components/FileBrowser/index.vue'
-import AutoMenu from '../../components/AutoMenu/index.vue'
-import Tabs from './Tabs.vue'
+import jsDownload from 'js-downloadfiles';
+import { Toast } from 'vant';
+import marked from 'marked';
+import prism from 'prismjs';
+import FileBrowser from '../../components/FileBrowser/index.vue';
+import AutoMenu from '../../components/AutoMenu/index.vue';
+import Tabs from './Tabs.vue';
 
 interface PkgDataType {
-  name: string
-  description?: string
-  license?: string
-  modified?: string
-  readme?: string
-  downloads?: number
-  keywords?: string[]
-  dependents?: string[]
-  dependencies?: string[]
-  repository?: { type: string; url: string }
-  version?: string
-  versions?: { [prop: string]: string; created: string; modified: string }
-  error?: boolean
-  [prop: string]: any
+  name: string;
+  version: string;
+  description?: string;
+  license?: string;
+  modified?: string;
+  readme?: string;
+  downloadsLast30Days?: number;
+  keywords?: string[];
+  dependencies?: string[];
+  repository?: { type: string; url: string };
+  versions?: { [prop: string]: string; created: string; modified: string };
+  error?: boolean;
+  [prop: string]: any;
 }
 interface PkgSourceInfo {
-  canBeDirectlyRequired?: boolean
-  description?: string
-  directoryListing: []
-  keywords?: string
-  homepage?: string | null
-  license?: string | null
-  packageName?: string | null
+  canBeDirectlyRequired?: boolean;
+  description?: string;
+  directoryListing: [];
+  keywords?: string;
+  homepage?: string | null;
+  license?: string | null;
+  packageName?: string | null;
 }
 
+let canCloseSourceViewer = true;
+
 let BigFileCache: {
-  [prop: string]: string
-} = {}
+  [prop: string]: string;
+} = {};
 /* eslint-disable no-undef */
 @Component({
   name: 'Detail',
   components: { codemirror, FileBrowser, AutoMenu, Tabs },
   filters: {
     convertToThousands: (val: string | number = '-') => {
-      return toThousands(val)
+      return toThousands(val);
     },
     truncate: (text: string) => {
-      const maxwidth = 20
-      if (text.length > maxwidth) return text.substring(0, maxwidth) + '...'
-      return text
+      const maxwidth = 20;
+      if (text.length > maxwidth) return text.substring(0, maxwidth) + '...';
+      return text;
     }
   }
 })
 export default class Detail extends Vue {
-  private skeLoading: boolean = true
+  private skeLoading: boolean = true;
   private pkgDetail: PkgDataType = {
     name: '',
+    version: '',
     repository: { type: 'git', url: '' },
     keywords: [],
-    dependents: [],
     dependencies: []
-  }
-  private code = ''
+  };
+  private isCollected = false;
+  private showPopAction = false;
+  private actions = [
+    { text: '收藏✨', key: 'collect', icon: 'star-o' },
+    { text: '下载', key: 'download', icon: 'down' },
+    { text: '运行', key: 'run', icon: 'edit' }
+  ];
+
+  private code = '';
   private cmOptions = {
     value: '',
     mode: 'text/javascript',
     theme: 'mdn-like',
     lineNumbers: true,
+    lineWrapping: true,
+    matchBrackets: true,
     line: true,
     readOnly: true
-  }
+  };
 
-  private pkgSourceDirList!: []
+  private pkgSourceDirList!: [];
 
-  private pkgSourceUnavailable: boolean = false
-  private showSourceBrowser: boolean = false
-  private showSourceViewer: boolean = false
+  private pkgSourceUnavailable: boolean = false;
+  private showSourceBrowser: boolean = false;
+  private showSourceViewer: boolean = false;
 
   created() {
     marked.setOptions({
       highlight: function(code, lang) {
         if (prism.languages[lang]) {
-          return prism.highlight(code, prism.languages[lang], lang)
+          return prism.highlight(code, prism.languages[lang], lang);
         } else {
-          return code
+          return code;
         }
       }
-    })
+    });
 
-    this.utoolSetInput()
+    this.utoolSetInput();
   }
 
+  // 标题动作选项
+  async onPopSelect(action: any) {
+    console.log(action, action.key);
+    switch (action.key) {
+      case 'collect':
+        break;
+      case 'download':
+        // https://r.cnpmjs.org/@techiediaries/ngx-textarea-autosize/download/@techiediaries/ngx-textarea-autosize-1.2.0.tgz
+        // download(
+        //   `https://r.cnpmjs.org/@techiediaries/ngx-textarea-autosize/download/@techiediaries/ngx-textarea-autosize-1.2.0.tgz`,
+        //   utools.getPath('downloads')
+        // );
+        {
+          /*  const pkgInfo = await pacote.tarball(
+            getNpmTarballUrl(this.pkgDetail.name, this.pkgDetail.version, {
+              registry: `https://registry.npm.taobao.org/`
+            })
+          ); */
+          Toast.loading({
+            message: '下载中...'
+          });
+          const { name, version } = this.pkgDetail;
+          const tarball = `https://registry.nlark.com/${name}/download/${name}-${version}.tgz`;
+          jsDownload.handleDownloadOne({
+            id: this.pkgDetail.name,
+            url: tarball,
+            name: `${this.pkgDetail.name}.tgz`,
+            progressFunBack: (res: {
+              progress: number;
+              id: string;
+              name: string;
+            }) => {
+              if (res.progress === 100) Toast.clear();
+            }
+          });
+          // console.log('download', res);
+        }
+        break;
+      case 'run':
+        break;
+    }
+  }
+
+  //
   private utoolSetInput() {
     utools.setSubInput(({ text }) => {
-      utools.findInPage(text)
-      this.$store.dispatch('changeText', { searchText: text })
+      utools.findInPage(text);
+      this.$store.dispatch('changeText', { searchText: text });
       // highlightManual('#manualBody', text);
-    }, '搜索全文，选中文本回车键查询，T翻译；Tab切换界面')
+    }, '搜索全文，选中文本回车键查询，T翻译；Tab切换界面');
   }
 
   get queryPkgName() {
-    return this.$route.params.name
+    return this.$route.params.name;
   }
 
   get titleDate() {
-    const relTime = timeAgo(this.pkgDetail.modified!)
-    const author = this.repoUrl.match(/com\/(.+?)\//)
-    return `${this.pkgDetail.version} • Published ${relTime}${author ? ' by ' + author[1] : ''}` //1.2.6 • Published 4 years ago
+    const relTime = timeAgo(this.pkgDetail.modified!);
+    const author = this.repoUrl.match(/com\/(.+?)\//);
+    return ` Published ${relTime}${author ? ' by ' + author[1] : ''}`; //1.2.6 • Published 4 years ago
   }
 
   get title() {
-    const { name, version } = this.pkgDetail
-    return `${name} v${version}` //1.2.6 • Published 4 years ago
+    const { name, version } = this.pkgDetail;
+    return `${name} v${version}`; //1.2.6 • Published 4 years ago
   }
 
   get installDesc() {
-    return `npm i ${this.pkgDetail.name}`
+    return `npm i ${this.pkgDetail.name}`;
   }
 
   // 处理一下
   get repoUrl() {
-    let url = (this.pkgDetail.repository && this.pkgDetail.repository.url) || ''
+    let url =
+      (this.pkgDetail.repository && this.pkgDetail.repository.url) || '';
     if (url) {
       url = url.replace(/(git.*github|\.git)/g, (match, p1, index) => {
-        return index === 0 ? 'https://github' : ''
-      })
+        return index === 0 ? 'https://github' : '';
+      });
     }
-    return url
+    return url;
   }
 
+  // 添加到收藏
+  collect() {
+    utools.copyText(this.installDesc);
+  }
+
+  // 复制
   copyInstall() {
     utools.copyText(this.installDesc)
+      ? this.$toast('复制成功', { position: 'top' })
+      : this.$toast('复制失败', { position: 'top' });
   }
   runInRunKit() {
-    utools.shellOpenExternal(`https://runkit.com/npm/${this.pkgDetail.name}`)
+    utools.shellOpenExternal(`https://runkit.com/npm/${this.pkgDetail.name}`);
+  }
+
+  // 关闭源文件显示popup
+  closeSourceViewer() {
+    canCloseSourceViewer = true;
+  }
+
+  // 关闭源文件列表
+  closeSourceBrowser() {
+    if (canCloseSourceViewer) this.showSourceBrowser = false;
   }
 
   openUrl(e: any) {
     switch (typeof e) {
       case 'string':
-        utools.shellOpenExternal(e)
-        break
+        utools.shellOpenExternal(e);
+        break;
       default:
         if (e.target.tagName === 'A') {
-          const { href } = e.target
-          href.startsWith('http') && utools.shellOpenExternal(href)
+          const { href } = e.target;
+          href.startsWith('http') && utools.shellOpenExternal(href);
           !href.startsWith('http') &&
             href.toLocaleLowerCase().endsWith('.md') &&
-            utools.shellOpenExternal(`${this.repoUrl}/blob/master/${href.replace(/file.*\//, '')}`)
+            utools.shellOpenExternal(
+              `${this.repoUrl}/blob/master/${href.replace(/file.*\//, '')}`
+            );
         }
-        break
+        break;
     }
   }
 
   // ===============
 
   resetDetail() {
-    this.skeLoading = true
-    this.pkgSourceUnavailable = false
-    this.showSourceBrowser = false
-    this.showSourceViewer = false
+    this.skeLoading = true;
+    this.pkgSourceUnavailable = false;
+    this.showSourceBrowser = false;
+    this.showSourceViewer = false;
+    BigFileCache = {};
   }
-  async ajaxInfo(params: string) {
-    this.resetDetail()
-    this.pkgDetail = await getPkgInfo(params as string)
-    this.skeLoading = false
-    this.pkgDetail.readme = marked.parse(this.pkgDetail.readme || '❌: 没有找到 README 文件！😢')
+
+  async fetchPkgInfo(params: string) {
+    this.resetDetail();
+    this.pkgDetail = await getPkgDetail(params as string);
+    this.skeLoading = false;
+    this.pkgDetail.readme = marked.parse(
+      this.pkgDetail.readme ||
+        (await getGhFile(this.repoUrl, this.pkgDetail.version)) ||
+        '❌: 没有找到 README 文件！😢'
+    );
     // -
-    const elTarget = document.querySelector('#post_top')
-    elTarget && elTarget.scrollIntoView(true)
+    const elTarget = document.querySelector('#post_top');
+    elTarget && elTarget.scrollIntoView(true);
+    return this.pkgDetail;
+  }
+  async fetchPkgOtherInfo(params: string) {
+    this.resetDetail();
+    this.pkgDetail = await getNpmioDetail(params as string);
+    this.skeLoading = false;
+    this.pkgDetail.readme = marked.parse(
+      this.pkgDetail.readme ||
+        (await getGhFile(this.repoUrl, this.pkgDetail.version)) ||
+        '❌: 没有找到 README 文件！😢'
+    );
+    // -
+    const elTarget = document.querySelector('#post_top');
+    elTarget && elTarget.scrollIntoView(true);
   }
 
   async mounted() {
-    utools.setExpendHeight(700)
-    console.log(this)
-    await this.ajaxInfo((this.queryPkgName as string) || (this.pkgDetail.name as string))
+    utools.setExpendHeight(700);
+    const pkg = await this.fetchPkgInfo(
+      this.queryPkgName || this.pkgDetail.name
+    );
+    const dd = utools.db.put({
+      _id: `searched/${pkg.name}-${pkg.version}`,
+      data: {
+        name: pkg.name,
+        version: pkg.version,
+        description: pkg.description
+      }
+    });
+    console.log(dd);
   }
 
   // dbClick pkg name to show source directory
@@ -299,16 +462,22 @@ export default class Detail extends Vue {
       pkgSourceDirList = [],
       pkgDetail: { name, version },
       pkgSourceUnavailable
-    } = this
-    if (pkgSourceUnavailable) return
+    } = this;
+    if (pkgSourceUnavailable) return;
     if (!pkgSourceDirList.length) {
-      const { directoryListing = [], unavailable } = await getPkgSourceInfo(name, version!)
-      this.pkgSourceUnavailable = !!unavailable
-      this.pkgSourceDirList = directoryListing
+      const { directoryListing = [], unavailable } = await getSourceStructure(
+        name,
+        version!
+      );
+      this.pkgSourceUnavailable = !!unavailable;
+      this.pkgSourceDirList = directoryListing;
     }
     // 切换显示
 
-    this.showSourceBrowser = this.pkgSourceDirList.length && !pkgSourceUnavailable ? !this.showSourceBrowser : false
+    this.showSourceBrowser =
+      this.pkgSourceDirList.length && !pkgSourceUnavailable
+        ? !this.showSourceBrowser
+        : false;
   }
 
   /*   parseToDOM(str: string) {
@@ -318,31 +487,39 @@ export default class Detail extends Vue {
   } */
 
   async getFileSource(path: string) {
-    const { pkgDetail } = this
+    const { pkgDetail } = this;
 
     if (!BigFileCache[path]) {
-      BigFileCache[path] = await getPkgFileSource(pkgDetail, path)
+      Toast.loading();
+      BigFileCache[path] = await getPkgFileSource(pkgDetail, path);
     }
 
-    this.showSourceViewer = true
-    this.code = BigFileCache[path]
+    this.code = BigFileCache[path];
+    this.showSourceViewer = true;
+    // tag
+    canCloseSourceViewer = false;
+    Toast.clear();
 
-    // 绑定复制代码按钮
-    setTimeout(() => {
-      const targetFileEl = document.querySelector('article.post-content') as HTMLElement
-      targetFileEl.querySelector('.copy-button')!.addEventListener('click', () => {
-        this.copyFileSource(this.code)
-      })
-    }, 300)
+    // 绑定 按钮操作
+    this.$nextTick(() => {
+      const targetFileEl = document.querySelector(
+        'article.post-content'
+      ) as HTMLElement;
+      targetFileEl
+        .querySelector('.copy-button')!
+        .addEventListener('click', () => {
+          this.copyFileSource(this.code);
+        });
+    });
   }
 
   // 复制文件代码
   copyFileSource(source: string) {
-    utools.copyText(typeof source === 'string' ? source : '😢无法复制!')
+    utools.copyText(typeof source === 'string' ? source : '😢无法复制!');
   }
 
   beforeDestroy() {
-    BigFileCache = {} // 清空缓存
+    BigFileCache = {}; // 清空缓存
   }
 
   // loader-bar
@@ -364,7 +541,11 @@ export default class Detail extends Vue {
     width: 100%;
     display: inline-block;
     text-decoration: none;
-    background-image: linear-gradient(-180deg, hsla(0, 0%, 100%, 0.13), rgba(0, 184, 15, 0.1));
+    background-image: linear-gradient(
+      -180deg,
+      hsla(0, 0%, 100%, 0.13),
+      rgba(0, 184, 15, 0.1)
+    );
     border: 1px solid rgba(75, 173, 58, 0.5);
     background-color: #fff;
     color: #444;
@@ -386,18 +567,22 @@ export default class Detail extends Vue {
 }
 
 // .source-viewer
-.copy-button {
-  // position: fixed;
-  color: #dd6546;
-  right: 6vw;
-  top: 2vw;
-  border: 1px #c5c5c5 solid;
-  padding: 10px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  z-index: 9999;
-  &:active {
-    box-shadow: inset 2px 2px 4px #a0a0a0;
+.actions {
+  padding: 6px;
+  border-bottom: 1px #578dbf solid;
+  .copy-button {
+    margin-right: 10px;
+    color: #7b6565;
+    right: 6vw;
+    top: 2vw;
+    border: 1px #dedede solid;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 9999;
+    &:active {
+      box-shadow: inset 2px 2px 4px #a0a0a0;
+    }
   }
 }
 </style>

@@ -3,12 +3,12 @@ import createPlayer from 'audio-player'
 import { _debounce, fetch, getTrans, getTransAudio } from './util'
 
 const algoliaUrl = 'https://ofcncog2cu-3.algolia.net/1/indexes/*/queries' // 3比较快速
-const npmioUrl = 'https://npm.io/api'
+const npmioUrl = 'https://npm.io/api/v1/'
 const runkitUrl = 'https://runkit.com/api'
 const npmjsUrl = 'https://www.npmjs.com/search'
 const youdaoApi = 'https://m.youdao.com/dict?le=eng&q='
 //const youdaoApi = 'http://dict.youdao.com';
-const githubUrl = 'https://api.github.com' //https://api.github.com/repos/bitinn/node-fetch
+const githubUrl = 'https://api.github.com'
 const per_page = 10
 
 async function ajax(apiUrl: string, options?: object) {
@@ -26,7 +26,7 @@ async function ajax(apiUrl: string, options?: object) {
 }
 
 export const commonKeywords = async (): Promise<[]> => {
-  const { list } = await fetch(`${npmioUrl}/v1/keywords?page=1&per_page=90`).then(res => {
+  const { list } = await fetch(`${npmioUrl}keywords?page=1&per_page=90`).then(res => {
     return res.json()
   })
   return list || []
@@ -48,7 +48,7 @@ export const getSuggestionList = async (npmPkgStr: string, url?: string): Promis
   let api = `${algoliaUrl}?x-algolia-agent=Algolia%20for%20vanilla%20JavaScript%20(lite)%203.27.1%3Breact-instantsearch%205.2.0-beta.2%3BJS%20Helper%202.26.1&x-algolia-api-key=f54e21fa3a2a0160595bb058179bfb1e&x-algolia-application-id=OFCNCOG2CU`
   const npmjsApi = `${npmjsUrl}?q=${searchStr}&size=${per_page}&ranking=popularity`
   const runUrl = `${runkitUrl}/search/modules/${searchStr}?page=1&size=${per_page}`
-  const npmioApi = `${npmioUrl}/v1/search?query=${searchStr}&page=1&per_page=${per_page}`
+  const npmioApi = `${npmioUrl}search?query=${searchStr}&page=1&per_page=${per_page}`
 
   const options = {
     method: 'POST',
@@ -142,8 +142,8 @@ export const getKeyWordList = async (keyword: string) => {
 }
 
 // 获取包信息
-export async function getPkgInfo(npmPkgStr: string): Promise<any> {
-  const res = await fetch(`${npmioUrl}/v1/package/${npmPkgStr}`).then(
+export async function getNpmioDetail(npmPkgStr: string): Promise<any> {
+  return await fetch(`${npmioUrl}package/${npmPkgStr}`).then(
     res => {
       return res.json()
     },
@@ -152,7 +152,27 @@ export async function getPkgInfo(npmPkgStr: string): Promise<any> {
       return Promise.reject({ error: err.status })
     }
   )
-  return res
+}
+
+// 获取包信息
+export async function getPkgDetail(npmPkgStr: string): Promise<any> {
+  //   const resultPromise = await fetch(`${npmioUrl}/v1/package/${npmPkgStr}`).then(
+  const url = `https://ofcncog2cu-3.algolianet.com/1/indexes/npm-search/`
+  const pkgPromise = await fetch(`${url + encodeURIComponent(npmPkgStr)}?x-algolia-agent=Algolia%20for%20JavaScript%20(4.2.0)%3B%20Browser`, {
+    headers: {
+      'x-algolia-api-key': `f54e21fa3a2a0160595bb058179bfb1e`,
+      'x-algolia-application-id': `OFCNCOG2CU`
+    }
+  }).then(
+    res => {
+      return res.json()
+    },
+    err => {
+      // console.log("错误！", err);
+      return Promise.reject({ error: err.status })
+    }
+  )
+  return pkgPromise
 }
 
 /*
@@ -160,11 +180,11 @@ export async function getPkgInfo(npmPkgStr: string): Promise<any> {
  * https://runkit.com/api/search/modules/%E5%BE%AE%E4%BF%A1?page=2&size=10
  * https://npm.runkit.com/?q=typescript
  * 通过 https://runkit.com/api/npm/info/touchui-wx-cli?version=2.6.0 查看库的源码
- * 或者这也很全：https://yarnpkg.com/package/snapdragon-node?files
+ * 或者这也很全：https://yarnpkg.cn/package/snapdragon-node?files
  **/
 //===== from runkit  info ====
 
-export async function getPkgSourceInfo(packageName: string, version: string) {
+export async function getSourceStructure(packageName: string, version: string) {
   return await fetch(`${runkitUrl}/npm/info/${packageName}?version=${version}`).then(
     res => {
       return res.json()
@@ -174,9 +194,29 @@ export async function getPkgSourceInfo(packageName: string, version: string) {
     }
   )
 }
+
+/**
+ * @description 获取某个文件源码
+ */
 export async function getPkgFileSource(pkg: any, pkgFilePath: string) {
   const { name, version } = pkg
   const api = `https://cdn.jsdelivr.net/npm/${name}@${version}${pkgFilePath}`
+  return await fetch(api).then(
+    res => {
+      return res.text()
+    },
+    err => {
+      return Promise.reject({ error: err.status })
+    }
+  )
+}
+
+// ForbesLindesay/sync-request/
+
+export async function getGhFile(repoUrl: string, version: string, fileName = 'README.md') {
+  if (!repoUrl) return ''
+  const githubStr = repoUrl.replace('https://github.com/', '')
+  const api = `https://cdn.jsdelivr.net/gh/${githubStr}@${version}/${fileName}`
   return await fetch(api).then(
     res => {
       return res.text()

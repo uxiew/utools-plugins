@@ -1,4 +1,5 @@
-const { shell } = require("electron");
+const { shell } = require('electron');
+const fs = require('fs');
 
 // declare global {
 //   interface Window {
@@ -11,5 +12,7 @@ window.exportFuncs = {
     shell.openExternal(url);
   }
 };
+
+window.fs = fs;
 
 // window.exports = {};

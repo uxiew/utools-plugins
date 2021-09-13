@@ -26,9 +26,9 @@ module.exports = {
           before: [
             tsImportPluginFactory({
               libraryName: 'vant',
-              libraryDirectory: 'es'
+              libraryDirectory: 'es',
               // specify less file path
-              // style: name => `${name}/style/index`
+              style: true
             })
           ]
         });

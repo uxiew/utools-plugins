@@ -14,10 +14,21 @@
     {
       "code": "npm_search",
       "explain": "查询某个 npm 库的用法",
-      "cmds": ["npm","node",{
-        "type":"over",
-        "label":"npm查询"
-      }]
+      "cmds": [
+        "npm",
+        "node",
+        {
+          "type": "over",
+          "label": "npm查询"
+        },
+        {
+          "type": "files",
+          "label": "package文件匹配",
+          "fileType": "file",
+          "match": "/package.json/",
+          "maxLength": 1
+        }
+      ]
     }
   ]
 }

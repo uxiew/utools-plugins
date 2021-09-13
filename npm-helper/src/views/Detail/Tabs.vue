@@ -1,15 +1,15 @@
 <template>
   <div class="package-tabs">
     <input v-if="keywords.length" id="tab0" type="radio" name="tab" :checked="keywords.length" />
-    <input v-if="dependencies.length" id="tab1" type="radio" name="tab" :checked="!keywords.length" />
+    <input v-if="isNotEmpty('dependencies')" id="tab1" type="radio" name="tab" :checked="!keywords.length" />
     <input v-if="dependents.length" id="tab2" type="radio" name="tab" :checked="!keywords.length && !dependencies.length" />
-    <input v-if="versions" id="tab3" type="radio" name="tab" :checked="!keywords.length && !dependencies.length && !dependents.length" />
+    <input v-if="versions" id="tab3" type="radio" name="tab" :checked="!keywords.length && isNotEmpty('dependencies') && !dependents.length" />
     <nav>
       <ul class="package-tabs-list">
         <li v-if="keywords.length" class="tab0">
           <label for="tab0">{{ getTabTitle('keyword') }}</label>
         </li>
-        <li v-if="dependencies.length" class="tab1">
+        <li v-if="isNotEmpty('dependencies')" class="tab1">
           <label for="tab1">{{ getTabTitle('dependency') }}</label>
         </li>
         <li v-if="dependents.length" class="tab2">
@@ -28,10 +28,19 @@
           </a>
         </div>
       </div>
-      <div v-if="dependencies.length" class="tab1">
+      <!-- 兼容 npm.io 数组结构 -->
+      <div v-if="dependencies.length > 0" class="tab1">
         <div class="tags_list">
-          <a v-for="item in dependencies" :key="item" class="tag_link" @click="getInfo(item)">
-            {{ item }}
+          <a v-for="(value, key) in dependencies" :key="key" class="tag_link" @click="getInfo(value)">
+            {{ value }}
+          </a>
+        </div>
+      </div>
+      <!-- yarnpkg 对象形式 -->
+      <div v-else-if="isNotEmpty('dependencies')" class="tab1">
+        <div class="tags_list">
+          <a v-for="(value, key) in dependencies" :key="key" class="tag_link" @click="getInfo(formatVers(key, value))">
+            {{ key + '@' + value }}
           </a>
         </div>
       </div>
@@ -68,14 +77,24 @@ import { timeAgo } from '../../utils/util'
 export default class Tabs extends Vue {
   @Prop({ type: String }) pkgname!: ''
   @Prop({ type: Array }) keywords!: []
-  @Prop({ type: Array }) dependents!: []
-  @Prop({ type: Array }) dependencies!: []
+  @Prop({ type: Array, default: () => [] }) dependents!: []
+  @Prop({ type: Object || Array }) dependencies!: []
   @Prop({ type: Object }) versions!: {
     [prop: string]: string
-    created: string
-    modified: string
   }
   @Prop({ type: Function }) getInfo!: Function
+
+  // 数据转化,可能数组或者对象形式
+  private isNotEmpty(prop: string): boolean {
+    // @ts-ignore
+    const data = this[prop]
+    if (data.length === 0 || JSON.stringify(data) === '{}') return false
+    return true
+  }
+
+  private formatVers(pkgName: string, versionStr: string) {
+    return /^\^/.test(versionStr) ? `${pkgName}/v/${versionStr.replace('^', '')}` : `${pkgName}`
+  }
 
   get versArrObj() {
     const { versions } = this
@@ -83,10 +102,9 @@ export default class Tabs extends Vue {
     delete versions['created']
     delete versions['modified']
     const arr = Object.keys(versions).reverse()
-    for (let i = 0; i < arr.length; i++) {
-      tmpObj[arr[i]] = timeAgo(versions[arr[i]])
+    for (let item of arr) {
+      tmpObj[item] = timeAgo(versions[item])
     }
-    console.log(tmpObj)
     return tmpObj
   }
 
@@ -102,20 +120,18 @@ export default class Tabs extends Vue {
   // ==== 底部三标题 ====
   getTabTitle(cat: string) {
     let title = '0 keyword'
-    const { keywords, dependencies, dependents, versArrObj } = this
+    const { keywords, versArrObj } = this
+    const dependencyLen = this.dependencies.length || Object.keys(this.dependencies).length
     switch (cat) {
       case 'keyword':
-        title = keywords!.length + (keywords!.length > 1 ? ' keywords' : ' keyword')
+        title = keywords.length + (keywords.length > 1 ? ' keywords' : ' keyword')
         break
       case 'dependency':
-        title = dependencies!.length + (dependencies!.length > 1 ? ' dependencies' : ' dependency')
-        break
-      case 'dependent':
-        title = dependents!.length + (dependents!.length > 1 ? ' dependents' : ' dependent')
+        title = dependencyLen + (dependencyLen > 1 ? ' dependencies' : ' dependency')
         break
       default:
         // eslint-disable-next-line no-case-declarations
-        const verLen = Object.keys(versArrObj!).length
+        const verLen = Object.keys(versArrObj).length
         title = verLen + (verLen > 1 ? ' versions' : ' version')
         break
     }

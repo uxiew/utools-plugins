@@ -1,9 +1,24 @@
 <template>
   <div class="list">
     <home-keywords v-if="!npmList.length && !npmList.error" />
-    <van-empty v-if="!!npmList.error" class="custom-image" :image="emptyImg" description="暂无数据" />
+    <van-empty
+      v-if="!!npmList.error"
+      class="custom-image"
+      :image="emptyImg"
+      description="暂无数据"
+    />
     <div
-      v-for="({ name, version, description, owner, types, license, modified, keywords }, index) in npmList"
+      v-for="({
+        name,
+        version,
+        description,
+        owner,
+        types,
+        license,
+        modified,
+        keywords
+      },
+      index) in npmList"
       v-else
       :key="index"
       :class="{ 'list-item': true, selected: index === 0 }"
@@ -30,14 +45,28 @@
         <div class="list-item-description" v-html="description"></div>
         <div v-if="owner" class="list-item-bottom">
           <a class="owner">
-            <img width="28" height="28" alt="owner" :src="`https://res.cloudinary.com/hilnmyskv/image/fetch/w_40,h_40,f_auto,q_80,fl_lossy/${owner.avatar}`" />
+            <img
+              width="28"
+              height="28"
+              alt="owner"
+              :src="
+                `https://res.cloudinary.com/hilnmyskv/image/fetch/w_40,h_40,f_auto,q_80,fl_lossy/${owner.avatar}`
+              "
+            />
             {{ owner.name }}
           </a>
           <span class="hint">{{ modified | timeAgo }}</span>
         </div>
 
         <div v-if="keywords && keywords.length" class="tags_list">
-          <span v-for="(keyword, i) in keywords" :key="i" class="tag_link" @click="getKeywordInf(keyword)">{{ keyword }}</span>
+          <span
+            v-for="(keyword, i) in keywords"
+            :key="i"
+            class="tag_link"
+            @click="getKeywordInf(keyword)"
+          >
+            {{ keyword }}
+          </span>
         </div>
       </div>
     </div>
@@ -46,12 +75,12 @@
 
 <script lang="ts">
 // https://github.com/vst93/myDictionary-uToolsPlugin/blob/master/assets/index.js
-import { Vue, Component } from 'vue-property-decorator'
-import homeKeywords from './home-keywords.vue'
+import { Vue, Component } from 'vue-property-decorator';
+import homeKeywords from './home-keywords.vue';
 
-import { getSuggestionList, getKeyWordList } from '../../utils/API'
-import { _debounce } from '../../utils/util'
-import noimage from '@/assets/custom-empty-image.png'
+import { getSuggestionList, getKeyWordList } from '../../utils/API';
+import { _debounce } from '../../utils/util';
+import noimage from '@/assets/custom-empty-image.png';
 
 /* eslint-disable no-undef */
 @Component({
@@ -61,50 +90,72 @@ import noimage from '@/assets/custom-empty-image.png'
   }
 })
 export default class List extends Vue {
-  private emptyImg = noimage
-  private npmList: any[] | {} = []
+  private emptyImg = noimage;
+  private npmList: any[] | {} = [];
 
   goPackageDetail(name: string) {
     this.$router.push({
       name: 'Detail',
       params: { name }
-    })
+    });
   }
 
   async fetchList(args: string) {
-    this.npmList = args.includes('keywords:') ? await getKeyWordList(args) : ((await getSuggestionList(args)) as any[])
-    utools.setExpendHeight(660)
+    this.npmList = args.includes('keywords:')
+      ? await getKeyWordList(args)
+      : ((await getSuggestionList(args)) as any[]);
+    utools.setExpendHeight(660);
   }
 
   getKeywordInf(keyName: string) {
-    utools.setSubInputValue('keywords:' + keyName)
+    utools.setSubInputValue('keywords:' + keyName);
   }
 
   private utoolSetInput() {
     utools.setSubInput(({ text }) => {
-      const txt = text.trim()
+      const txt = text.trim();
       if (!txt) {
-        return
+        return;
       }
-      _debounce(this.fetchList)(text)
-    }, '输入包名，或输入 keywords:angular 搜索相关库')
+      _debounce(this.fetchList)(text);
+    }, '输入包名，或输入 keywords:angular 搜索相关库');
   }
 
+  // 每当插件从后台进入到前台时，uTools 将会主动调用这个方法。
   created() {
     utools.onPluginEnter(({ type, payload }) => {
-      this.utoolSetInput()
-      if (type === 'over') {
-        utools.setSubInputValue(payload)
-        // getSuggestionList(payload);
+      switch (type) {
+        case 'files':
+          {
+            const { devDependencies, dependencies } = JSON.parse(
+              window.fs.readFileSync(payload[0].path, {
+                encoding: 'utf8'
+              })
+            );
+            console.log(dependencies, devDependencies);
+
+            // https://api.npms.io/v2/package/mget
+          }
+          break;
+        case 'text':
+          this.utoolSetInput();
+
+          break;
+        case 'over':
+          this.utoolSetInput();
+          utools.setSubInputValue(payload);
+          break;
+
+        default:
+          break;
       }
-    })
+    });
   }
 
   async mounted() {
-    this.utoolSetInput()
-    const { keyword } = this.$route.params
+    const { keyword } = this.$route.params;
     if (keyword) {
-      utools.setSubInputValue(keyword)
+      utools.setSubInputValue(keyword);
     }
   }
 }
