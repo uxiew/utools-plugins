@@ -17,18 +17,13 @@
 
     <van-cell-group inset>
       <van-cell title="收藏列表" icon="search"></van-cell>
-      <van-cell title="单元格" value="内容" label="描述信息" />
-      <van-cell title="单元格" value="内容" label="描述信息" />
-      <van-cell title="单元格" value="内容" label="描述信息" />
-      <van-cell title="单元格" value="内容" label="描述信息" />
-    </van-cell-group>
-
-    <van-cell-group inset>
-      <van-cell title="npm +-++趋势" icon="search"></van-cell>
-      <van-cell title="单元格" value="内容" label="描述信息" />
-      <van-cell title="单元格" value="内容" label="描述信息" />
-      <van-cell title="单元格" value="内容" label="描述信息" />
-      <van-cell title="单元格" value="内容" label="描述信息" />
+      <van-cell
+        v-for="{ name, version, description } in collection.npmList"
+        :key="version"
+        :title="name"
+        :value="version"
+        :label="description"
+      />
     </van-cell-group>
 
     <!-- keywords -->
@@ -51,6 +46,8 @@
 /* eslint-disable no-undef */
 import { Vue, Component } from 'vue-property-decorator';
 import { commonKeywords } from '../../utils/API';
+// @ts-ignore
+import Gitee from 'gitee-client';
 
 interface TagType {
   name: string;
@@ -59,6 +56,7 @@ interface HistoryPkgType {
   name: string;
   version: string;
   description: string;
+  [prop: string]: string;
 }
 
 @Component({
@@ -66,14 +64,28 @@ interface HistoryPkgType {
 })
 export default class Home extends Vue {
   private searchHistory: { data: HistoryPkgType }[] = [];
+  private collection = {};
   private wordsList: TagType[] = [];
 
   async mounted() {
     this.searchHistory = utools.db.allDocs('searched');
-    console.log(this.searchHistory);
+    this.collection = await this.getCollection();
+    window.collection = this.collection;
+    console.log(this.searchHistory, window.collection);
 
     // 关键字搜索
     this.wordsList = await commonKeywords();
+  }
+
+  private async getCollection() {
+    const GITEE_TOKEN = process.env.VUE_APP_GITEE_TOKEN;
+    const GIST_ID = process.env.VUE_APP_GIST_ID;
+    const gee = new Gitee(GITEE_TOKEN);
+    let {
+      data: { files }
+    } = await gee.get(`/v5/gists/${GIST_ID}`).catch(console.error);
+    const collection = JSON.parse(files['npm-helper'].content);
+    return collection;
   }
 
   private async getInformation(name: string) {

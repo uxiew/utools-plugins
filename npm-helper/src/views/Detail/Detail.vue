@@ -12,7 +12,7 @@
         image="error"
         :description="pkgDetail.error"
       />
-      <div v-else class="article post-content" @click="closeSourceBrowser">
+      <div v-else class="article post-content" @click.prevent="closeAllPop">
         <div class="post-content-top">
           <!-- 头部 -->
           <header class="post-title">
@@ -20,19 +20,19 @@
               <van-icon v-if="isCollected" name="star" size="12" color="#f00" />
               {{ titleDate }}
             </div>
-            <h1 class="header header__primary" @dblclick="showPkgFBrowser">
-              <van-popover
-                v-model="showPopAction"
-                trigger="click"
-                :close-on-click-outside="true"
-                :actions="actions"
-                @select="onPopSelect"
-              >
-                <template #reference>
+            <van-popover
+              ref="actionPopover"
+              v-model="showPopAction"
+              trigger="click"
+              :actions="actions"
+              @select="onPopSelect"
+            >
+              <template #reference>
+                <h1 class="header header__primary" @dblclick="showPkgFBrowser">
                   {{ title }}
-                </template>
-              </van-popover>
-            </h1>
+                </h1>
+              </template>
+            </van-popover>
           </header>
           <div class="post-copy">
             <label for="install-input">Install</label>
@@ -181,6 +181,9 @@ import FileBrowser from '../../components/FileBrowser/index.vue';
 import AutoMenu from '../../components/AutoMenu/index.vue';
 import Tabs from './Tabs.vue';
 
+// @ts-ignore
+import Gitee from 'gitee-client';
+
 interface PkgDataType {
   name: string;
   version: string;
@@ -196,6 +199,7 @@ interface PkgDataType {
   error?: boolean;
   [prop: string]: any;
 }
+
 interface PkgSourceInfo {
   canBeDirectlyRequired?: boolean;
   description?: string;
@@ -280,6 +284,7 @@ export default class Detail extends Vue {
     console.log(action, action.key);
     switch (action.key) {
       case 'collect':
+        this.collect();
         break;
       case 'download':
         // https://r.cnpmjs.org/@techiediaries/ngx-textarea-autosize/download/@techiediaries/ngx-textarea-autosize-1.2.0.tgz
@@ -310,7 +315,6 @@ export default class Detail extends Vue {
               if (res.progress === 100) Toast.clear();
             }
           });
-          // console.log('download', res);
         }
         break;
       case 'run':
@@ -318,7 +322,7 @@ export default class Detail extends Vue {
     }
   }
 
-  //
+  // 监听用户输入
   private utoolSetInput() {
     utools.setSubInput(({ text }) => {
       utools.findInPage(text);
@@ -359,8 +363,34 @@ export default class Detail extends Vue {
   }
 
   // 添加到收藏
-  collect() {
-    utools.copyText(this.installDesc);
+  async collect() {
+    const GITEE_TOKEN = process.env.VUE_APP_GITEE_TOKEN;
+    const GIST_ID = process.env.VUE_APP_GIST_ID;
+    const gee = new Gitee(GITEE_TOKEN);
+
+    // 新增新的npm包：
+    const { name, description, version } = this.pkgDetail;
+    window.collection.tags.push('framework');
+    window.collection.npmList.push({
+      name,
+      description,
+      version,
+      type: 'js',
+      tag: 'framework'
+    });
+    const files = {
+      'npm-helper': { content: JSON.stringify(window.collection) }
+    };
+
+    console.log(JSON.stringify(window.collection), files);
+    let { data } = await gee
+      .patch(`/v5/gists/${GIST_ID}`, {
+        files,
+        description: 'npm-helper 插件数据',
+        public: 'false'
+      })
+      .catch(console.error);
+    console.log(data);
   }
 
   // 复制
@@ -379,7 +409,12 @@ export default class Detail extends Vue {
   }
 
   // 关闭源文件列表
-  closeSourceBrowser() {
+  closeAllPop(e) {
+    // @ts-ignore
+    const popWrapperNode = e.target!.parentNode;
+    if (popWrapperNode.className !== 'van-popover__wrapper')
+      this.$refs.actionPopover.$refs.popover.close();
+    // 关闭源代码栏
     if (canCloseSourceViewer) this.showSourceBrowser = false;
   }
 
@@ -414,7 +449,7 @@ export default class Detail extends Vue {
 
   async fetchPkgInfo(params: string) {
     this.resetDetail();
-    this.pkgDetail = await getPkgDetail(params as string);
+    this.pkgDetail = await getPkgDetail(params);
     this.skeLoading = false;
     this.pkgDetail.readme = marked.parse(
       this.pkgDetail.readme ||
@@ -467,7 +502,7 @@ export default class Detail extends Vue {
     if (!pkgSourceDirList.length) {
       const { directoryListing = [], unavailable } = await getSourceStructure(
         name,
-        version!
+        version
       );
       this.pkgSourceUnavailable = !!unavailable;
       this.pkgSourceDirList = directoryListing;

@@ -5,7 +5,7 @@
       :directory-listing="dir"
     /> -->
     <!-- <router-link to="/HelloWorld">Go to HelloWorld</router-link> -->
-    <keep-alive :include='cashViews'>
+    <keep-alive :include="cashViews">
       <router-view />
     </keep-alive>
   </div>
@@ -152,15 +152,17 @@ export default class App extends Vue {
         // 划词翻译
         case 84:
           if (name === 'Detail' && selectText) {
-            translateYD(selectText).then(tran => {
-              tran &&
-                this.$notify({
-                  message: tran,
-                  color: '#000',
-                  background: '#f5f5f9',
-                  duration: 0
-                });
-            });
+            translateYD(selectText)
+              .then(transText => {
+                transText &&
+                  this.$notify({
+                    message: transText,
+                    color: '#000',
+                    background: '#f5f5f9',
+                    duration: 0
+                  });
+              })
+              .catch(err => console.error(err));
           }
           break;
         default:

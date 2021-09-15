@@ -14,6 +14,7 @@
     "@types/prismjs": "^1.16.1",
     "audio-player": "^1.1.0",
     "dayjs": "^1.8.28",
+    "gitee-client": "^0.2.0",
     "js-downloadfiles": "^1.0.6",
     "lodash": "^4.17.15",
     "marked": "^1.1.0",
