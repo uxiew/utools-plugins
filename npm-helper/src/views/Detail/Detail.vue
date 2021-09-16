@@ -409,10 +409,10 @@ export default class Detail extends Vue {
   }
 
   // 关闭源文件列表
-  closeAllPop(e) {
-    // @ts-ignore
-    const popWrapperNode = e.target!.parentNode;
+  closeAllPop(e: any) {
+    const popWrapperNode = e.target.parentNode;
     if (popWrapperNode.className !== 'van-popover__wrapper')
+      // @ts-ignore
       this.$refs.actionPopover.$refs.popover.close();
     // 关闭源代码栏
     if (canCloseSourceViewer) this.showSourceBrowser = false;

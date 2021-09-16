@@ -70,8 +70,7 @@ export default class Home extends Vue {
   async mounted() {
     this.searchHistory = utools.db.allDocs('searched');
     this.collection = await this.getCollection();
-    window.collection = this.collection;
-    console.log(this.searchHistory, window.collection);
+    window.collection = this.collection || {};
 
     // 关键字搜索
     this.wordsList = await commonKeywords();

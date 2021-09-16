@@ -3,7 +3,7 @@
 
 快捷的查询 npm 库（npm helper）
 
-![npm 插件](./demo/2020-06-18_173702.jpg)
+![npm 插件](../demo/2020-06-18_173702.jpg)
 
 
 使用了 vue + vant + typescript 进行项目开发

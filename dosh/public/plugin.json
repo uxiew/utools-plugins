@@ -28,7 +28,7 @@
         {
           "type": "regex",
           "label": "文本正则匹配",
-          "match": "/^d[o|e].*/i",
+          "match": "/^d[o|e].*/",
           "minLength": 1,
           "maxLength": 1
         }

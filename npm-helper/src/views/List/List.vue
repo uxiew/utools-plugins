@@ -123,12 +123,14 @@ export default class List extends Vue {
 
   // 每当插件从后台进入到前台时，uTools 将会主动调用这个方法。
   created() {
-    utools.onPluginEnter(({ type, payload }) => {
+    //@ts-ignore
+    utools.onPluginEnter(params => {
+      const { type, payload } = params;
       switch (type) {
         case 'files':
           {
             const { devDependencies, dependencies } = JSON.parse(
-              window.fs.readFileSync(payload[0].path, {
+              window.fs.readFileSync((payload[0] as any).path, {
                 encoding: 'utf8'
               })
             );

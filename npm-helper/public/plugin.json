@@ -10,6 +10,9 @@
   "pluginSetting": {
     "single": true
   },
+  "development": {
+    "main": "http://localhost:8080/index.html"
+	},
   "features": [
     {
       "code": "npm_search",

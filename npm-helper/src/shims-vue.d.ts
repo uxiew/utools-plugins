@@ -9,6 +9,12 @@ declare module '*.jpg';
 
 declare module 'prismjs/components/index';
 declare module 'audio-player';
+declare module 'js-downloadfiles';
+
+declare interface Window {
+  fs: any;
+  collection: any;
+}
 
 /*
 declare module "vue/types/vue" {
