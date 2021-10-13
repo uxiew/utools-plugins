@@ -14,35 +14,22 @@
 <script lang="ts">
 /* eslint-disable no-undef */
 import { Component, Vue } from 'vue-property-decorator';
-import 'vant/es/skeleton/style';
-import 'vant/es/empty/style';
-import 'vant/es/popup/style';
-import 'vant/es/notify/style';
-import FileBrowser from './components/FileBrowser/index.vue';
 import { translateYD } from './utils/API';
 
 @Component({
-  name: 'App',
-  components: {
-    FileBrowser
-  }
+  name: 'App'
 })
 export default class App extends Vue {
   private cashViews!: string[]; //待优化，点击刷新
 
-  /* 
-    beforeCreate
-    constructor
-    created
-  */
   created() {
     this.cashViews = ['List', 'Detail']; //待优化，点击刷新
 
     // 右键单击手册，退出手册; 中键发送文本
     document.addEventListener('mousedown', (e: MouseEvent) => {
-      if (3 == e.which) {
+      if (2 == e.button) {
         // 右键
-      } else if (1 == e.which) {
+      } else if (0 == e.button) {
         // 左键
         this.$notify.clear();
       }
@@ -51,15 +38,51 @@ export default class App extends Vue {
     // 按键监听
     // idea 参考 https://hub.fastgit.org/fofolee/uTools-Manuals/blob/4c264bafc537d7a5971b14345c0f58dd097cc1c7/src/assets/index.js#L149
     document.addEventListener('keydown', (e: KeyboardEvent) => {
-      // const text = this.$store.state.searchText;
       const {
         $router,
         $route: { name }
       } = this;
 
+      console.log(e.code);
       const selectText = document.getSelection()!.toString();
-      switch (e.keyCode) {
-        case 9:
+      switch (e.code) {
+        case 'KeyH':
+          // TAB 键切换视图
+          if (e.ctrlKey || e.metaKey) {
+            utools.setSubInputValue('keywords:');
+            this.$nextTick(() => utools.setSubInputValue(''));
+          }
+          break;
+        // 划词翻译
+        case 'KeyS':
+          if (name === 'Detail') {
+            for (const component of this.$children) {
+              //@ts-ignore
+              if (component.showPkgFBrowser) {
+                //@ts-ignore
+                component.showPkgFBrowser();
+                return;
+              }
+            }
+          }
+          break;
+        // 划词翻译
+        case 'KeyT':
+          if (name === 'Detail' && selectText) {
+            translateYD(selectText)
+              .then(transText => {
+                transText &&
+                  this.$notify({
+                    message: transText,
+                    color: '#000',
+                    background: '#f5f5f9',
+                    duration: 0
+                  });
+              })
+              .catch(err => console.error(err));
+          }
+          break;
+        case 'Tab':
           // TAB 键切换视图
           if (name === 'Detail') {
             $router.push({
@@ -74,7 +97,7 @@ export default class App extends Vue {
           }
           break;
 
-        case 13 || 108:
+        case 'Enter':
           // enter键
           if (name === 'List') {
             const pkgNameEl = (e.target as HTMLElement).querySelector(
@@ -95,14 +118,14 @@ export default class App extends Vue {
               } as any);
           }
           break;
-        case 114:
+        case 'F3':
           // F3 键
           if (name === 'Detail') {
             utools.findInPage(this.$store.state.searchText);
           }
           break;
         // 上
-        case 38:
+        case 'ArrowUp':
           if (
             name === 'List' &&
             (e.target as HTMLElement)!.querySelector('.selected')
@@ -129,7 +152,7 @@ export default class App extends Vue {
           }
           break;
         // 下
-        case 40:
+        case 'ArrowDown':
           if (name === 'List') {
             const selectedTarget = (e.target as HTMLElement)!.querySelector(
               '.selected'
@@ -147,22 +170,6 @@ export default class App extends Vue {
                   document.documentElement.clientHeight / 2;
               }
             }
-          }
-          break;
-        // 划词翻译
-        case 84:
-          if (name === 'Detail' && selectText) {
-            translateYD(selectText)
-              .then(transText => {
-                transText &&
-                  this.$notify({
-                    message: transText,
-                    color: '#000',
-                    background: '#f5f5f9',
-                    duration: 0
-                  });
-              })
-              .catch(err => console.error(err));
           }
           break;
         default:
@@ -226,6 +233,9 @@ u {
   text-decoration: none;
 }
 
+#app .list {
+  user-select: initial;
+}
 .truncate {
   white-space: nowrap;
   overflow: hidden;

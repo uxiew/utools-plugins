@@ -26,7 +26,44 @@ Props：
 mocha v7.2.0 npm 库结构：
 
 ```js
-private dir = [
+private files = [
+    {
+      "type": "directory",
+      "name": "dist",
+      "files": [
+        {
+          "type": "file",
+          "name": "aimer.common.js",
+          "hash": "BM53wc1Ynp4xGlK2wM0jAfx+ajMiORz9GblbiC5yUo4=",
+          "time": "2017-11-01T03:23:44.000Z",
+          "size": 37852
+        },
+        {
+          "type": "file",
+          "name": "aimer.css",
+          "hash": "cWHBlambgzD37G1Ann0o3t8uYWX8afhQ8h+jmMnJMfU=",
+          "time": "2017-11-01T03:23:48.000Z",
+          "size": 21486
+        },
+        {
+          "type": "file",
+          "name": "aimer.js",
+          "hash": "BZmv80w//xQ4nrwJk5PQQDjXvXR04VsoL1azmC82W+c=",
+          "time": "2017-11-01T03:23:48.000Z",
+          "size": 291469
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "package.json",
+      "hash": "BnfoDn6ahGmRgnB3IKKhviCEYArVcnnCsS5NlyH7YuY=",
+      "time": "2017-11-01T03:23:39.000Z",
+      "size": 840
+    }
+]
+    //  或者下面👇这种格式
+private files = [
     ['assets', [['growl', ['error.png', 'ok.png']]]],
     ['bin', ['_mocha', 'mocha']],
     [
@@ -123,3 +160,4 @@ private dir = [
 
 想法来源于：
 [runkit](https://npm.runkit.com/typescript/)
+[data.jsdelivr](https://data.jsdelivr.com/v1/package/npm/typescript)

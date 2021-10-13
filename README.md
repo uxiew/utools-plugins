@@ -24,3 +24,5 @@ plugin.json 中加入开发模式热重载：
 1. 查询成语，汉字，诗集
 
 
+# 官网 Github
+https://github.com/uTools-Labs

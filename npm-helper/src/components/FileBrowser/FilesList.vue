@@ -4,27 +4,24 @@
       <!-- <a
         href="https://npm.runkit.com/mocha/assets/growl/ok.png?t=1591545024237"
             >-->
-      <a
-        v-if="list.name"
-        :title="list.type=== 'file' && list.name"
-      >
+      <a v-if="list.name" :title="list.type === 'file' && list.name">
         <span
           class="fa-label"
-          :style="depthStyle(list.depth)"
+          :style="depthStyle"
           @click="subDirClick(fullPath, list.type)"
         >
-          <i :class="`icon ${icon(list.name, list.type)} `"></i>{{list.name}}</span>
+          <i :class="`icon ${icon(list.name, list.type)} `"></i>
+          {{ list.name }}
+        </span>
       </a>
 
       <!--  v-show="showSubLevel" 看你是否要记住打开项 -->
-      <ul
-        v-show="showSubLevel"
-        class="fb-viewer"
-      >
+      <ul v-show="showSubLevel" class="fb-viewer">
         <Fileslist
-          v-for="(item, i) in list.children"
+          v-for="(item, i) in list.files"
           :key="i"
           :list="item"
+          :depth="depthNum"
           :active-sub="true"
           :path="fullPath"
           @item-click="subDirClick"
@@ -42,9 +39,8 @@ import { getFileIcon } from './helper';
 
 interface Dir {
   name: string;
-  type: 'file' | 'folder';
-  depth: number;
-  children: null | Dir[];
+  type: 'file' | 'directory';
+  files: null | Dir[];
 }
 @Component({
   name: 'Fileslist'
@@ -52,16 +48,20 @@ interface Dir {
 export default class List extends Vue {
   @Prop() list!: Dir;
 
-  @Prop({ type: Number, default: 0 }) depth!: number;
+  @Prop({ type: Number, default: -1 }) depth!: number;
   @Prop({ type: Boolean, default: false }) activeSub!: boolean;
   @Prop({ type: String, default: '' }) path!: string;
 
   private fullPath!: string;
   private showSub = false;
   private static allPathArray: string[] = [];
+  private depthNum: number = -1;
 
   constructor() {
     super();
+    this.depthNum = this.depth;
+    this.depthNum++; // 计算深度，展示时，显示深度
+
     const { name, type } = this.list;
     // 拼接完整路径
     this.fullPath = !name ? this.path : this.path + '/' + name;
@@ -76,7 +76,7 @@ export default class List extends Vue {
   subDirClick(fullPath: string, itemType: string) {
     const { showSub } = this;
     // 只点击文件夹
-    if (itemType === 'folder') {
+    if (itemType === 'directory') {
       this.showSub = !showSub;
     } else {
       this.$emit('item-click', fullPath, itemType);
@@ -94,8 +94,8 @@ export default class List extends Vue {
     }
   }
 
-  depthStyle(depth: number) {
-    return { paddingLeft: `${14 + 14 * depth}px` };
+  get depthStyle() {
+    return { paddingLeft: `${14 + 14 * this.depth}px` };
   }
 
   // 获取图标显示

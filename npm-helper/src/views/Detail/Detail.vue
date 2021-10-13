@@ -1,5 +1,8 @@
 <template>
-  <section id="post_top" class="post-single">
+  <section
+    id="post_top"
+    :class="['post-single', isCollected ? 'is-collected' : '']"
+  >
     <FileBrowser
       v-if="showSourceBrowser"
       :search="true"
@@ -12,7 +15,7 @@
         image="error"
         :description="pkgDetail.error"
       />
-      <div v-else class="article post-content" @click.prevent="closeAllPop">
+      <div v-else class="article post-content" @click="closeAllPop">
         <div class="post-content-top">
           <!-- 头部 -->
           <header class="post-title">
@@ -28,7 +31,7 @@
               @select="onPopSelect"
             >
               <template #reference>
-                <h1 class="header header__primary" @dblclick="showPkgFBrowser">
+                <h1 class="header header__primary">
                   {{ title }}
                 </h1>
               </template>
@@ -141,7 +144,7 @@
             :keywords="pkgDetail.keywords"
             :dependencies="pkgDetail.dependencies"
             :versions="pkgDetail.versions"
-            :get-info="fetchPkgOtherInfo"
+            :get-info="fetchPkgInfo"
           />
         </article>
       </div>
@@ -156,7 +159,7 @@ import {
   getPkgDetail,
   getSourceStructure,
   getPkgFileSource,
-  getGhFile,
+  getREADMEFile,
   getNpmioDetail
 } from '../../utils/API';
 import { timeAgo, toThousands } from '../../utils/util';
@@ -182,12 +185,12 @@ import AutoMenu from '../../components/AutoMenu/index.vue';
 import Tabs from './Tabs.vue';
 
 // @ts-ignore
-import Gitee from 'gitee-client';
+import { getNpmList, delNpmDoc, addNpmDoc } from '@/utils/tcb';
 
 interface PkgDataType {
   name: string;
   version: string;
-  description?: string;
+  description: string;
   license?: string;
   modified?: string;
   readme?: string;
@@ -235,6 +238,7 @@ export default class Detail extends Vue {
   private pkgDetail: PkgDataType = {
     name: '',
     version: '',
+    description: '',
     repository: { type: 'git', url: '' },
     keywords: [],
     dependencies: []
@@ -259,7 +263,7 @@ export default class Detail extends Vue {
     readOnly: true
   };
 
-  private pkgSourceDirList!: [];
+  private pkgSourceDirList!: any[];
 
   private pkgSourceUnavailable: boolean = false;
   private showSourceBrowser: boolean = false;
@@ -276,12 +280,58 @@ export default class Detail extends Vue {
       }
     });
 
+    // 当前是否已被收藏
+    getNpmList(1, '', this.queryPkgName).then(docs => {
+      this.isCollected = docs[0] && docs[0].name === this.queryPkgName;
+    });
+  }
+
+  async mounted() {
     this.utoolSetInput();
+    utools.setExpendHeight(700);
+    const {
+      name,
+      description,
+      version,
+      license = ''
+    } = await this.fetchPkgInfo(
+      this.queryPkgName || this.pkgDetail.name,
+      'normal'
+    );
+    // 添加操作记录
+    const pkgInfo = {
+      name,
+      description,
+      version,
+      license,
+      repoUrl: this.repoUrl
+      // _oldestRecordId: window.utoolsState.oldestRecord._id
+    };
+    await addNpmDoc(pkgInfo, 'history');
+  }
+  async fetchPkgInfo(params: string, type = 'version') {
+    this.resetDetail();
+    this.pkgDetail = await (type === 'normal' ? getPkgDetail : getNpmioDetail)(
+      params
+    );
+
+    this.skeLoading = false;
+    this.pkgDetail.readme = marked.parse(
+      this.pkgDetail.readme || (await getREADMEFile(this.pkgDetail))
+    );
+    // -
+    const elTarget = document.querySelector('#post_top');
+    elTarget && elTarget.scrollIntoView(true);
+
+    this.$store.dispatch('savePkg', {
+      name: this.pkgDetail.name,
+      version: this.pkgDetail.version
+    });
+    return this.pkgDetail;
   }
 
   // 标题动作选项
   async onPopSelect(action: any) {
-    console.log(action, action.key);
     switch (action.key) {
       case 'collect':
         this.collect();
@@ -324,7 +374,7 @@ export default class Detail extends Vue {
 
   // 监听用户输入
   private utoolSetInput() {
-    utools.setSubInput(({ text }) => {
+    utools.setSubInput(({ text }: { text: string }) => {
       utools.findInPage(text);
       this.$store.dispatch('changeText', { searchText: text });
       // highlightManual('#manualBody', text);
@@ -364,40 +414,31 @@ export default class Detail extends Vue {
 
   // 添加到收藏
   async collect() {
-    const GITEE_TOKEN = process.env.VUE_APP_GITEE_TOKEN;
-    const GIST_ID = process.env.VUE_APP_GIST_ID;
-    const gee = new Gitee(GITEE_TOKEN);
-
     // 新增新的npm包：
-    const { name, description, version } = this.pkgDetail;
-    window.collection.tags.push('framework');
-    window.collection.npmList.push({
+    const { name, description, version, license = '' } = this.pkgDetail;
+    const npm = {
       name,
       description,
       version,
-      type: 'js',
-      tag: 'framework'
-    });
-    const files = {
-      'npm-helper': { content: JSON.stringify(window.collection) }
+      license,
+      repoUrl: this.repoUrl
     };
 
-    console.log(JSON.stringify(window.collection), files);
-    let { data } = await gee
-      .patch(`/v5/gists/${GIST_ID}`, {
-        files,
-        description: 'npm-helper 插件数据',
-        public: 'false'
-      })
-      .catch(console.error);
-    console.log(data);
+    // let { data } = await updateNpmDoc(npm); {updated	:1}
+    let { id, deleted } = this.isCollected
+      ? await delNpmDoc(npm)
+      : await addNpmDoc(npm);
+
+    this.isCollected = id ? true : false;
+    this.$toast(id ? '🎉添加收藏' : deleted ? '🙁取消收藏' : '操作错误❌', {
+      position: 'top'
+    });
   }
 
   // 复制
   copyInstall() {
-    utools.copyText(this.installDesc)
-      ? this.$toast('复制成功', { position: 'top' })
-      : this.$toast('复制失败', { position: 'top' });
+    const res = utools.copyText(this.installDesc);
+    this.$toast('复制' + res ? '成功' : '失败', { position: 'top' });
   }
   runInRunKit() {
     utools.shellOpenExternal(`https://runkit.com/npm/${this.pkgDetail.name}`);
@@ -442,56 +483,13 @@ export default class Detail extends Vue {
   resetDetail() {
     this.skeLoading = true;
     this.pkgSourceUnavailable = false;
+    this.pkgSourceDirList = [];
     this.showSourceBrowser = false;
     this.showSourceViewer = false;
     BigFileCache = {};
   }
 
-  async fetchPkgInfo(params: string) {
-    this.resetDetail();
-    this.pkgDetail = await getPkgDetail(params);
-    this.skeLoading = false;
-    this.pkgDetail.readme = marked.parse(
-      this.pkgDetail.readme ||
-        (await getGhFile(this.repoUrl, this.pkgDetail.version)) ||
-        '❌: 没有找到 README 文件！😢'
-    );
-    // -
-    const elTarget = document.querySelector('#post_top');
-    elTarget && elTarget.scrollIntoView(true);
-    return this.pkgDetail;
-  }
-  async fetchPkgOtherInfo(params: string) {
-    this.resetDetail();
-    this.pkgDetail = await getNpmioDetail(params as string);
-    this.skeLoading = false;
-    this.pkgDetail.readme = marked.parse(
-      this.pkgDetail.readme ||
-        (await getGhFile(this.repoUrl, this.pkgDetail.version)) ||
-        '❌: 没有找到 README 文件！😢'
-    );
-    // -
-    const elTarget = document.querySelector('#post_top');
-    elTarget && elTarget.scrollIntoView(true);
-  }
-
-  async mounted() {
-    utools.setExpendHeight(700);
-    const pkg = await this.fetchPkgInfo(
-      this.queryPkgName || this.pkgDetail.name
-    );
-    const dd = utools.db.put({
-      _id: `searched/${pkg.name}-${pkg.version}`,
-      data: {
-        name: pkg.name,
-        version: pkg.version,
-        description: pkg.description
-      }
-    });
-    console.log(dd);
-  }
-
-  // dbClick pkg name to show source directory
+  // Hotkey to show source directory
   async showPkgFBrowser() {
     const {
       pkgSourceDirList = [],
@@ -500,10 +498,18 @@ export default class Detail extends Vue {
     } = this;
     if (pkgSourceUnavailable) return;
     if (!pkgSourceDirList.length) {
-      const { directoryListing = [], unavailable } = await getSourceStructure(
-        name,
-        version
-      );
+      const {
+        directoryListing = [],
+        unavailable,
+        message
+      } = await getSourceStructure(name, version);
+      if (message) {
+        Toast.loading({
+          message: message
+        });
+      }
+
+      console.log('pkgSourceDirList', directoryListing);
       this.pkgSourceUnavailable = !!unavailable;
       this.pkgSourceDirList = directoryListing;
     }
@@ -522,14 +528,15 @@ export default class Detail extends Vue {
   } */
 
   async getFileSource(path: string) {
-    const { pkgDetail } = this;
+    const { name, version } = this.pkgDetail;
+    const pathKey = version + path;
 
-    if (!BigFileCache[path]) {
+    if (!BigFileCache[pathKey]) {
       Toast.loading();
-      BigFileCache[path] = await getPkgFileSource(pkgDetail, path);
+      BigFileCache[pathKey] = await getPkgFileSource({ name, version }, path);
     }
 
-    this.code = BigFileCache[path];
+    this.code = BigFileCache[pathKey];
     this.showSourceViewer = true;
     // tag
     canCloseSourceViewer = false;
@@ -591,6 +598,9 @@ export default class Detail extends Vue {
     padding-top: 4px;
     margin: 0 5px 0 0;
   }
+}
+// 收藏
+.is-collected {
 }
 
 // CodeMirror

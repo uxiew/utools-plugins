@@ -1,9 +1,12 @@
 const path = require('path');
+const merge = require("webpack-merge");
 const tsImportPluginFactory = require('ts-import-plugin');
+const { name } = require('./package.json');
 
 // let isProduction = process.env.NODE_ENV === "production";
 
 module.exports = {
+  parallel: false,
   publicPath: './',
   productionSourceMap: false,
   chainWebpack: config => {
@@ -18,23 +21,32 @@ module.exports = {
       };
       return args;
     });
+
+    config.plugin('define').tap(args => {
+      args[0]['process.env']['APP_NAME'] = JSON.stringify(name);
+      return args;
+    });
+
     config.module
       .rule('ts')
       .use('ts-loader')
       .tap(options => {
-        options.getCustomTransformers = () => ({
-          before: [
-            tsImportPluginFactory({
-              libraryName: 'vant',
-              libraryDirectory: 'es',
-              // specify less file path
-              style: true
-            })
-          ]
+        options = merge(options, {
+          happyPackMode: true,
+          transpileOnly: true,
+          getCustomTransformers: () => ({
+            before: [
+              tsImportPluginFactory({
+                libraryName: "vant",
+                libraryDirectory: "es",
+                style: true
+              })
+            ]
+          }),
+          compilerOptions: {
+            module: "es2015"
+          }
         });
-        options.compilerOptions = {
-          module: 'es2015'
-        };
         return options;
       });
   }

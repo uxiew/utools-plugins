@@ -24,6 +24,7 @@ module.exports = {
     'prettier/prettier': [
       1,
       {
+        semi: true,
         singleQuote: true,
         parser: 'flow'
       }

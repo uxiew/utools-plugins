@@ -4,6 +4,8 @@ declare module '*.vue' {
   export default Vue;
 }
 
+declare const utools: any;
+
 declare module '*.png';
 declare module '*.jpg';
 
@@ -12,7 +14,8 @@ declare module 'audio-player';
 declare module 'js-downloadfiles';
 
 declare interface Window {
-  fs: any;
+  utoolsState: any;
+  requireMoudle: any;
   collection: any;
 }
 

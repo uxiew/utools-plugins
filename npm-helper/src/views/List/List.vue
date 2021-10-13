@@ -91,7 +91,7 @@ import noimage from '@/assets/custom-empty-image.png';
 })
 export default class List extends Vue {
   private emptyImg = noimage;
-  private npmList: any[] | {} = [];
+  private npmList: {}[] = [];
 
   goPackageDetail(name: string) {
     this.$router.push({
@@ -112,42 +112,40 @@ export default class List extends Vue {
   }
 
   private utoolSetInput() {
-    utools.setSubInput(({ text }) => {
-      const txt = text.trim();
-      if (!txt) {
-        return;
-      }
-      _debounce(this.fetchList)(text);
-    }, '输入包名，或输入 keywords:angular 搜索相关库');
+    utools.setSubInput(
+      ({ text }: { text: string }) => {
+        const txt = text.trim();
+        if (!txt) {
+          return;
+        }
+        _debounce(this.fetchList)(text);
+      },
+      '输入 keywords:angular 搜索相关库',
+      true
+    );
   }
 
-  // 每当插件从后台进入到前台时，uTools 将会主动调用这个方法。
   created() {
+    this.utoolSetInput();
     //@ts-ignore
+    // 每当插件从后台进入到前台时，uTools 将会主动调用这个方法。
     utools.onPluginEnter(params => {
       const { type, payload } = params;
       switch (type) {
         case 'files':
           {
-            const { devDependencies, dependencies } = JSON.parse(
-              window.fs.readFileSync((payload[0] as any).path, {
-                encoding: 'utf8'
-              })
+            const { devDependencies, dependencies } = window.requireMoudle(
+              payload[0].path
             );
             console.log(dependencies, devDependencies);
-
             // https://api.npms.io/v2/package/mget
           }
           break;
         case 'text':
-          this.utoolSetInput();
-
           break;
         case 'over':
-          this.utoolSetInput();
           utools.setSubInputValue(payload);
           break;
-
         default:
           break;
       }
@@ -169,6 +167,7 @@ export default class List extends Vue {
 .selected {
   background-color: #e4e4e4;
 }
+
 .list-item-title {
   .license {
     font-size: 0.75rem;

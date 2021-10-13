@@ -1,53 +1,72 @@
 <template>
   <div class="home-keywords">
     <div class="logo">
-      <img src="../../assets/npm-io.png" alt="npm-io-logo" />
+      <img src="../../assets/npm-node.png" alt="npm-io-logo" />
     </div>
 
-    <van-cell-group inset>
-      <van-cell title="最近搜索" icon="search" value="更多"></van-cell>
-      <van-cell
-        v-for="{ data: { name, version, description } } in searchHistory"
-        :key="version"
-        :title="name"
-        :value="version"
-        :label="description"
-      />
-    </van-cell-group>
+    <van-row type="flex" justify="space-between" gutter="14">
+      <van-col span="8">
+        <van-cell-group>
+          <van-cell title="最近搜索" icon="search"></van-cell>
+          <van-skeleton :row="5" :loading="!searchRecord.length">
+            <div
+              v-for="{ name, version, description } in searchRecord"
+              :key="name + version"
+              class="collection"
+            >
+              <div class="collection--title" @click="goPackageDetail(name)">
+                {{ name }}
+                <span>v{{ version }}</span>
+              </div>
+              <div class="collection--content" v-html="description"></div>
+            </div>
+          </van-skeleton>
+        </van-cell-group>
+      </van-col>
+      <van-col span="8">
+        <van-cell-group>
+          <van-cell is-link title="收藏列表" icon="search"></van-cell>
+          <van-skeleton :row="5" :loading="!npmList.length">
+            <div
+              v-for="{ name, version, description } in npmList"
+              :key="name + version"
+              class="collection"
+            >
+              <div class="collection--title" @click="goPackageDetail(name)">
+                {{ name }}
+                <span>v{{ version }}</span>
+              </div>
+              <div class="collection--content" v-html="description"></div>
+            </div>
+          </van-skeleton>
+        </van-cell-group>
+      </van-col>
 
-    <van-cell-group inset>
-      <van-cell title="收藏列表" icon="search"></van-cell>
-      <van-cell
-        v-for="{ name, version, description } in collection.npmList"
-        :key="version"
-        :title="name"
-        :value="version"
-        :label="description"
-      />
-    </van-cell-group>
-
-    <!-- keywords -->
-    <div class="tags_list">
-      <van-skeleton :row="5" :loading="!wordsList.length">
-        <span
-          v-for="({ name }, index) in wordsList"
-          :key="index"
-          class="tag_link"
-          @click="getInformation(name)"
-        >
-          {{ name }}
-        </span>
-      </van-skeleton>
-    </div>
+      <!-- keywords -->
+      <van-col span="8" class="tags_list">
+        <van-skeleton :row="5" :loading="!wordsList.length">
+          <span
+            v-for="({ name }, index) in wordsList"
+            :key="index"
+            class="tag_link"
+            @click="getInformation(name)"
+          >
+            {{ name }}
+          </span>
+        </van-skeleton>
+      </van-col>
+    </van-row>
   </div>
 </template>
 
 <script lang="ts">
 /* eslint-disable no-undef */
 import { Vue, Component } from 'vue-property-decorator';
+
 import { commonKeywords } from '../../utils/API';
+import { getNpmList } from '../../utils/tcb';
 // @ts-ignore
-import Gitee from 'gitee-client';
+// import Gitee from 'gitee-client';
 
 interface TagType {
   name: string;
@@ -63,29 +82,39 @@ interface HistoryPkgType {
   name: 'home-keywords'
 })
 export default class Home extends Vue {
-  private searchHistory: { data: HistoryPkgType }[] = [];
-  private collection = {};
+  private searchRecord: Array<HistoryPkgType> = [];
+  private npmList: Array<HistoryPkgType> = [];
   private wordsList: TagType[] = [];
 
   async mounted() {
-    this.searchHistory = utools.db.allDocs('searched');
-    this.collection = await this.getCollection();
-    window.collection = this.collection || {};
-
+    this.searchRecord = await this.getCollection('history');
+    this.npmList = await this.getCollection();
     // 关键字搜索
     this.wordsList = await commonKeywords();
   }
 
-  private async getCollection() {
-    const GITEE_TOKEN = process.env.VUE_APP_GITEE_TOKEN;
-    const GIST_ID = process.env.VUE_APP_GIST_ID;
-    const gee = new Gitee(GITEE_TOKEN);
-    let {
-      data: { files }
-    } = await gee.get(`/v5/gists/${GIST_ID}`).catch(console.error);
-    const collection = JSON.parse(files['npm-helper'].content);
-    return collection;
+  goPackageDetail(name: string) {
+    this.$router.push({
+      name: 'Detail',
+      params: { name }
+    });
   }
+
+  private async getCollection(type?: string) {
+    const docs = await getNpmList(10, type);
+    return docs;
+  }
+  //======== by gist data ========
+  // private async getCollection() {
+  //   const GITEE_TOKEN = process.env.VUE_APP_GITEE_TOKEN;
+  //   const GIST_ID = process.env.VUE_APP_GIST_ID;
+  //   const gee = new Gitee(GITEE_TOKEN);
+  //   let {
+  //     data: { files }
+  //   } = await gee.get(`/v5/gists/${GIST_ID}`).catch(console.error);
+  //   const collection = JSON.parse(files['npm-helper'].content);
+  //   return collection;
+  // }
 
   private async getInformation(name: string) {
     utools.setSubInputValue('keywords:' + name);
@@ -105,15 +134,14 @@ export default class Home extends Vue {
 }
 .logo {
   text-align: center;
+  margin: 2rem;
   img {
-    height: 160px;
+    height: 120px;
     max-width: 100%;
   }
 }
 .tags_list {
   text-align: left;
-  margin: 0 2.5rem;
-
   .tag_link {
     cursor: pointer;
     display: inline-block;
@@ -124,6 +152,29 @@ export default class Home extends Vue {
     color: #000;
     background-color: #e1e2e8;
     text-decoration: none;
+  }
+}
+
+.collection {
+  background: #f1f1f1;
+  padding: 5px 10px;
+  span {
+    color: #787878;
+  }
+  &--title {
+    padding: 5px;
+    cursor: pointer;
+    &:hover {
+      color: #515dde;
+      span {
+        color: #515dde;
+      }
+    }
+  }
+  &--content {
+    color: #7b7b7b;
+    padding: 5px 0 10px;
+    border-bottom: 1px solid #e4e4e4;
   }
 }
 </style>

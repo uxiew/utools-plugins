@@ -1,4 +1,4 @@
-const { shell } = require("electron");
+const { shell } = require('electron');
 
 // declare global {
 //   interface Window {
@@ -12,4 +12,4 @@ window.exportFuncs = {
   }
 };
 
-// window.exports = {};
+window.requireMoudle = require;
