@@ -111,25 +111,32 @@ export default class List extends Vue {
     utools.setSubInputValue('keywords:' + keyName);
   }
 
-  private utoolSetInput() {
-    utools.setSubInput(
-      ({ text }: { text: string }) => {
-        const txt = text.trim();
-        if (!txt) {
-          return;
-        }
-        _debounce(this.fetchList)(text);
-      },
-      '输入 keywords:angular 搜索相关库',
-      true
-    );
+  private utoolSetInput(needSearch?: boolean) {
+    this.$route.name === 'List' || needSearch
+      ? utools.setSubInput(
+          ({ text }: { text: string }) => {
+            const txt = text.trim();
+            if (!txt) {
+              return;
+            }
+            _debounce(this.fetchList)(text);
+          },
+          '输入 keywords:angular 搜索相关库',
+          true
+        )
+      : // 监听用户输入
+        utools.setSubInput(({ text }: { text: string }) => {
+          utools.findInPage(text);
+          this.$store.dispatch('changeText', { searchText: text });
+          // highlightManual('#manualBody', text);
+        }, '搜索全文，选中文本回车键查询，T翻译；Tab切换界面');
   }
 
   created() {
-    this.utoolSetInput();
     //@ts-ignore
     // 每当插件从后台进入到前台时，uTools 将会主动调用这个方法。
     utools.onPluginEnter(params => {
+      console.log(params);
       const { type, payload } = params;
       switch (type) {
         case 'files':
@@ -137,13 +144,16 @@ export default class List extends Vue {
             const { devDependencies, dependencies } = window.requireMoudle(
               payload[0].path
             );
-            console.log(dependencies, devDependencies);
+            console.log('--package文件匹配--:', dependencies, devDependencies);
             // https://api.npms.io/v2/package/mget
           }
           break;
         case 'text':
+          this.utoolSetInput();
           break;
         case 'over':
+          this.utoolSetInput(true);
+          console.log('setSubInputValue', payload);
           utools.setSubInputValue(payload);
           break;
         default:

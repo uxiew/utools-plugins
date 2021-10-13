@@ -216,7 +216,11 @@ export const translateYD = async (selectText: string): Promise<any> => {
   const { KK, BE } = getTransAudio(data, text);
   const player = new createPlayer();
   // 直接播放语音
-  player.play(BE.audio ? BE.audio : KK.audio);
+  try {
+    player.play(BE.audio ? BE.audio : KK.audio);
+  } catch (error) {
+    // console.log('语音', error);
+  }
   return (
     (BE.phonetic
       ? `英${BE.phonetic} 美${KK.phonetic} \n`
@@ -326,7 +330,7 @@ export async function getREADMEFile(
   // 去除后缀哦
   const fileStr = fileName.split(/\./);
 
-  const targetName = fileName.replace(/\./g, '\\.');
+  // const targetName = fileName.replace(/\./g, '\\.');
 
   //@ts-ignore
   for (const str of textArr) {
@@ -334,19 +338,16 @@ export async function getREADMEFile(
       `${fileStr[0]}|${fileStr[0].toLocaleUpperCase()}`,
       'g'
     ).exec(str);
-    // console.log(
-    //   new RegExp(`${fileStr[0]}|${fileStr[0].toLocaleUpperCase()}`, 'g'),
-    //   matches
-    // );
-    if (matches) {
-      result = fetch(api + matches[0] + '.' + fileStr[1])
-        .then(res => res.text())
-        .catch(err => {
-          console.log('getGhFile', err);
-          return Promise.reject({ error: err.status });
-        });
-      break;
-    }
+    if (!matches) continue;
+    const mdFileName = /=".*">(.+?)<\/a>/g.exec(matches.input)![1];
+
+    // console.log(matches[0] + '.' + fileStr[1], fileStr);
+    result = fetch(api + mdFileName)
+      .then(res => res.text())
+      .catch(err => {
+        console.log('getGhFile', err);
+        return Promise.reject({ error: err.status });
+      });
   }
 
   return result;

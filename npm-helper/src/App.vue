@@ -40,10 +40,11 @@ export default class App extends Vue {
     document.addEventListener('keydown', (e: KeyboardEvent) => {
       const {
         $router,
+        $children: Comps,
         $route: { name }
       } = this;
 
-      console.log(e.code);
+      // console.log(e.code);
       const selectText = document.getSelection()!.toString();
       switch (e.code) {
         case 'KeyH':
@@ -56,11 +57,11 @@ export default class App extends Vue {
         // 划词翻译
         case 'KeyS':
           if (name === 'Detail') {
-            for (const component of this.$children) {
+            for (const comp of Comps) {
               //@ts-ignore
-              if (component.showPkgFBrowser) {
+              if (comp.showPkgFBrowser) {
                 //@ts-ignore
-                component.showPkgFBrowser();
+                comp.showPkgFBrowser();
                 return;
               }
             }
@@ -68,7 +69,7 @@ export default class App extends Vue {
           break;
         // 划词翻译
         case 'KeyT':
-          if (name === 'Detail' && selectText) {
+          if (selectText) {
             translateYD(selectText)
               .then(transText => {
                 transText &&
@@ -84,17 +85,10 @@ export default class App extends Vue {
           break;
         case 'Tab':
           // TAB 键切换视图
-          if (name === 'Detail') {
-            $router.push({
-              name: 'List',
-              params: { tabKey: true }
-            } as any);
-          } else {
-            $router.push({
-              name: 'Detail',
-              params: { tabKey: true }
-            } as any);
-          }
+          $router.push({
+            name: name === 'Detail' ? 'List' : 'Detail',
+            params: { tabKey: true }
+          } as any);
           break;
 
         case 'Enter':

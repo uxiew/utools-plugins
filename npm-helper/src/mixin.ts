@@ -1,6 +1,16 @@
 // @ts-nocheck
 // 使用 Vue.mixin 的方法拦截了路由离开事件，并在该拦截方法中实现了销毁页面缓存的功能。
 export default {
+  beforeRouteEnter: function({ params: pas }, { params }, next) {
+    let flag = false;
+    // @ts-ignore
+    if (params.name || (pas.name === 'List' && pas.tabKey)) {
+      flag = true;
+    }
+    next(vm => {
+      vm.utoolSetInput(flag);
+    });
+  },
   beforeRouteLeave: function(to, from, next) {
     // 默认是缓存的 在来清除
     // 1.用tag标记控制 判断上下级

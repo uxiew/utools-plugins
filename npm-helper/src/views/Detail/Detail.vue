@@ -508,8 +508,7 @@ export default class Detail extends Vue {
           message: message
         });
       }
-
-      console.log('pkgSourceDirList', directoryListing);
+      // console.log('pkgSourceDirList', directoryListing);
       this.pkgSourceUnavailable = !!unavailable;
       this.pkgSourceDirList = directoryListing;
     }
