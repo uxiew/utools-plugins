@@ -20,10 +20,10 @@ import { translateYD } from './utils/API';
   name: 'App'
 })
 export default class App extends Vue {
-  private cashViews!: string[]; //待优化，点击刷新
+  private cashViews!: string[]; // 待优化，点击刷新
 
   created() {
-    this.cashViews = ['List', 'Detail']; //待优化，点击刷新
+    this.cashViews = ['List']; // 待优化，点击刷新
 
     // 右键单击手册，退出手册; 中键发送文本
     document.addEventListener('mousedown', (e: MouseEvent) => {

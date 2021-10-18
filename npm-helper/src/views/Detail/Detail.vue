@@ -496,6 +496,7 @@ export default class Detail extends Vue {
       pkgDetail: { name, version },
       pkgSourceUnavailable
     } = this;
+    debugger;
     if (pkgSourceUnavailable) return;
     if (!pkgSourceDirList.length) {
       const {
