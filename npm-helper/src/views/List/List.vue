@@ -153,7 +153,6 @@ export default class List extends Vue {
           break;
         case 'over':
           this.utoolSetInput(true);
-          console.log('setSubInputValue', payload);
           utools.setSubInputValue(payload);
           break;
         default:
@@ -165,7 +164,9 @@ export default class List extends Vue {
   async mounted() {
     const { keyword } = this.$route.params;
     if (keyword) {
-      utools.setSubInputValue(keyword);
+      this.$nextTick(() => {
+        utools.setSubInputValue(keyword);
+      });
     }
   }
 }

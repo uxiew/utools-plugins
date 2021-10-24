@@ -23,7 +23,7 @@ export default class App extends Vue {
   private cashViews!: string[]; // 待优化，点击刷新
 
   created() {
-    this.cashViews = ['List']; // 待优化，点击刷新
+    this.cashViews = ['List', 'Detail']; // 缓存视图
 
     // 右键单击手册，退出手册; 中键发送文本
     document.addEventListener('mousedown', (e: MouseEvent) => {
@@ -57,14 +57,9 @@ export default class App extends Vue {
         // 划词翻译
         case 'KeyS':
           if (name === 'Detail') {
-            for (const comp of Comps) {
-              //@ts-ignore
-              if (comp.showPkgFBrowser) {
-                //@ts-ignore
-                comp.showPkgFBrowser();
-                return;
-              }
-            }
+            const compsLast = Comps[Comps.length - 1];
+            // @ts-ignore
+            compsLast.showPkgFBrowser && compsLast.showPkgFBrowser();
           }
           break;
         // 划词翻译
