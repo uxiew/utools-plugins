@@ -222,6 +222,9 @@ u {
   text-decoration: none;
 }
 
+p {
+  margin: 0;
+}
 #app .list {
   user-select: initial;
 }

@@ -14,11 +14,14 @@
               :key="name + version"
               class="collection"
             >
-              <div class="collection--title" @click="goPackageDetail(name)">
+              <div class="collection-title" @click="goPackageDetail(name)">
                 {{ name }}
                 <span>v{{ version }}</span>
               </div>
-              <div class="collection--content" v-html="description"></div>
+              <div
+                class="collection-content"
+                v-html="renderMD(description)"
+              ></div>
             </div>
           </van-skeleton>
         </van-cell-group>
@@ -36,7 +39,10 @@
                 {{ name }}
                 <span>v{{ version }}</span>
               </div>
-              <div class="collection--content" v-html="description"></div>
+              <div
+                class="collection-content"
+                v-html="renderMD(description)"
+              ></div>
             </div>
           </van-skeleton>
         </van-cell-group>
@@ -62,7 +68,7 @@
 <script lang="ts">
 /* eslint-disable no-undef */
 import { Vue, Component } from 'vue-property-decorator';
-
+import marked from 'marked';
 import { commonKeywords } from '../../utils/API';
 import { getNpmList } from '../../utils/tcb';
 // @ts-ignore
@@ -98,6 +104,10 @@ export default class Home extends Vue {
       name: 'Detail',
       params: { name }
     });
+  }
+
+  renderMD(str: string = '') {
+    return marked.parse(str);
   }
 
   private async getCollection(type?: string) {
@@ -161,7 +171,8 @@ export default class Home extends Vue {
   span {
     color: #787878;
   }
-  &--title {
+
+  &-title {
     padding: 5px;
     cursor: pointer;
     &:hover {
@@ -171,10 +182,12 @@ export default class Home extends Vue {
       }
     }
   }
-  &--content {
+
+  &-content {
     color: #7b7b7b;
-    padding: 5px 0 10px;
+    padding: 10px 0;
     border-bottom: 1px solid #e4e4e4;
+    overflow: hidden;
   }
 }
 </style>

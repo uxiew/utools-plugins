@@ -2,7 +2,7 @@
   "pluginName": "npm-helper",
   "author": "ChandlerVer5",
   "homepage": "https://www.kancloud.cn/@chandler",
-  "description": "npm 助手，方便快捷地查询某个 npm 库的相关用法",
+  "description": "npm助手，方便快捷地查询某个 npm 库的相关用法😄",
   "version": "0.2.0",
   "logo": "logo.png",
   "main": "index.html",
