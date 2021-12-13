@@ -104,7 +104,7 @@ export function getTransAudio(htmlText: string, text: string) {
 export function fetch(
   apiUrl: string,
   headers?: RequestHeaders,
-  timeout?: number = 5000
+  timeout?: number = 8000
 ): Promise<Response> {
   //ahutor:herbert qq:464884492
   let controller = new AbortController();

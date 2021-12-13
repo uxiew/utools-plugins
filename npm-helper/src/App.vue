@@ -199,8 +199,8 @@ body {
   margin: 0;
   padding: 0;
   // font-size: 16px;
-  font-family: Roboto Mono, monospace, system-ui, -apple-system,
-    BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: Operator Mono Lig, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: #f5f4f9;
   color: #000;
 }

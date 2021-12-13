@@ -388,7 +388,7 @@ export default class Detail extends Vue {
   get titleDate() {
     const relTime = timeAgo(this.pkgDetail.modified!);
     const author = this.repoUrl.match(/com\/(.+?)\//);
-    return ` Published ${relTime}${author ? ' by ' + author[1] : ''}`; //1.2.6 • Published 4 years ago
+    return `Published ${relTime}${author ? ' by ' + author[1] : ''}`; //1.2.6 • Published 4 years ago
   }
 
   get title() {

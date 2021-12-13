@@ -8,7 +8,7 @@ const npmjsUrl = 'https://www.npmjs.com/search';
 const youdaoApi = 'https://m.youdao.com/dict?le=eng&q=';
 //const youdaoApi = 'http://dict.youdao.com';
 const githubUrl = 'https://api.github.com';
-const per_page = 10;
+const per_page = 20;
 
 async function ajax(apiUrl: string, options?: object) {
   const opts =
@@ -19,17 +19,17 @@ async function ajax(apiUrl: string, options?: object) {
             'x-spiferack': '1'
           }
         };
-  return await fetch(apiUrl, opts, 3000).then(res => {
+  return fetch(apiUrl, opts, 3000).then(res => {
     return res.json(); // maybe:ok: false  status: 504
   });
 }
 
 export const commonKeywords = async (): Promise<[]> => {
-  const { list } = await fetch(`${npmioUrl}keywords?page=1&per_page=90`).then(
-    res => {
-      return res.json();
-    }
-  );
+  const { list } = await fetch(
+    `${npmioUrl}keywords?page=1&per_page=${per_page + 40}`
+  ).then(res => {
+    return res.json();
+  });
   return list || [];
 };
 
@@ -74,7 +74,6 @@ export const getSuggestionList = async (
   let data = await ajax(url ? url : api, options);
 
   let tempArray: any = [];
-
   //  超时，直接结束了？data === undefined
   // npmjs 出错，比如查询了特殊字符，返回带有 error
   if (data.status == 403 || data.status == 504 || !data || data.error) {
@@ -139,7 +138,7 @@ export const getSuggestionList = async (
 
 /**
  *  搜索关键词 按流行度排序
- * https://npm.io/api/v1/search?query=keyword%3Aangular&page=1&per_page=20
+ * https://npm.io/api/v1/search?query=keyword%3Aangular&page=1&per_page=${per_page}
  * @param {keyword} 'keywords:async'
  */
 export const getKeyWordList = async (keyword: string) => {

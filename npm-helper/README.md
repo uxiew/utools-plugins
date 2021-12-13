@@ -48,7 +48,7 @@ https://www.npmjs.com
 https://runkit.com/api/npm/info/sync-request
 https://npm.runkit.com/fs-extra
 https://yarnpkg.cn/?q=babel&p=1
-
+https://npm.devtool.tech/vue
 https://npm.io/search/axios
 
 https://www.jsdelivr.com/

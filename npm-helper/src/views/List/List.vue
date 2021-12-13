@@ -13,6 +13,7 @@
         version,
         description,
         owner,
+        publisher,
         types,
         license,
         modified,
@@ -46,14 +47,39 @@
         <div v-if="owner" class="list-item-bottom">
           <a class="owner">
             <img
-              width="28"
-              height="28"
+              width="30"
+              height="30"
               alt="owner"
               :src="
                 `https://res.cloudinary.com/hilnmyskv/image/fetch/w_40,h_40,f_auto,q_80,fl_lossy/${owner.avatar}`
               "
             />
             {{ owner.name }}
+          </a>
+          <span class="hint">{{ modified | timeAgo }}</span>
+        </div>
+        <div v-else-if="publisher" class="list-item-bottom">
+          <a v-if="publisher.avatars" class="owner">
+            <img
+              width="30"
+              height="30"
+              alt="owner"
+              :src="`https://www.npmjs.com/${publisher.avatars.small}`"
+            />
+            {{ publisher.name }}
+          </a>
+          <span class="hint">{{ modified | timeAgo }}</span>
+        </div>
+        <div v-else class="list-item-bottom">
+          <a class="owner">
+            <svg viewBox="0 0 27.23 27.23" width="30" height="30">
+              <rect fill="#333333" width="27.23" height="27.23" rx="2"></rect>
+              <polygon
+                fill="#fff"
+                points="5.8 21.75 13.66 21.75 13.67 9.98 17.59 9.98 17.58 21.76 21.51 21.76 21.52 6.06 5.82 6.04 5.8 21.75"
+              ></polygon>
+            </svg>
+            npm.io
           </a>
           <span class="hint">{{ modified | timeAgo }}</span>
         </div>
@@ -205,7 +231,8 @@ export default class List extends Vue {
     color: #222;
     text-decoration: none;
   }
-  img {
+  img,
+  svg {
     vertical-align: middle;
     margin-right: 4px;
   }
