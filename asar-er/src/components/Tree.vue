@@ -23,8 +23,12 @@ import { defineComponent, PropType } from 'vue';
 
 function resolveArray(arr: any[]): any[] {
   let res: any[] = [];
-  for (let i = 0; i < arr.length; i++) {
-    Array.isArray(arr[i]) ? (res = [...res, ...resolveArray(arr[i])]) : res.push(arr[i]);
+  for (let ar of arr) {
+    if (Array.isArray(ar)) {
+      res = [...res, ...resolveArray(ar)];
+    } else {
+      res.push(ar);
+    }
   }
   return res;
 }
@@ -69,28 +73,69 @@ export default defineComponent({
       immediate: true,
       handler(val) {
         this.copiedValue = JSON.parse(JSON.stringify(val));
+        console.log(this.renderNodea(this.copiedValue, 'asddas'));
+        /**
+         * {
+         *  files:
+              134.js: {size: 5794, offset: '0', integrity: {…}}
+              183.js: {size: 28478, offset: '5794', integrity: {…}}
+              717.js: {size: 4959, offset: '34272', integrity: {…}}
+              autojs: {
+                    files: {darwin_folder_open_to_iterm: {…}, github_clone: {…}, img_imgchr: {…}, ...}
+            }
+          }
+         */
       },
     },
   },
   methods: {
+    renderNodea(data: any, name = 'ad') {
+      const tempArr: any[] = [];
+      const nodeFiles = data.files;
+
+      Object.keys(nodeFiles).forEach((fname) => {
+        const data = nodeFiles[fname];
+        if (data.files) {
+          const files = this.renderNodea(data, fname);
+          tempArr.push({
+            name: fname,
+            type: 'directory',
+            files,
+          });
+        } else {
+          tempArr.push({
+            name: fname,
+            type: 'file',
+            hash: data.offset,
+            size: data.size,
+          });
+        }
+      });
+
+      return tempArr;
+    },
     /**
      * 渲染结构
+     * data: {files: {…}, _open: true}
+     * indent: 0
+     * key: "/"
+     * title: "/"
      */
     renderNode(title: string, asarNode: AsarNode, indent: number, base = '/'): TreeItem[] {
       const node: AsarNode = asarNode;
       const curPath: string = join(base, title);
       let items: TreeItem[] = [];
-      let tempArr: TreeItem[] = [];
+      let folderArr: TreeItem[] = [];
+      let subfiles = node.files;
       // 文件夹
-      if (node.files) {
-        tempArr.push({ title: title, data: node, indent: indent, key: curPath });
-        console.log(title);
+      if (subfiles) {
+        folderArr.push({ title: title, data: node, indent: indent, key: curPath });
         if (node._open) {
           items = [
             ...items,
             ...resolveArray(
-              Object.keys(node.files).map((item) =>
-                this.renderNode(item, node.files![item], indent + 8, curPath)
+              Object.keys(subfiles).map((item) =>
+                this.renderNode(item, subfiles![item], indent + 8, curPath)
               )
             ),
           ];
@@ -98,13 +143,11 @@ export default defineComponent({
       } else {
         items.push({ title: title, data: node, indent: indent, key: curPath });
       }
-      items = [...tempArr, ...items];
-      console.log(tempArr);
+      items = [...folderArr, ...items];
       return items;
     },
     openFolder(dir: string): void {
-      for (let i = 0; i < this.renderList.length; i++) {
-        const item = this.renderList[i];
+      for (let item of this.renderList) {
         if (dir.indexOf(item.key) !== -1 && item.data.files) {
           item.data._open = true;
           if (dir === item.key) {

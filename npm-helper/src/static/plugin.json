@@ -3,7 +3,7 @@
   "author": "ChandlerVer5",
   "homepage": "https://www.kancloud.cn/@chandler",
   "description": "npm助手，方便快捷地查询某个 npm 库的相关用法😄",
-  "version": "0.2.0",
+  "version": "1.0.2",
   "logo": "logo.png",
   "main": "index.html",
   "preload": "preload.js",

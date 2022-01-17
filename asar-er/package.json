@@ -8,10 +8,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "asar-class-api": "github:toyobayashi/asar-class-api",
+    "@tybys/oid": "^1.0.4",
+    "chromium-pickle-js": "^0.2.0",
     "core-js": "^3.6.5",
+    "cuint": "^0.2.2",
     "filesize": "^8.0.6",
+    "fs-extra": "^8.1.0",
     "vue": "^3.0.0",
+    "vue-monaco-cdn": "^2.0.1",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
   },

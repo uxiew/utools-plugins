@@ -35,7 +35,7 @@
               :key="name + version"
               class="collection"
             >
-              <div class="collection--title" @click="goPackageDetail(name)">
+              <div class="collection-title" @click="goPackageDetail(name)">
                 {{ name }}
                 <span>v{{ version }}</span>
               </div>

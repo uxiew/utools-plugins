@@ -1,22 +1,18 @@
 <template>
   <li>
-    <div>
+  <div>
       <!-- <a
         href="https://npm.runkit.com/mocha/assets/growl/ok.png?t=1591545024237"
             >-->
-      <a v-if="list.name" :title="list.type === 'file' && list.name">
-        <span
-          class="fa-label"
-          :style="depthStyle"
-          @click="subDirClick(fullPath, list.type)"
-        >
-          <i :class="`icon ${icon(list.name, list.type)} `"></i>
+      <a v-if="list.name" :title="list.name" :style="depthStyle">
+        <i :class="`icon ${icon(list.name, list.type)} `"></i>
+        <span class="fa-label" @click="subDirClick(fullPath, list.type)">
           {{ list.name }}
         </span>
       </a>
 
       <!--  v-show="showSubLevel" 看你是否要记住打开项 -->
-      <ul v-show="showSubLevel" class="fb-viewer">
+      <ul v-show="showSubLevel" class="fb-viewer ellipsis">
         <Fileslist
           v-for="(item, i) in list.files"
           :key="i"
@@ -95,7 +91,9 @@ export default class List extends Vue {
   }
 
   get depthStyle() {
-    return { paddingLeft: `${14 + 14 * this.depth}px` };
+      const left = 14 + 14 * this.depth;
+      const iconWidth = 16;
+      return { width: `calc(100% - ${left + iconWidth}px)`, paddingLeft: `${left}px` };
   }
 
   // 获取图标显示

@@ -1,14 +1,16 @@
 <template>
-  <div class="home full-screen flex-center" @drop="onDrop" @dragover="onDragOver">
+  <div class="home full-screen flex-center">
     <button class="asar-btn open" @click="open">打开一个 asar 存档</button>
   </div>
   <div class="plugins">
     <a v-for="asar in UPluginFiles" :key="asar.fileName" class="item">
       <div class="logo open" @click="goDetail(asar.fullPath)">
-        <img :src="'file://' + asar.fullPath + '/' + asar.logo" alt="EFE" />
+        <img :src="'file://' + asar.fullPath + '/' + asar.logo" :alt="asar.pluginName" />
       </div>
       <div class="card-body">
-        <div title="EFE" class="name">{{ asar.pluginName }} {{ 'v' + asar.version }}</div>
+        <div title="asar.pluginName" class="name">
+          {{ asar.pluginName }} {{ 'v' + asar.version }}
+        </div>
         <div title="asar.description" class="desc">
           {{ asar.description }}
         </div>
@@ -25,9 +27,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { openFile } from '@/utils/index';
 import { setAsarPath } from '@/store/store';
+import { openFile } from '../utils';
 
+const { extname } = window.toRequire('path');
 export default defineComponent({
   name: 'Home',
   data() {
@@ -36,18 +39,8 @@ export default defineComponent({
     };
   },
   methods: {
-    onDrop(e: DragEvent) {
-      e.preventDefault();
-      e.stopPropagation();
-      // this.goDetail(e.dataTransfer!.files[0].path);
-      // this.handleDrop(e.dataTransfer.files)
-    },
-    onDragOver(e: DragEvent) {
-      e.preventDefault();
-      e.stopPropagation();
-    },
     goDetail(path: string) {
-      if (window.toRequire('path').extname(path) === '.asar') {
+      if (extname(path) === '.asar') {
         setAsarPath(path);
         this.$router.push({ name: 'Detail' }).catch((err) => console.log(err));
       } else {
@@ -135,9 +128,6 @@ export default defineComponent({
       box-shadow: 0 0.5rem 1rem rgb(51 51 51 / 10%);
       text-decoration: none;
       transform: translateY(-0.05rem);
-    }
-    &:last-child {
-      margin-right: 0;
     }
     .logo {
       background-size: cover;

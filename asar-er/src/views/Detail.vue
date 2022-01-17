@@ -5,13 +5,16 @@
         <button class="menu-button" @click="open">打开</button>
         <button class="menu-button" @click="goBack">关闭</button>
         <button class="menu-button" @click="extractClicked">提取</button>
+        <button class="menu-button" @click="save">保存</button>
       </div>
-      <button @click="reveal" class="filepath" :title="asarPath">『{{ title }}』👈</button>
+      <button @click="reveal(asarPath)" class="filepath" :title="asarPath">
+        『{{ title }}』👈
+      </button>
     </div>
-    <div class="content" :class="{ resize: point }" @mousemove="onMouseMove" @mouseup="onMouseUp">
+    <div class="content">
       <!-- 左侧文件结构区域 -->
       <div class="tree-view" :style="{ width: treeWidth + 'px' }">
-        <Tree ref="tree" v-model="activeDir" :tree="tree" :title="title" />
+        <FileBrowser search @get-path="onItemClicked" :directory-listing="tree" />
       </div>
       <!-- 右侧文件内容区 -->
       <div
@@ -19,12 +22,22 @@
         :style="{ width: `calc(100% - ${treeWidth}px)` }"
         @click="clearListFocus"
       >
-        <FileList
-          :tree="tree"
-          v-model:dir="activeDir"
-          @itemclick="onListItemClicked"
-          @dragstart="onDragStart"
-          @itemdoubleclick="onListItemDoubleClicked"
+        <!-- <FileList
+            :tree="tree"
+            v-model:dir="activeDir"
+            @itemclick="onListItemClicked"
+            @itemdoubleclick="onListItemDoubleClicked"
+          /> -->
+        <img v-show="showPic" :src="picSrc" alt="EFE" />
+        <monaco-editor
+          ref="editor"
+          v-show="!showPic"
+          v-model="monacoOptions.value"
+          class="editor"
+          :options="monacoOptions"
+          :language="monacoOptions.language"
+          @editor-did-mount="onEditorDidMount"
+          url="https://lib.baomitu.com/monaco-editor/latest/min/"
         />
       </div>
       <div class="resize" :style="{ left: `${treeWidth - 4}px` }" @mousedown="onMouseDown"></div>
@@ -43,33 +56,36 @@
       :tpos="modal.tpos"
       :text="modal.text"
     />
-    <!-- <div>{{asarPath}}</div>
-    <div>{{activeDir}}</div>
-    <div>{{activePath}}</div> -->
+    <!-- <div>{{ asarPath }}</div>
+    <div>{{ activeDir }}</div>
+    <div>{{ activePath }}</div> -->
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { openFile, deepCopy, formatSize } from '../utils';
+import { openFile, formatSize } from '../utils';
 import { setAsarPath, getters, setTree } from '../store/store';
-import Tree from '../components/Tree.vue';
-import FileList from '../components/list/FileList.vue';
+import FileBrowser from '../components/FileBrowser/index.vue';
 import ModalExtract from '../components/ModalExtract.vue';
+import MonacoEditor from 'vue-monaco-cdn';
 
 const Asar = window.Asar;
-const { basename, join } = window.toRequire('path');
+const { basename, join, extname } = window.toRequire('path');
+let monacoEditor: any = null;
 
 export default defineComponent({
   components: {
-    Tree,
-    FileList,
+    FileBrowser,
     ModalExtract,
+    MonacoEditor,
   },
   data() {
     const data: {
-      point: null | [number, number];
+      picSrc: string;
       treeWidth: number;
+      showPic: boolean;
+      activePath: string;
       activeDir: string;
       selectedItems: ListItem[];
       asar: typeof Asar | null;
@@ -81,10 +97,13 @@ export default defineComponent({
         cmax: number;
         cpos: number;
       };
+      monacoOptions: any;
     } = {
-      point: null,
+      picSrc: '',
       treeWidth: 200,
-      activeDir: '',
+      showPic: false,
+      activePath: '/plugin.json',
+      activeDir: '/',
       selectedItems: [],
       asar: null,
       extractModalShow: false,
@@ -95,6 +114,27 @@ export default defineComponent({
         cmax: 100,
         cpos: 25,
       },
+      monacoOptions: {
+        value: '',
+        language: 'javascript',
+        fontSize: 13,
+        hideCursorInOverviewRuler: true,
+        overviewRulerBorder: false,
+        renderLineHighlight: 'none',
+        fontFamily:
+          'Operator Mono Lig, Dank Mono, Microsoft YaHei Mono, Source_Code_Pro-YaHei Hybrid',
+        lineHeight: 20,
+        fontLigatures: true,
+        detectIndentation: true,
+        wordWrap: 'on',
+        minimap: {
+          enabled: false,
+        },
+        // contextmenu: false,
+        autoIndent: true,
+        // formatOnPaste: true,
+        // formatOnType: true,
+      },
     };
     return data;
   },
@@ -104,10 +144,9 @@ export default defineComponent({
       return basename(this.asarPath || '');
     },
     asarDetailString(): string {
-      if (!this.asar) return '';
       let folders = 0;
       let files = 0;
-      Asar.walk(this.tree as typeof Asar.AsarNodeDirectory, (n: AsarNode) => {
+      Asar.walk(this.tree, (n: AsarNode) => {
         if (n.files) {
           folders++;
         } else {
@@ -115,76 +154,51 @@ export default defineComponent({
         }
       });
       return `文件: ${files}, 文件夹: ${folders - 1}, 大小: ${
-        formatSize(this.asar.getFileSize() || 0) || '未知'
+        formatSize(this.asar?.getFileSize() || 0) || '未知'
       }`;
     },
   },
-  mounted() {
-    console.log(window.toRequire(join(this.asarPath, 'plugin.json')));
-    // this.$nextTick(() => {
+  async created() {
     if (this.asarPath) {
-      this.closeAsar();
-      this.asar = Asar.open(this.asarPath);
-      this.readHeader();
+      await this.open(this.asarPath);
     }
-    // });
   },
-  beforeMount() {
+  mounted() {
+    utools.onPluginOut(
+      async () =>
+        new Promise((resolve) => {
+          this.closeAsar(); // 移除缓存文件
+          setTimeout(resolve, 300);
+        })
+    );
+  },
+  unmounted() {
     this.closeAsar();
   },
   methods: {
-    onMouseMove(e: MouseEvent) {
-      if (this.point) {
-        const x = e.pageX;
-        let target: any = e.target;
-        while (target && !target.classList.contains('content')) {
-          target = target.parentNode;
-        }
-        if (!target) return;
-        const targetLeft = target.offsetLeft as number;
-        const left = this.point[0] - targetLeft;
-        const newWidth = left + x - this.point[0];
-        this.treeWidth = newWidth < 100 ? 100 : newWidth > 250 ? 250 : newWidth;
+    onEditorDidMount(editor: any) {
+      monacoEditor = editor;
+      // console.log(this.)
+      const { name, type } = this.tree[this.tree.length - 1];
+      type === 'file' && this.$nextTick(() => this.onItemClicked('/' + name));
+    },
+    async open(asarpath: string) {
+      let path = asarpath;
+      if (typeof path !== 'string') {
+        path = await openFile();
       }
-    },
-    onMouseUp() {
-      if (this.point) {
-        this.point = null;
-      }
-    },
-    onMouseDown(e: MouseEvent) {
-      if (!this.point) {
-        this.point = [e.pageX, e.pageY];
-      }
-    },
-    onItemClicked(_item: TreeItem) {
-      // console.log(JSON.stringify(item, (key, value) => {
-      //   if (key[0] === '_') {
-      //     return undefined
-      //   }
-      //   return value
-      // }, 2))
-    },
-    async open() {
-      const path = await openFile();
-      if (!path) return;
-      if (window.toRequire('path').extname(path) === '.asar') {
+      if (extname(path) === '.asar') {
         this.closeAsar();
         setAsarPath(path);
         this.asar = Asar.open(path);
+        this.asar.extract('.', this.asar._tmp);
         this.readHeader();
-      } else {
-        alert('Not an asar file.');
       }
     },
     readHeader() {
       if (this.asar) {
         setTree(this.asar.getHeader(true));
       }
-      this.$nextTick(() => {
-        (this.$refs.tree as any).openFolder('/');
-        this.activeDir = '/';
-      });
     },
     clearListFocus() {
       this.selectedItems.forEach((item) => {
@@ -192,9 +206,61 @@ export default defineComponent({
       });
       this.selectedItems = [];
     },
-    onDragStart() {
-      // todo
+    getFileType(file: string) {
+      let language = 'javascript';
+      switch (extname(file)) {
+        case '.html':
+          language = 'html';
+          break;
+        case '.js':
+          language = 'javascript';
+          break;
+        case '.css':
+          language = 'css';
+          break;
+        case '.json':
+          language = 'json';
+          break;
+        case '.md':
+          language = 'markdown';
+          break;
+        default:
+          language = 'plaintext';
+          break;
+      }
+      return language;
     },
+    async onItemClicked(filePath: string) {
+      console.log('===monacoEditor===', this.tree, this.asar);
+      if (!this.asar) return;
+      this.activePath = filePath;
+      if (/png|jp(e?)g|gif|svg/.test(extname(filePath))) {
+        this.showPic = true;
+        this.picSrc = 'file://' + this.asar.getSrc() + filePath;
+        return;
+      } else {
+        this.showPic = false;
+      }
+      if (!monacoEditor) return;
+      const code = window.readFileSync(this.asar.getTempPath(filePath), 'UTF-8');
+      const language = this.getFileType(filePath);
+      this.monacoOptions.language = language;
+      monacoEditor.setValue(code);
+      setTimeout(() => {
+        language === 'json' && monacoEditor.getAction('editor.action.formatDocument').run();
+      }, 200);
+    },
+    async save() {
+      const dest = this.activePath;
+      // TODO 删除 所有 utools.getPath('temp') + this.title 下所有 .asarer-temp 缓存文件
+      const newTempPath = join(utools.getPath('temp'), `${dest}.asarer-temp`);
+      //  this.reveal(this.asar._tmp);
+      window.writeFileSync(newTempPath, monacoEditor.getValue(), 'UTF-8');
+      // this.reveal(newTempPath);
+      await this.asar.write(dest, newTempPath);
+      window.rmSync(newTempPath);
+    },
+    //
     onListItemClicked(items: ListItem[]) {
       this.selectedItems = items;
       // todo
@@ -212,16 +278,13 @@ export default defineComponent({
      * 提取文件
      */
     async extractClicked() {
-      if (!this.selectedItems.length || !this.asar) return;
       const [savePath] =
         utools.showOpenDialog({
           properties: ['openDirectory', 'showHiddenFiles', 'createDirectory', 'promptToCreate'],
         }) || [];
       if (savePath) {
-        for (let item of this.selectedItems) {
-          await this.asar.extract(item.path, savePath);
-        }
-        this.reveal(join(savePath, basename(this.selectedItems[0].path)));
+        await this.asar.extract(this.activePath, savePath);
+        this.reveal(join(savePath, this.activePath));
       }
     },
     closeAsar() {
@@ -240,6 +303,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+* {
+  box-sizing: border-box;
+}
+
 .menu {
   width: 100%;
   background: linear-gradient(45deg, #0078d7, #5da9e4);
@@ -272,19 +339,21 @@ export default defineComponent({
     }
   }
 }
+
 .tree-view {
   background-color: #f3f3f3;
   height: 100%;
-  box-sizing: border-box;
-  padding: 2px 10px;
 }
 .list-view {
-  box-sizing: border-box;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
+  background-color: rgba(186, 186, 186, 0.495);
 }
+
 .content {
   display: flex;
   justify-content: space-between;
-  height: calc(100% - 70px);
   text-align: left;
   & > .resize {
     width: 4px;
@@ -306,5 +375,9 @@ export default defineComponent({
   display: flex;
   justify-content: space-between;
   font-size: 14px;
+}
+.editor {
+  width: 100%;
+  height: calc(100vh - 42px - 30px);
 }
 </style>

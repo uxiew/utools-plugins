@@ -1,9 +1,9 @@
 const state: {
   asarPath: string;
-  tree: AsarNode;
+  tree: FBAsar[];
 } = {
   asarPath: '',
-  tree: { files: {} },
+  tree: [],
 };
 
 export default state;

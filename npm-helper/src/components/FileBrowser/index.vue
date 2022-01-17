@@ -1,20 +1,21 @@
 <template>
   <div class="file-browser-root">
     <!-- 倒三角指示器 -->
-    <div v-if="false" style="width: 0px; height: 0px; margin: 0px auto;">
+    <div v-if="false" style="width: 0; height: 0; margin: 0 auto;">
       <span
-        style="display: block; background: linear-gradient(135deg, rgb(255, 255, 255) 0%, rgb(238, 238, 238) 60%, rgba(238, 238, 238, 0) 60%, rgba(238, 238, 238, 0) 100%); margin: 0px 0px 0px -6px; top: -6px; width: 12px; height: 12px; border-radius: 4px 0px 0px; border-width: 1pt 0px 0px 1pt; border-style: solid; border-color: rgb(204, 204, 204); border-image: initial; box-shadow: rgba(50, 50, 93, 0.05) -3px -3px 5px; transform: rotate(45deg); position: relative;"
+        style="display: block; background: linear-gradient(135deg, rgb(255, 255, 255) 0%, rgb(238, 238, 238) 60%, rgba(238, 238, 238, 0) 60%, rgba(238, 238, 238, 0) 100%); margin: 0px 0px 0px -6px; top: -6px; width: 12px; height: 12px; border-radius: 4px 0px 0px; border-width: 1px 0px 0px 1px; border-style: solid; border-color: rgb(204, 204, 204); border-image: initial; box-shadow: rgba(50, 50, 93, 0.05) -3px -3px 5px; transform: rotate(45deg); position: relative;"
       />
     </div>
 
     <div
-      style="background: rgb(255, 255, 255);border-radius: 4px; border: 1pt solid rgb(204, 204, 204); box-shadow: rgba(50, 50, 93, 0.1) 0px 50px 100px, rgba(50, 50, 93, 0.15) 0px 15px 35px, rgba(0, 0, 0, 0.1) 0px 5px 15px; overflow: hidden;"
+      style="background: rgb(255, 255, 255);border-radius: 4px; border: 1px solid rgb(204, 204, 204); box-shadow: rgba(50, 50, 93, 0.1) 0px 50px 100px, rgba(50, 50, 93, 0.15) 0px 15px 35px, rgba(0, 0, 0, 0.1) 0px 5px 15px; overflow: hidden;"
     >
       <div class="file-browser">
         <SearchList
           v-if="search"
           :files-list="allFullPaths"
           :need-search="search"
+          @item-click="whenClickIt($event)"
           @show-result="hasChar($event)"
         ></SearchList>
         <!-- main part 这里的 v-if 真的恐怖！-->
@@ -191,9 +192,9 @@ export default class FileBrowser extends Vue {
   position: fixed;
   top: 10px;
   left: 14px;
-  width: 200pt;
+  width: 230px;
   margin: 0px;
-  font-size: 10pt;
+  font-size: 14px;
   z-index: 100;
 }
 .file-browser {
@@ -203,8 +204,7 @@ export default class FileBrowser extends Vue {
 }
 .fb-wrap-viewer {
   position: relative;
-  max-height: 80vh;
+  // max-height: 80vh;
   width: 100%;
-  overflow: auto;
 }
 </style>

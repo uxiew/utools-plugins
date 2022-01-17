@@ -13,7 +13,7 @@ module.exports = {
     config.plugin('copy').tap((args) => {
       // 添加第二组
       args[0][1] = {
-        from: path.join(__dirname, './src/utools-configs'),
+        from: path.join(__dirname, './src/utools'),
         to: path.join(__dirname, './dist/[name].[ext]'),
         globOptions: {
           ignore: ['**/*.ts'],

@@ -104,7 +104,7 @@
               <div class="post-table-cell">
                 <span>Last release</span>
                 <div class="post-table-content">
-                  {{ pkgDetail.modified | timeAgo }}
+                  {{ lastRelease }}
                 </div>
               </div>
             </div>
@@ -213,7 +213,7 @@ interface PkgSourceInfo {
   packageName?: string | null;
 }
 
-let canCloseSourceViewer = true;
+let sourceViewerOpened = true;
 
 let BigFileCache: {
   [prop: string]: string;
@@ -381,14 +381,18 @@ export default class Detail extends Vue {
     }, '搜索全文，选中文本回车键查询，T翻译；Tab切换界面');
   }
 
+  get lastRelease() {
+    const {modified, version="", versions = {} as any}  = this.pkgDetail;
+    return timeAgo(versions[version] || modified); 
+  }
+
   get queryPkgName() {
     return this.$route.params.name;
   }
 
   get titleDate() {
-    const relTime = timeAgo(this.pkgDetail.modified!);
     const author = this.repoUrl.match(/com\/(.+?)\//);
-    return `Published ${relTime}${author ? ' by ' + author[1] : ''}`; //1.2.6 • Published 4 years ago
+    return `Published ${this.lastRelease}${author ? ' by ' + author[1] : ''}`; //1.2.6 • Published 4 years ago
   }
 
   get title() {
@@ -446,7 +450,7 @@ export default class Detail extends Vue {
 
   // 关闭源文件显示popup
   closeSourceViewer() {
-    canCloseSourceViewer = true;
+    sourceViewerOpened = true;
   }
 
   // 关闭源文件列表
@@ -456,7 +460,7 @@ export default class Detail extends Vue {
       // @ts-ignore
       this.$refs.actionPopover.$refs.popover.close();
     // 关闭源代码栏
-    if (canCloseSourceViewer) this.showSourceBrowser = false;
+    if (sourceViewerOpened) this.showSourceBrowser = false;
   }
 
   openUrl(e: any) {
@@ -539,7 +543,7 @@ export default class Detail extends Vue {
     this.code = BigFileCache[pathKey];
     this.showSourceViewer = true;
     // tag
-    canCloseSourceViewer = false;
+    sourceViewerOpened = false;
     Toast.clear();
 
     // 绑定 按钮操作

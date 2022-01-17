@@ -54,14 +54,16 @@ export default class App extends Vue {
             this.$nextTick(() => utools.setSubInputValue(''));
           }
           break;
-        // 划词翻译
-        case 'KeyS':
-          if (name === 'Detail') {
-            const compsLast = Comps[Comps.length - 1];
+        // 查看包源码
+        case 'KeyS':{
+          const compsLast = Comps[Comps.length - 1];
+            // @ts-ignore
+          if (name === 'Detail' && !compsLast.showSourceBrowser) {
             // @ts-ignore
             compsLast.showPkgFBrowser && compsLast.showPkgFBrowser();
           }
           break;
+        }
         // 划词翻译
         case 'KeyT':
           if (selectText) {
@@ -198,9 +200,8 @@ html,
 body {
   margin: 0;
   padding: 0;
-  // font-size: 16px;
-  font-family: Operator Mono Lig, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  // font-family: Operator Mono Lig, Hasklig;
+  font-family: Operator Mono Lig, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif !important;
   background-color: #f5f4f9;
   color: #000;
 }

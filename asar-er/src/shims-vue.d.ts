@@ -5,11 +5,18 @@ declare module '*.vue' {
   export default component;
 }
 
+declare module 'vue-monaco-cdn';
+
 interface Window {
+  monaco: any;
   toRequire: any;
+  readFileSync: any;
+  writeFileSync: any;
+  rmSync: any;
+  rmdirSync: any;
   Asar: any;
   pathBasename: any;
-  UPluginFiles: string[];
+  UPluginFiles: any[];
   execSync: any;
   ipcRenderer: any;
   renderRemote: any;

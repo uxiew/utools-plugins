@@ -14,7 +14,7 @@ export const getters = {
     return store.state.asarPath;
   },
   tree: {
-    get(): AsarNode {
+    get(): FBAsar[] {
       return store.state.tree;
     },
     set(v: AsarNode): void {

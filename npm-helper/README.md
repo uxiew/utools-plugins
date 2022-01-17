@@ -36,11 +36,13 @@
 7. 详情页面翻译 -- ✅
 8. esc 键关闭打开的源码窗口，或者点击其他处关闭 -- ✅
 9. 是否可以考虑记录一下最近的 10 个查询，好方便回找 -- ✅
-10. 增加下载包功能("https://r.cnpmjs.org/@techiediaries/ngx-textarea-autosize/download/@techiediaries/ngx-textarea-autosize-1.2.0.tgz") -- ✅
+10. 增加下载包功能("https://r.cnpmjs.org/@techiediaries/ngx-textarea-autosize/download/@techiediaries/ngx-textarea-autosize-1.2.0.tgz") -- ✅·
 11. 增加收藏功能（腾讯云开发）-- ✅
-12. package.json 文件分析
+12. package.json 文件分析，展示详情
 13. 增加编辑窗口在线编辑，运行，通过在线 require，import 文件
     https://runkit.com/docs/embed
+14. 复制代码区功能，维持原 markdown 格式
+
 
 # 数据来源：
 <!-- @cucumber/cucumber-expressions -->

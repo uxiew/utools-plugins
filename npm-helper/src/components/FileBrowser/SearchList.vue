@@ -9,8 +9,8 @@
         没有相关文件
       </li>
 
-      <li v-for="({ filename, filepath }, i) in searchedList" v-else :key="filename + i">
-        <a href="/touchui-wx-cli/lib/class/CLIExample.d.ts?t=1591757011309" style="padding: 12px 22px;display:block;line-height: 1.3em;" :title="filename">
+      <li v-else @click="subDirClick(filepath)" v-for="({ filename, filepath }, i) in searchedList" :key="filename + i">
+        <a style="padding: 12px 22px;display:block;line-height: 1.3em;" :title="filename">
           <i
             :class="
               `icon
@@ -59,6 +59,11 @@ export default class SearchList extends Vue {
     })
   }
 
+  // 点击搜索结果
+  subDirClick(filepath: string) {
+      this.$emit('item-click', filepath, 'file');
+  }
+
   // 文件图标
   fileIcon(filename: string) {
     return getFileIcon(filename)
@@ -74,11 +79,11 @@ export default class SearchList extends Vue {
 
     for (const path of list) {
       const filename = path.replace(/\/.*\//, '').replace(/^\//, '')
-      const filepath = path.replace(/^\//, '')
+      // const filepath = path.replace(/^\//, '')
       if (filename.toLowerCase().includes(text.toLowerCase())) {
         tmpArr.push({
           filename,
-          filepath
+          filepath: path 
         })
       }
     }
@@ -134,8 +139,9 @@ input[type='text'] {
   width: 100%;
   line-height: 1.8em;
   border-radius: 4px;
+  padding: 0 5px;
+  box-sizing: border-box;
   border: 0px;
-  padding: 0px 1em;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 2px 0 rgba(0, 0, 0, 0.16);
   &:focus {
     box-shadow: 0 0 0 1px #7dc8ff, 0 0 0 3px rgba(125, 200, 255, 0.5), 0 2px 2px 0 rgba(0, 0, 0, 0.16);

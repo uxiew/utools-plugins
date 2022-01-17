@@ -7,10 +7,14 @@ const path = require('path');
 const { remote } = require('electron');
 const { execSync } = require('child_process');
 const pkg = require('./plugin.json');
-const Asar = require('asar-class-api');
-const { readdirSync } = require('fs-extra');
+const Asar = require('../libs/asar/asar');
+const { writeFileSync, readdirSync, readFileSync, rmdirSync, rmSync } = require('fs-extra');
 
 window.toRequire = require;
+window.readFileSync = readFileSync;
+window.writeFileSync = writeFileSync;
+window.rmdirSync = rmdirSync;
+window.rmSync = rmSync;
 window.Asar = Asar;
 
 window.UPluginPath = path.join(utools.getPath('userData'), 'plugins');

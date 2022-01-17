@@ -24,6 +24,7 @@ specifiers:
   typescript: ~4.1.5
   utools-api-types: ^2.3.0
   vue: ^3.0.0
+  vue-monaco-cdn: ^2.0.1
   vue-router: ^4.0.0-0
   vuex: ^4.0.0-0
 
@@ -32,6 +33,7 @@ dependencies:
   core-js: 3.19.3
   filesize: 8.0.6
   vue: 3.2.26
+  vue-monaco-cdn: 2.0.1
   vue-router: 4.0.12_vue@3.2.26
   vuex: 4.0.2_vue@3.2.26
 
@@ -9240,7 +9242,7 @@ packages:
     dev: true
 
   /vue-loader/16.8.3_webpack@4.46.0:
-    resolution: {integrity: sha1-1D5nXe9bqTRdbH8FkUwT2GGZcIc=, tarball: http://npm.yunxuetang.com.cn/repository/yxt-npm/vue-loader/-/vue-loader-16.8.3.tgz}
+    resolution: {integrity: sha512-7vKN45IxsKxe5GcVCbc2qFU5aWzyiLrYJyUuMz4BQLKctCj/fmCa0w6fGiiQ2cLFetNcek1ppGJQDCup0c1hpA==, tarball: http://npm.yunxuetang.com.cn/repository/yxt-npm/vue-loader/-/vue-loader-16.8.3.tgz}
     requiresBuild: true
     peerDependencies:
       webpack: ^4.1.0 || ^5.0.0-0
@@ -9251,6 +9253,12 @@ packages:
       webpack: 4.46.0
     dev: true
     optional: true
+
+  /vue-monaco-cdn/2.0.1:
+    resolution: {integrity: sha512-8qvObA6wslVJqdIsDr9u1zjIGIpX3zNSwprGqNw7YzuuuMd+0fVRTNoAGHFcAbZuKVs658rb3RYkJ3ENtVic2Q==, tarball: http://npm.yunxuetang.com.cn/repository/yxt-npm/vue-monaco-cdn/-/vue-monaco-cdn-2.0.1.tgz}
+    dependencies:
+      vue: 3.2.26
+    dev: false
 
   /vue-router/4.0.12_vue@3.2.26:
     resolution: {integrity: sha1-jceSzd9bsavMOQj5BkE23n4TxGA=, tarball: http://npm.yunxuetang.com.cn/repository/yxt-npm/vue-router/-/vue-router-4.0.12.tgz}

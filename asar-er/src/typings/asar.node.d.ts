@@ -1,3 +1,9 @@
+interface FBAsar {
+  name: string;
+  type: 'file' | 'directory';
+  files?: FBAsar[];
+  [key: string]: any;
+}
 declare interface AsarNode {
   _open?: boolean;
   _active?: boolean;
