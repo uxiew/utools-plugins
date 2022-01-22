@@ -1,1 +1,1 @@
-{"name":"developer","version":"1.0.8","pluginName":"uTools 开发者工具","description":"一个开发 uTools 插件的插件","author":"福州猿力信息科技有限公司","main":"index.html","logo":"logo.png","preload":"preload.js","features":[{"code":"developer","explain":"一个开发 uTools 插件的插件","cmds":["开发者工具"]}],"homepage":null}
+{"name":"developer","version":"1.0.8","pluginName":"uTools 开发者工具","description":"一个开发 uTools 插件的插件","author":"福州猿力信息科技有限公司","main":"index.html","logo":"logo.png","preload":"preload.js","features":[{"code":"developer","explain":"一个开发 uTools 插件的插件","cmds":["upx","开发者工具"]}],"homepage":null}
