@@ -1,4 +1,5 @@
 /*! For license information please see index.js.LICENSE.txt */
+// 模拟数据
 window.xeeState = {
 	accountToken:'xpV6srcRWsIroyFL4WeMs9jHZRY5q0JHOcTsUJJ1',
 	getId: (num = 8)=>{

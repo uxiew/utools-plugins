@@ -79,7 +79,7 @@
             v-for="(value, key) in dependencies"
             :key="key"
             class="tag_link"
-            @click="getInfo(formatVers(key, value))"
+            @click="getInfo(formatVers(key), 'normal')"
           >
             {{ key + '@' + value }}
           </a>
@@ -172,7 +172,7 @@ export default class Tabs extends Vue {
   // ==== 底部三标题 ====
   getTabTitle(cat: string) {
     let title = '0 keyword';
-    const { keywords, versArrObj } = this;
+    const { keywords = [] , versArrObj } = this;
     const dependencyLen =
       this.dependencies.length || Object.keys(this.dependencies).length;
     switch (cat) {

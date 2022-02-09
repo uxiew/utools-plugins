@@ -290,64 +290,30 @@ export async function getPkgFileSource(pkg: any, pkgFilePath: string) {
   );
 }
 
-// ForbesLindesay/sync-request/
-export async function getGhFile(
-  repoUrl: string,
-  version: string,
-  fileName = 'readme.md'
-) {
-  if (!repoUrl) return '';
-  const githubStr = repoUrl.replace('https://github.com/', '');
-
-  const api = `https://cdn.jsdelivr.net/gh/${githubStr}@${version}/${fileName}`;
-  return fetch(api)
-    .then(res => {
-      return res.text();
-    })
-    .catch(err => {
-      console.log('getGhFile', err);
-      return Promise.reject({ error: err.status });
-    });
-}
-
-export async function getREADMEFile(
-  { name, version }: { name: string; version: string },
-  fileName = 'readme.md'
-) {
-  let result = Promise.resolve('❌: 没有找到 README 文件！😢');
+export async function getREADMEFile({ name, version }: { name: string; version: string }) {
+  let result = Promise.resolve('😢: 没有找到 README 文件！');
   if (!name) return result;
 
+  // const api = `https://cdn.jsdelivr.net/gh/${githubStr}@${version}/${fileName}`; // ForbesLindesay/sync-request/
   const api = `https://cdn.jsdelivr.net/npm/${name}@${version}/`;
+  const files = ['README.md', 'README.MD', 'readme.md', 'readme.MD'];
+  
+  let mdFileName = await fetch(api).then(async res => {
+      let tmpStr = await res.text(),result = '';
+      for (const filename of files) {
+        if ((new RegExp(`${filename}`,'g')).exec(tmpStr) !== null) {
+          result = filename
+          break;
+        }
+      }
+      return result
+    })
 
-  let textArr =
-    (await fetch(api).then(async res => {
-      let str = await res.text();
-
-      return str.match(/">(.*)<\/a><\/td>/g);
-    })) || [];
-
-  // 去除后缀哦
-  const fileStr = fileName.split(/\./);
-
-  // const targetName = fileName.replace(/\./g, '\\.');
-
-  //@ts-ignore
-  for (const str of textArr) {
-    const matches = new RegExp(
-      `${fileStr[0]}|${fileStr[0].toLocaleUpperCase()}`,
-      'g'
-    ).exec(str);
-    if (!matches) continue;
-    const mdFileName = /=".*">(.+?)<\/a>/g.exec(matches.input)![1];
-
-    // console.log(matches[0] + '.' + fileStr[1], fileStr);
-    result = fetch(api + mdFileName)
+  if (!mdFileName) return result;
+  return fetch(api + mdFileName)
       .then(res => res.text())
       .catch(err => {
-        console.log('getGhFile', err);
+        console.log('getREADMEFile error', err);
         return Promise.reject({ error: err.status });
       });
-  }
-
-  return result;
 }

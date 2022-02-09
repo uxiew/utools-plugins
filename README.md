@@ -18,7 +18,8 @@ plugin.json 中加入开发模式热重载：
   },
 ```
 
-
+# 注意⚠️
+1. `upx-开发者工具-1.1.0.upx`的安装：需要先安装原版，然后再进行替换 asar 文件。
 
 # TODO
 1. cdn;有些基于纯 Esbuild 来做线上 cjs -> esm 的 CDN 服务，比如 esm.sh  和 skypack:
