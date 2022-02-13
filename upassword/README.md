@@ -36,3 +36,7 @@ https://github.com/kelektiv/node.bcrypt.js
 3. 快捷键 `Command/Ctrl + U` 复制当前帐号用户名
 4. 快捷键 `Command/Ctrl + P` 复制当前帐号密码
 4. 快捷键 `Command/Ctrl + N` 新增帐号
+
+
+# Refs
+[speeding up your development with webpack5's hmr and react-fast-refresh](https://dev.to/workingeeks/speeding-up-your-development-with-webpack-5-hmr-and-react-fast-refresh-of8)

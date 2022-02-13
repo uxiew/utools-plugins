@@ -2,6 +2,9 @@
   "main": "index.html",
   "logo": "logo.png",
   "preload": "preload.js",
+  "development": {
+    "main": "http://localhost:3000/"
+  },
   "features": [
     {
       "code": "passwords",
