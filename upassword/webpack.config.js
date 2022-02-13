@@ -8,8 +8,6 @@ const isDev = process.env.NODE_ENV === 'development'
 const host = process.env.HOST || '0.0.0.0';
 const outputPath = path.join(__dirname, 'dist')
 
-console.log( process.env.NODE_ENV)
-
 module.exports = (_, argv) => {
   console.log(_, argv)
   const mode = argv.mode;
