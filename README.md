@@ -27,6 +27,7 @@ plugin.json 中加入开发模式热重载：
 3. xxxxx
 3. 学习英语的插件
 2. 查询成语，汉字，诗集
+4. 直接查询 gitee,github,gitlab 资源,做 sourceviewer
 
 
 # 官网 Github

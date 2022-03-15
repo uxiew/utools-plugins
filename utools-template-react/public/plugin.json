@@ -1,0 +1,31 @@
+{
+  "main": "index.html",
+  "logo": "logo.png",
+  "preload": "preload.js",
+  "author": "ChandlerVer5",
+  "homepage": "https://www.kancloud.cn/@chandler",
+  "description": "uTools react template 😄",
+  "development": {
+    "main": "http://localhost:3000/"
+  },
+  "pluginSetting": {
+    "single": true
+  },
+  "features": [
+    {
+      "code": "passwords",
+      "explain": "uTools 官方开源、安全、简洁的密码管理器",
+      "cmds": [
+        "Passwords",
+        "密码管理"
+      ]
+    },
+    {
+      "code": "random",
+      "explain": "随机密码生成器",
+      "cmds": [
+        "随机密码"
+      ]
+    }
+  ]
+}
