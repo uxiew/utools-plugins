@@ -42,7 +42,7 @@ module.exports = (_, argv) => {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: './public/index.html'
+        template: './index.html'
       }),
       isDev
         ? () => {}

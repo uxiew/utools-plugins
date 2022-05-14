@@ -1,4 +1,6 @@
 {
+  "name": "utools-plugin-xxx",
+  "author": "ChandlerVer5",
   "scripts": {
     "start": "webpack serve --mode=development --hot",
     "dev": "webpack -w",
@@ -28,12 +30,12 @@
     "css-loader": "^6.5.1",
     "html-webpack-plugin": "^5.5.0",
     "react-refresh": "^0.11.0",
-    "style-loader": "^3.3.1",
-    "utools-api-types": "^2.3.0",
     "sass": "^1.51.0",
     "sass-loader": "^12.6.0",
-    "webpack": "^5.64.1",
-    "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.7.4"
+    "style-loader": "^3.3.1",
+    "utools-api-types": "^2.3.0",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.9.0"
   }
 }
