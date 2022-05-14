@@ -1,6 +1,6 @@
-import React from 'react'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-
+import React from 'react';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import './index.scss';
 
 const themeDic = {
   light: createTheme({
@@ -33,15 +33,17 @@ const themeDic = {
       }
     }
   })
-}
+};
 
 export default class App extends React.Component {
   state = {
     code: 'passwords',
-    theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-  }
+    theme: window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light'
+  };
 
-  componentDidMount () {
+  componentDidMount() {
     /* // 进入插件
     window.utools.onPluginEnter(({ code, type, payload }) => {
       this.setState({ code })
@@ -51,15 +53,28 @@ export default class App extends React.Component {
       this.setState({ code: '' })
     }) */
     // 主题切换事件
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-      this.setState({ theme: e.matches ? 'dark' : 'light' })
-    })
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', e => {
+        this.setState({ theme: e.matches ? 'dark' : 'light' });
+      });
   }
 
-  render () {
-    const { code, theme } = this.state
-    if (code === 'passwords') return <div theme={themeDic[theme]}><h1>Passwords</h1><h3>测试</h3></div>
-    if (code === 'random') return <div theme={themeDic[theme]}><h1>Random</h1></div>
-    return false
+  render() {
+    const { code, theme } = this.state;
+    if (code === 'passwords')
+      return (
+        <div theme={themeDic[theme]}>
+          <h1>Passwords</h1>
+          <h3>测试</h3>
+        </div>
+      );
+    if (code === 'random')
+      return (
+        <div theme={themeDic[theme]}>
+          <h1>Random</h1>
+        </div>
+      );
+    return false;
   }
 }

@@ -1,29 +1,29 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('Html-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
+const path = require('path');
+const HtmlWebpackPlugin = require('Html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 // Host
-const isDev = process.env.NODE_ENV === 'development'
+const isDev = process.env.NODE_ENV === 'development';
 const host = process.env.HOST || '0.0.0.0';
-const outputPath = path.join(__dirname, 'dist')
+const outputPath = path.join(__dirname, 'dist');
 
 module.exports = (_, argv) => {
-  console.log(_, argv)
+  console.log(_, argv);
   const mode = argv.mode;
-  const isDev = mode === "development";
+  const isDev = mode === 'development';
 
   return {
     target: 'web',
     mode: 'development',
-    devtool: !isDev ? "hidden-source-map" : "eval-cheap-source-map",
+    devtool: !isDev ? 'hidden-source-map' : 'eval-cheap-source-map',
     entry: {
       index: './src/index.js'
     },
     output: {
       path: outputPath,
       filename: '[name].js',
-      chunkFilename: "[name].chunk.js",
+      chunkFilename: '[name].chunk.js'
     },
     devServer: {
       // Enable compression
@@ -31,21 +31,25 @@ module.exports = (_, argv) => {
       host,
       port: 3000,
       devMiddleware: {
-        publicPath: '/',
+        publicPath: '/'
       },
       headers: {
-          'Access-Control-Allow-Origin': '*'
-      }, 
-      static: {
-        publicPath: '/',
+        'Access-Control-Allow-Origin': '*'
       },
+      static: {
+        publicPath: '/'
+      }
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: './public/index.html',
+        template: './public/index.html'
       }),
-      isDev ? ()=>{} : new CopyWebpackPlugin({ patterns: [{ from: 'public', to: outputPath }] }),
-      isDev && new ReactRefreshWebpackPlugin(),
+      isDev
+        ? () => {}
+        : new CopyWebpackPlugin({
+            patterns: [{ from: 'public', to: outputPath }]
+          }),
+      isDev && new ReactRefreshWebpackPlugin()
     ].filter(Boolean),
     optimization: {
       runtimeChunk: 'single'
@@ -60,43 +64,43 @@ module.exports = (_, argv) => {
           exclude: /node_modules/,
           use: {
             loader: 'babel-loader',
-            options:{
-              "presets": [
-                ["@babel/preset-env", { "targets": { "chrome": 91 } }],
-                "@babel/preset-react"
+            options: {
+              presets: [
+                ['@babel/preset-env', { targets: { chrome: 91 } }],
+                '@babel/preset-react'
               ],
-              "plugins": [
+              plugins: [
+                ['@babel/plugin-proposal-decorators', { legacy: true }],
+                '@babel/plugin-proposal-class-properties',
                 [
-                  "@babel/plugin-proposal-decorators", { "legacy": true }
-                ],
-                  "@babel/plugin-proposal-class-properties",
-                [
-                  "import", 
-                  { 
-                    "libraryName": "@mui/material", 
-                    "libraryDirectory": "esm", "camel2DashComponentName": false 
-                  }, 
-                  "material"
-                ],
-                ["import", 
-                  { 
-                    "libraryName": "@mui/icons-material", 
-                    "libraryDirectory": "esm", 
-                    "camel2DashComponentName": false 
+                  'import',
+                  {
+                    libraryName: '@mui/material',
+                    libraryDirectory: 'esm',
+                    camel2DashComponentName: false
                   },
-                  "icons"
+                  'material'
                 ],
-                // this code will evaluate to "false" when 
+                [
+                  'import',
+                  {
+                    libraryName: '@mui/icons-material',
+                    libraryDirectory: 'esm',
+                    camel2DashComponentName: false
+                  },
+                  'icons'
+                ],
+                // this code will evaluate to "false" when
                 // "isDevelopment" is "false"
                 // otherwise it will return the plugin
-                isDev && require("react-refresh/babel")
-              // this line removes falsy values from the array
+                isDev && require('react-refresh/babel')
+                // this line removes falsy values from the array
               ].filter(Boolean)
             }
           }
         },
         {
-          test: /\.(less|css)$/,
+          test: /\.(s[a|c]ss|css)$/,
           use: [
             {
               loader: 'style-loader'
@@ -106,11 +110,11 @@ module.exports = (_, argv) => {
               options: { url: false }
             },
             {
-              loader: 'less-loader'
+              loader: 'sass-loader'
             }
           ]
         }
       ]
     }
-  }     
-}
+  };
+};
