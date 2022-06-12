@@ -1,0 +1,68 @@
+{
+    "name": "FFFFFFFF",
+    "version": "5.0.0",
+    "pluginName": "uTools",
+    "description": "uTools",
+    "author": "utools",
+    "main": "index.html",
+    "logo": "logo.png",
+    "preload": "preload.js",
+    "features": [
+        {
+            "code": "store",
+            "explain": "uTools 插件应用市场",
+            "cmds": [
+                "Plugin Apps",
+                "插件应用市场"
+            ]
+        },
+        {
+            "code": "settings",
+            "explain": "uTools 偏好设置",
+            "cmds": [
+                "Setting",
+                "偏好设置"
+            ]
+        },
+        {
+            "code": "installed",
+            "explain": "管理我的 uTools 插件应用",
+            "cmds": [
+                "我的插件应用"
+            ]
+        },
+        {
+            "code": "accountdb",
+            "explain": "uTools 帐号与数据",
+            "cmds": [
+                "帐号与数据"
+            ]
+        },
+        {
+            "code": "plugininstall",
+            "icon": "icon-plugininstall.png",
+            "cmds": [
+                {
+                    "type": "files",
+                    "fileType": "file",
+                    "match": "/\\.upx$/i",
+                    "label": "uTools 插件应用安装",
+                    "maxLength": 1
+                }
+            ]
+        },
+        {
+            "code": "redeemcode",
+            "icon": "icon-redeemcode.png",
+            "cmds": [
+                {
+                    "type": "regex",
+                    "match": "/^uTools-[0-9a-zA-Z]{32}-[A-Z]{2}$/",
+                    "label": "uTools 兑换码",
+                    "minLength": 42,
+                    "maxLength": 42
+                }
+            ]
+        }
+    ]
+}

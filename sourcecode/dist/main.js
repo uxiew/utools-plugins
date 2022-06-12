@@ -1,0 +1,12427 @@
+(()=>{
+    "use strict";
+    var e = {
+        n: t=>{
+            var i = t && t.__esModule ? ()=>t.default : ()=>t;
+            return e.d(i, {
+                a: i
+            }),
+            i
+        }
+        ,
+        d: (t,i)=>{
+            for (var n in i)
+                e.o(i, n) && !e.o(t, n) && Object.defineProperty(t, n, {
+                    enumerable: !0,
+                    get: i[n]
+                })
+        }
+        ,
+        o: (e,t)=>Object.prototype.hasOwnProperty.call(e, t)
+    };
+    const t = require("electron")
+      , i = require("electron-settings");
+    var n = e.n(i);
+    const o = require("electron-is");
+    var s = e.n(o)
+      , r = {};
+    const a = require("path");
+    var c = e.n(a);
+    const l = require("fs");
+    var d = e.n(l);
+    const h = require("crypto");
+    var u = e.n(h);
+    function p(e, i, n) {
+        return new Promise(((o,s)=>{
+            if ("GET" === e) {
+                if (n && "object" == typeof n) {
+                    let e = "";
+                    for (const t in n)
+                        void 0 !== n[t] && null !== n[t] && (e && (e += "&"),
+                        e += t + "=" + encodeURIComponent(n[t]));
+                    i += (i.includes("?") ? "&" : "?") + e
+                }
+                n = null
+            }
+            const r = t.net.request({
+                method: e,
+                url: i
+            });
+            r.on("response", (e=>{
+                const t = [];
+                e.on("data", (e=>{
+                    t.push(e)
+                }
+                )),
+                e.on("end", (()=>{
+                    let i = null;
+                    try {
+                        i = JSON.parse(Buffer.concat(t).toString())
+                    } catch (e) {
+                        return s(new Error("服务端返回非 JSON 文本"))
+                    }
+                    if (e.statusCode >= 200 && e.statusCode < 300)
+                        return o(i);
+                    i.errors && (i.message = Object.values(i.errors).join("\n"));
+                    const n = new Error(i.message || "返回 " + e.statusCode + " 错误");
+                    return n.code = e.statusCode,
+                    s(n)
+                }
+                ))
+            }
+            )),
+            r.on("error", (e=>{
+                s(new Error("网络错误 " + e.message))
+            }
+            )),
+            r.setHeader("Content-Type", "application/json"),
+            r.setHeader("Accept", "application/json"),
+            n && "object" == typeof n ? r.end(JSON.stringify(n)) : r.end()
+        }
+        ))
+    }
+    function w(e, t) {
+        return p("GET", e, t)
+    }
+    function m(e, t) {
+        return p("POST", e, t)
+    }
+    const g = require("asar");
+    var f = e.n(g);
+    const y = require("zlib");
+    var b = e.n(y);
+    const C = require("os");
+    var v = e.n(C);
+    const W = require("internal-ip");
+    var S = e.n(W);
+    const P = require("addon");
+    var k = e.n(P);
+    const x = k().getLocalSecretKey();
+    function D() {
+        return Math.floor(65536 * (1 + Math.random())).toString(16).substring(1)
+    }
+    function I() {
+        const e = D() + D() + D() + D() + D() + D() + D() + D();
+        return u().createHash("md5").update(e + Date.now()).digest("hex")
+    }
+    function _(e) {
+        return e.startsWith("Double") ? "darwin" === process.platform ? e.replace("Meta", "Command").replace("Alt", "Option") : e.replace("Control", "Ctrl") : e.includes("Meta+") ? "darwin" === process.platform ? e.replace("Meta+", "Command+") : e.replace("Meta+", "Super+") : e
+    }
+    function T(e, t) {
+        return e = Math.ceil(e),
+        t = Math.floor(t),
+        Math.floor(Math.random() * (t - e + 1)) + e
+    }
+    function F(e) {
+        const t = u().createCipheriv("aes-256-cbc", x, "UTOOLS0123456789");
+        return t.update(e, "utf8", "hex") + t.final("hex")
+    }
+    function A(e) {
+        if (!e)
+            return "";
+        try {
+            const t = u().createDecipheriv("aes-256-cbc", x, "UTOOLS0123456789");
+            return t.update(e, "hex", "utf8") + t.final("utf8")
+        } catch (e) {
+            return ""
+        }
+    }
+    function M(e) {
+        return e || (e = process.platform),
+        "win32" === e ? "Windows" : "darwin" === e ? "Mac" : "linux" === e ? "Linux" : e
+    }
+    async function E() {
+        const e = await S().v4();
+        if (e)
+            return e;
+        const t = [].concat.apply([], Object.values(v().networkInterfaces())).find((e=>"IPv4" === e.family && "127.0.0.1" !== e.address && !e.internal));
+        return t ? t.address : null
+    }
+    const B = require("original-fs");
+    var V = e.n(B);
+    const O = require("semver");
+    var L = e.n(O)
+      , R = {
+        yi: "$$$h$i$p$q%)%*%+%V%y&=&`&d&i'1'4'j'l(0(T(^(t)M*H+I/2/6/I0^1%2>3v4<4i4x5A5V5v7h8X9=9W9d:<:U;J=g?^@gAfAzB:C_DDDFFfGCGKGSH5HSIbJ>L>M/M5M_MlMzOBONOYPOPPPcQHR/S$S5THUbUgUrVXV_W1W2WXX`YCYmYsYvYwZBZrZsZtZu[7[;]4]B]w^;^Y^y_X___la+c*cBcScvdhdie/e`fsg`hoiTkemamin;nAnVn[oWo]pEpfqWqerJrXt;t?tpuIuPvRvbvuw1y)yCykyw,$v&6'x(;(O)h)p*K+.+D+S+`+d/u0T0c0e1j1m282[2j4^5S6H8&8h9e;9<6>2>8>[?R?V?]?o@8@?@OC+C1CzDVEoF*H=I`K)K2KSK[KnL;LZM1M8MKMoO<P7Q4QaRYV8VuWhXEXzYPZ'[l]D_=_X`5a*fDg(g]g`haiak1k6k?kUkakcl5l>lwmsmyo6q%qernsMsZsqt%thu/u0vKxfxr,%L'9(/(3(p)K*/*v+6+;+@+X.:/F/J/R0Y1n1o1u2N2Y363=3b4G566a7D7E7`7e7v8A9$:Q;);1;2;K;^;q<?<@<Q<y=t=v>=>]>k?/?s@YB=BVEwFHG)GHH5HDHcHpHzIBIcJ+JPJhL(LAM'N1N9N=NZO$O&OJORPMQ/T>TcUzVnX/Y<Y[[f^Y_sbSbobpc@cMd2e+eBfJfogliYj'jXmUmVn=qDrDs8s9sCsxt*t8tItatfuluqutw9wEwYy*y6",
+        ding: "$%&A8*<eHtOLU9Vk]8hryU,9yEHJPJRKVObRkTUToUslxmPpLssxv,'K)s.P6i;eLyN_QVRVU_VpWwXl`]bLc7cme1f_wuwx",
+        zheng: "$%%['m1rD3D7E^InLJSGT)T0WS[C[P[s[w[x^.aVb`e[fjgIhlhri?ksmnnNqV,*Q/&<O=7A7CRD%L5N)P.P`Q$^7^j_cc3e8m5oF,$_7N97:`</<RCOKSL[PDRPU+WDX*`Gk^qi",
+        kao: "$&QETyfrmfvm,1c=>BHlE,'QQ6Wc`Rk1mbn$pE",
+        qiao: "$&%$)()Q+<.W/*3d4y=F=Y?*?`FCFMFdGEMPSFSOTyUZVMW;WfWz_J`sb_kDl.l?nLwK,%j&t'1'5'i)7+U+V+^8N>S?y@'BTM_PcQrSzT&U5UWUxV(V/Zd[G_Dg7gViqkol;vGvXx>,&L(D8X:p<]=IAvAwBnC/DHDIDVL'LOLSNlSMSNTaUBUkXx]E^Za0a6aGa[aqbhc]jdk0k2",
+        yu: "$&$4%M%Z%a%c'+'E(/)C)a)f*(*y.:.q/W0H5g7q8?9&<%<t=C=U?fANASAvD+DWDrE$HdHfINITJrK*K1K3L*L.L]M1N/O9P1P7PhR5SLTAT]TjUHUwY%Y&['[d]Z_L`Ba$a%a8bHcOdMe(e)eCgMgzh7iBn.nonyoBofpdt%vjw?xnxoy'z(,$G$V$m)4)P)`)g)h)u*6*M*e+n/[2k40424=4c4l5[7<7S8M9D9H9P;m<%>:>c?Z@+@>A3AYCSCUDRECEQESG)G1GRGoHtK.L=LoLxM(MmO4OEQ8RTSCT0T@V+V<VBW6WyX7X8XUYLYaZ;ZQ[.[5])^e`/`xa<aPaub/c<e]h3jWkCkSkhmnmonLpgrHrKrPrQs;s>t+t.unv(y)y*y6,$T%5%K&K&v')'r(c(r)a)y+z.4.Y/k1r2c373x5a648G8]9E9W:9;?<[<o=/>1>VCRECF3FfG/H:H@HAI^IiIrJOJoK*KCL3M)N+NqOmPhQTR[S?UhWBZT[J]A]r]t^C^n_(_._/_xbZbsd$e9egfAffg$gShriFiljVjnl2l3l=lLl]lfmlnLn`oPp.q^r/r1r4r]tBtZtituuTv$vFy(y3yG",
+        qi: "$'$2%0%f%p%r')'8)b*I.<.b0T1N3:8n919D9X:6;Z;p<><A<B<M=J>G?B?ZB1DJF(GtHEHOIfK:KOR0R8RFRISqTkWLYn]B]^^n`/a0aKbFbGbQbtcVd<e?hQhdilk*manAndneoHo^qSr+sUt@u)uavNvPwJwcx;xVx]x^y$y0,%Q&)(G(V)n*%*&*U.Z.^.j/F/p0+1+1^3j3u5@5A6q7X:3</=jClE<ERG8G<H@IsJWK&KjO2OhRlS.TOTdTjU0UVUbUdV>VhVnVoWLWxYBYh[R[T`b`da+bBcae3e4e6e<eHeNeli*iGj4lHnOoVqls`t3t@tLvZxSx^xhyy,&q'e'o(&(Z*?*B*H+N+x+y/9/Y0^0o2j3c3g6S7&909V;n=cAAAiB8CHEWHBHGJkKmLnNuRWTiUKXZZp][^)_QbXcwhahbi7j:j;kglAlNn/o3pbq)s.s6s>vLv[x]xc",
+        shang: "$($0'N.=<4CID9F8PxPy_*a1b9dgq(,&G*v+>/V5j7E7t?hWfeci/,%b/]3U6D6Z:@?P@6@nR5TjVBa;l<",
+        xia: "$)$1%6(w)c+_5^788Q9b;o?zB+ClGbGfSCS`Y2[icMhPnHqfuhxL,<N=4>LC0COC[FNGhK_KkM/Q;QXSyT2U$UGW=]H^DfPj/k_rhs0t2,&w)u**.m/M9?=TA8FkGiJ$S>SnTJU$Z)Z2]J]n_edNhum'npsnwF",
+        han: "$*&_'o.B0M23246i6o8j;=;G<yAOCaJyMBP0R3T/TS]A_Sbsc4e*gtkml>mkowoxq5q6r?wyyv,*I/;/I/h2Q2b3&3W7u99:q=e=n?bA=BkCeFgJ3NZPd]@^Bj?l2n=wEx3,%])z*e+Y.2.3/D:V=W=^F@JnK1M=NsQ<QXQlYsZu[.^rarb3bQc+c:cod6gFgUhMm)qOsuxP",
+        wan: "$+$_*52I3>6366;OD4E@G<GjGkIQKKKcO>OMREWGZEZe]V`=`>e^gdh&h7hgq8qCqGqZtFtNx*y>,&<+g/?3V5y8j9U;f=QEdFzG>K;N]O>PtQnTf]0_&c>d^dge7e>h:i<l+o[o_pGt$wDwRwgxiy(,%f'7*D.E/v=g>m?v@*CBF6F9QNQ_R0RtT9b[ct",
+        mo: "$+$o0q4$>B?1@:@BB3EvFNIeMEMVN(N=P<PzVzW0XCcWcyf3k?kNkOlxmNp[sbuH,&`'/*m*n*p000?0I7s:e@dCDD^MVNRP:P[P^QZQdS@UcVYXbbmd(d6fsgmltoOq:uWw.wQ,%8(<(h+B/y022p:>:?=9>I>N>O>P>_PeTZY0]:`mf=fWg3i>j^jxlVllm%vwvxw>w?",
+        zhang: "$.&G&U&f.C0+F+M6U<VwWEWnWxZ6Z7ZK[2b&e%h_r<t8,&^3J3S8081D_HIL]MFMNQ`V'[ca_bEnZp),%S0/?_@DJ=LQU)YbYj^6a;eui=oLvX",
+        san: "$/&N'H)W+s6h7S7T7U7V7WG?WFYyn=,.;.<.E8tBObKbhbnbog<,TaU8Z$fDg9km",
+        ji: "$2$T$h%;%r&:&;'5'8(L*w+H.f0T0]0_1k212?2E2y3@3F3t4r6?6Y6d7]7p8;8G:C:s;j;y=8=s>w@(B4BLC/DHE*EBECFcHEI(I=J4JBLxNjOuOwPoQZR$RBTTTUU.UjVWWLX<XsYWZgZh[8[^]:]Q^?`(`@aOc5cVcrdAdDeNgJhaick*kYkwl?lLlcmanAohoiojr2r3rKsTsUsqtdthx0xk,$<$Q$[%[%v&l'I'a()(3(K([)/+5+_/W/e1<1X2D3d4V5L7U7Z8U9k9s:5;3=jB:BhEKHbI&JvK:KAL*LdM:N$N0NFNSQSRmUjUwW?WpX$XnYBYSYbYhYoYuYxZ*Z=]2]6^+^p_E`<`@a)c1c6cHcPdHe%e6eOelfyg1gQgch9h<hlhzi%iGjhjljrjslglpn$oPq(r8s[tJtRu%u[usvZyi,$a%1%Y&>&y'4'e't(e)0)=)B)q.S/A0A3<4N4Y5C5D5g606?6S6o7(8I9/9>:f;$;d;h;s<F=U?^?j@lAVAiBWBrBtC3C8CsD+DYDsE2FUG*GdHxKHPgQ)RZS5U0UPV+V?]3^5^H^a^y_+_G`%`/a&a^b<e0fKf`idjOkQl@lWl`lelhm4n4nWo<oEoFotp0pLp^qLrUsEsqt$t3tgu/upv<x_xaxbxcxdym",
+        bu: "$3's4^6B6E8d:.;<CwCzD.DpKFSNVjXnY7^0_Weyh%h'h>q?uw,*S*V*WIj^[_w`rvt,%R1p3>8fC$FwI5KkKyN3O:OpRrW*WJeceqmuqHrYtw",
+        fou: "$38eID,+/<_cGiuixiz,_2q_",
+        mian: "$5+G0)0t4W4c=/K)KDLBN;O2a.tEx[,(F(b/7024`5H9JA[OwP>PkR>R@REbPd^eMekf$i3iCpor;t'wRy@,.X`T`U`Xmgvevfvpvuwdwe",
+        gai: "$6%4([5=5>C5J5S2]9dFk7mhq.t<,$i&%&&6/7dI*JxOHWFdBdQtGv>ya,$r80<S>)?7?>@dKDOUW)]B^)",
+        chou: "$7$8&E)i+</F8Z@'KgN*WCX(^8`8`tcZf7i'j4t^t`vaxNyD,(D+:@[B$B_BbK$K6KIMMN^O[QOR7YJ^S__a(ccd4e0i6r7r:x','`3Q84;P;R<XBuC.DXJ0MAMFMoMwNA^o_$_*lYmF",
+        zhuan: "$9'J.9.T.d3Z7R<[@_DnEwM?NoPaPg_4l2,7l;zGdH:IyS8UQUT[t_L`)`1`Za/fnlSpPq<,$'0B4V9Y:k?m?v@yE]FpG>LMcId=fFg:oJ",
+        qie: "$:'h2=5b6y=vHOIiWK^I_U`_a:aig.s;vNyB,1z3dD>KNNES.YQZ)ZY[L]O_+_Qa?mitiuR,+DANBOCGKFSGXqn6",
+        ju: "$:$e%>'K)9)h)t*V*e.q0U1p3I3j5&5D7x9k<hD5DLFpJ*K7KGKqP>QJQOQqQsRVR_SoV.VNVPYq]0]v^(^4`YaQc;cseSfLfRfZg?g]h@i(i^l]ljpMuFukw:x@yEyFyN,$p%('B'v):)G*Y./.70L0b102$3]3z4o5c9h<Z=?=r>'BABGC*C;F+G*L)P5R5R`SBXk[/[8^?`gasbAg>jGlbmHmSpDrSsCu1uBw8wq,$E$O%M(s)d*f+v/i2I3a517a94;x>*>^ANAgBJBOBSBsC:C@C`D9DTE3EDF&G8JSK/L%N;OxQqR.UvW.XRXnZF]`^ia>aIdXdvgvgyhHifixm6mBr)rds(sAsaxBxExryA",
+        pi: "$;&r'='i/+3Q3k5t8`8e<R?o?p@&@KAyBfD2FgIDLaM+QKRfT3UIX>^P_Hc)eGezf1iHlYoMs=tjtk,$s+r+s4.8L9g:4<9>=C)C5CkGGJ'KJKMKuLLMqNuQ/S4UAV:V;WXXYX_YU]A`*cKhBjLj_jbjqkdl]nPp$p0pIq)t:tl,*;*l*m.7/G/j192b3J9(;.>B>D>ZGrK5KnO/OLOlP=PsQ*R9RCT*W`Zy[s]0]c^@`)a<gzkBlqm*m;pAqcrrtbtmx)",
+        shi: "$<$=%:%?%]%^&>&S'g(U(d061'4M4q5S6%617$809H9S:L<Y=w>_?E?_D$DDELG=H/HlIvJRMpOPOQOVO[OeP2PDQBQWQXS7S;TITJU/ViVoW=YzZ%Z&[h]C]^^Z^^`rd]fhfyiQoCp&p)pbpcpuuLv3v9v?vv,$Z$h%A(7+0.U1G2?5V5_5z6G6T6c9N9R:)<j=*?&CICPCXDSGtK$L?OuP*P?PvRXRjSxTxVaVbVvXq[O]e^H_=```ucxlHrZr^wYyx,$8$:$t)t*..[.o/^4E4z535P6*6H7y8%8Q9I9K:0:o<4<C<E=?=p>w@QEyGNH9I*IGIsJ?JTKAMXN9NINNNPNQO&OcOuOvOzP.P[Q>SHWZe+e.eLehelf^fkg]h+iumDnNnso'o(pWpmqPq]sju2x=x?",
+        qiu: "$>$F&E)G7K82;T@yBlEsLKTEVUVV^s_=drjGspwi,$_'D+'.2/4/E0d2M4m5f5g5h>qAvBgEFFjHDNzOLXIXJZ$_SbbcBdbevn%stsxw3y%,%D(i)o)r*^+Q.k/%051.3:696O6k6l?G@fApI8I;J&K3LzMoNaO+Q@aDaEbNm0msngnhoCpxsLuhxOyZy[y^",
+        bing: "$?$L&J&P(K*0*z.%0S151:CLP*QYQfX4X5Xo^Leuhwk&pPpmtnuRvYv_xKxW,%r(I/'<bG%L3PHWRXGYIZ`[`dEu8,*r8?K6OhPZR&]1`B`ya<aVeSeofwmW",
+        ye: "$@%1&&&/*j/'1@848R:S=7>i?@D(DwF^FkGoPcSMUeUff.fxgzh)hiiqiulXl^lklmlnq2qlrNrOrbs's)uJuKyo,$P$S*9+11L3T7o8p9]=B=a>g?t@vAAADGkHKIELfNjR%R.V5[+eslyp=yG,189l=*K*K<LcNTO0QnSSSdStUrWk`W`ZbKclerf;g2iZs0tk",
+        cong: "$A&L5@7uA4A;KENu[U[V[X[a]W^K_k_wa?aqbKr:u*xY,$J&C&k&v)K4%7a7j8>8F8g;I>+?NA$G@H;H?QfTP`%gWmOmTmXm_tdu_yp,%A%x'm0(8s:;?Z?[RSSQTbTuhkiBjL",
+        dong: "$B(n*a.S161E1W464d5%:0C.D:FKJ1K=MyRtS4T.T:[]_1c8d;g5iopktSvExr,.h.t1i3Y5d=.@/CLSs]E_CdIo.o:pHuAwkyb,&j.F96Ht__h9mEn9s=sbu9x%",
+        si: "$C%i'e'g'k(x)b)o+L+]/[031c7@7H86:3>'?&?O@zJ&K2LRNgPXVYYG^7^qa@klo5tMu?v0x;,$8%K*j/N0_0v1.1W1k3:96:Y@)AxU=VgWjWsX%X?[e]Sc.c/dTeuh1iJj^l^l_mqmu,&k'$)T+M.(/6040R5Q>JNyOiOnPNPhQ9QaSXU;XudZdwe+e2eBeJfmh1hUhyivn=tGuDxHyp",
+        cheng: "$D%'%()3*p.c1J1R92CqCxD7DgEGEPJdO_SZXp[P_c`[bPb`cid2eMeqgVhSigjak0kgkhksq=q^suu6v7xixyyG,'?'@'C't(//&1'1P2^2u466=9*9.:jA9AeF[F`G6K=OMPgQkR9TNXcXoY5Y[Z@Zq[B^Fdaf7j3otvz,+'0T308_<HA4A6IHKWMLQySzU9U^UuWiWn[z`Ic'fMhSi(j5n&",
+        diu: "$E$H,,Q3WxdK",
+        liang: "$G$J&*)O)l*4*L0G1S;6;d<P=BF@_ihmq]whyI,&O3_5sb8b;breWp.sfwN,.C3T9<<tC)F2FAFRGXG_NUS$`EhLlKlP",
+        you: "$I&2'B(%(<(h+>/]0w6I7Z7^819P:a;B@6AII5JMNnOWQ*Q.SASUX:X;Xm]U^8^=^H_gbLcei@mgoEs?uivjwkwu,$H&/(c)@/o0'0W0p2U525p7L:VAaAbB$BpC8DDDEE0E9JGJJKfL=VwW[X]g+grk%k@lsm6nFtfwBwFwJw_,&S*_*c+j.j798V<`>GF5F]HuI6IZIuK0KxLmLxMGNOOqQ4WRWhgglzm9p1p;v:wCx>",
+        yan: "$K%G)k*r+(.E/o04053C3H5x6j6s757?7E7F:S;C;N<`=@=G?P@$@C@R@oCrE(EdF;G+G9H3HBI7IIJHJNK+K0M=MeMkN4NENSOgR`T4TQTaTbUPV2V<V=V>V@YaYr[%[&_?a;cKc_dOdmeOhqi%iCiZn?pHq+qYr/r`rnryxFy&yzz$,$2&m'T($(U)))W*3+1+Q/z0^1h3m4G5(515i64717g87;P;V;j;l<<<==9=U=d=l=o>6>7>`?H?w@3@rAuCbCrCuF@FiGBJ+OBPZS6S<SrT=TKTmV`[6^O`&`jdyfjjRkBo3p>qxsjsmsntMw@xJxe,%W)g+m._1W3]3z5H6'6e6g6h7@8;9e;N;a;c=4=M=n=o>'@'@5A%E7E?InKVL*LPLoM+MWM^N<NBNKWWYqZOZQZR[+[K[P]p^*^[cEcJc`d>e[fVhchfi2iUi_j6l5lIlZnfqIqOqgr=sVsztRv7v^wGwJwQwRwSwVw]xFxKxqy2yO",
+        sang: "$M=D=njKw7w8,%tUC,4:T+cOdC",
+        gun: "$N`5x`,7*7PPsSpUSeRf1i0,%(%[1y2T3Y:JFKG]m:mopY",
+        jiu: "$O$l$m%/%5*1.m3[565M5U5q7;9y<mHyQ;Y.Y9Y:b0gki@iiijjyn)onsrtHuxv8w;,&Y)O+A/1/U<$AiEPK]Y`ZLc0c4cZh2rFrOrTrYxn,A=M*Yd[Fb7b8kfl0n@qGtTu.uzvNy$",
+        ge: "$P%Y&`(A(D*93T5F8B8F8c9.:E;%;A=x>6>KAuE`ZW`xd(d5dJe0g2j)jjltmzvw,%W(a*:6m6yAvBlD@DuK[OHSo]c^bc=h7n(o9q$qgr?s.ueyY,$r*(+*+>2s356G9h9wF[G%PYStT$TDX(Y3Z9Z:[C^.`[a$aUaoayd.fthgjgl4mSm^p6qyrIuK",
+        ya: "$Q%m%o%q'L*%1>4(6q6r6x6z8T9(:h;X<LA_AkArCOD/D_FzJLJ[KpNyR>SxSyXJXVf6f;gBhji_tuwFyMyz,.p.s3Q7V8[AdBtD&D>E[FqIEKMKkLDLqPyS3TrUGY9[+]:m>t`,&d*J1d585:7/;yEEG9HQK*O0REUTWg^`qhr2s*u4u;xiy<",
+        pan: "$R1B2Z7nBXLjW^fFfTjUm.uV,%U0:181J5o6f8V:a<;AIASJkK(K*OJOVOnOoOxPIUJUva1fIm/nBnqqNxs,$V0>2X557]BNCuD1QwT(VbZ]aTbarp",
+        zhong: "$S&q'('A*t1*2Y=:E3ETGTI:I?L?Q:We[:]$]N]XnouX,*`/j0g<0>JC&LvO7P]VsXKYXZ2^1aDcyenhZnYp^rzv7,%s*I*Q+t/V/p1P2'2*2+9OCWD?NSOSQISaURW1Xyr.x:",
+        jie: "$U&I&v*M*P*w+V+l/)2]2^2s494J6O6P8c:s;y<?<w=V=z@(DuE4HxI8J$KWL<LFLYLtNWOiPoQPQTR@RKT6T`TtUkUlUvV$X+XL[f_Nd4dLe0fihIhxi0i4iljSlSlqlvo@p7tDtRw$w:wCyB,$6$R$]$^%6(4+l1K1z5W6w8R>vBMCFEZGPGaJcJdKNKXKhL<N(NLQ5S0TrV3XwYW[p_FcHd2d>hfkElgp+sytGwSx:,%G't*U+=+P+k.Z0w1&1G1b2%2.2I2n2q354=6I6M6w8.8`8p:E;i<F<YAVBiC7I$PAS^ShYg[y^&`ua&bld)eEj[lmmHpDsQsW",
+        feng: "$V&x*$+)/.191o1s1w1y;mCgE2E6GXHGIPPUP`SQSRTDk'u9wb,$9(&0A0F2i4q5Q6(8$;E<>=W>.>N?TBDD4FyKrLzOpS>U2_Ne$ffi[s8w7yO,)6+]175<9b<)=k?h@vILLfLuQ]TKToXI`+`<dJdodqgTqMqQqkvr",
+        guan: "$W*:0Q1(6COJ`)`*`bb+i:k2o%y8,&J)b+g1>3M3l8C;NA'GAHlIBL^M7MjOWRJRRRSV]WN[$^@_%eFhHj0j:rcwD,$(5F5n6$6&>r@MDNFNJ<R^TTV[Z4Z8ZnZs^uewg*o)oep)q+qBu'v+",
+        kuang: "$W/U1?4I5[5d6C:gB/G)H:Ri]h^bcccdePp'prrkw*,0`1x@kByC%P4PTRBRvSbSgVLZB^(^Td+d8gqh;,8D8O<A<b?*@TEPEZEaEhHIJtK>LiPOQfVArjw1",
+        chuan: "$X'J.9.i3X=2AVE8VAVCrAynz%,*0.a/>D;ENGbZU_Kq<rfrlrts/vB,?ICUFXIoNnVvs_",
+        chan: "$Y%z.d/5/f0`2c393Y3y6;<c=H?/@S@dG7KxMfNxT;U6U=U>V/WpX$YE]=ckcqi8j(jwkHkQmGo@p%xFxa,)E+u2F5t7M8x8y9a:d;<;^>_?sD`J8J9T+UUWWX&`7ePf8gEg[gvgyi_kRscte,$+&D.O/l0.0J0]3I4k5R6+8U9*:X;I;T<s=1DcH=LlLpN*QUQ^TnVWX0Y`ZIZx[RaacbdFfXg1jM",
+        lin: "$Z%U.v111f1g7J8[<7G5SmUSYSYT_%_Q`AcCcJfHkro:q[rGtz,'3'l(?3n9&9I;8=v@.DkGEHVJ$KFLbMvMxR)TRUr^qb0bFe)g=l9qDr2xM,&8(P?5@`DFD^DhDyG$G7GmJJK=L_U5ZK]*^=_]iLo^q<vJvY",
+        zhuo: "$[*Z3D3h697h<2<3?UB(F2IZK<[6fSgph$l1lHlenZo1o4o7o8o;qIw2xDxSy1y7yQ,%h(x/=2@2T3b3y9l:E;D<(<X=O>5@'BjG4GJP_THWmZ1ZGZx['_na5aOgYisjVm7uOyU,%$'v0v1I9)9;:L<kAkM$QgUjUmYYrvtAyy",
+        zhu: "$]$b%N'U'r'z(f4&474=>A>x@pBuF_GFNTO3OFPkQiQwTNWPf:f>nKnZo>rzsesfsht_v)v1ve,%s&e'O(x)')+)Z+P121d4i8s97:$;&;b<P<f=5>W>u@;@KA/D8FFKsLrP;QtRPSMSfUdW/W;Y$Zb[]]%]&]/]J^)^I_>_O_r`$`Iclcod3hMjFk2l%s'tItqu5v)v9w+yU,%=&M(N*o+5.r0j131H2u4&7M7p8C9c<I<g>2>v@LBIB]DSEoHkI:IUK@P0PuR'V(VjWuX6]keAg[gwhAizmPnToGrBtcv@vBwk",
+        ba: "$^&F'Y0I7c8)8f;3;7BSC^G;H=IWRRS'VZZ3dueEeXekfNgssjv%,)^;a<TABBeEJKgN?NKRi]4apjLjbk'l[nctOuUx/,*45A7l=xB7BAErNfO2WA`(`idRlElam/m8p5p7p>x7",
+        dan: "$`&4'>'q.k/=2F5'5k6;6>9i;N<D<E<n=H?0?;@HI3L3VuZOZTZ_`F`aa4bec0eZf?i6kykzlVomuu,+4+E.u0&1C4/9d?sC<EgIWJ(KOL$LtMdMuO/P$RjRzX'Zu_0`PcTg[m(m)m1mgnap7qYq[xb,%0*z+l2(4)4Z6A6x8S<L?Y@%@tE%L$LaM0Mc_ub`esfIgehEk=r(w;wTw[",
+        wei: "$a&7'I'T'x*[*x+&+W.e/c6Q6W6j7q9^;l;r<q=;=N@vA<A>AWAtFAG/J(JWJjL/LGLTPHPhQHQbS9S@T1TBTcU$UCUqV3VvWIWUY0[n[q`Q`w`zb:c6h6hNiIizktl3nqqosaw)xHyqyr,$X)J0G1R1r2N3B4w5%5E6.6L8K8W9':F:Q:y<J<i=+>X>f>o?`@NA<BPB`D&D3D:EiG1G^IAJfL=LnMkMnQPR6SmT%TwUBUKe;f%f'f?h>i2jfn^pes?t=tjuMvlwrxayeygyr,$3%H%m&='1'^(E)8.8.B.b.f/d1f1i4K5^5t82939m;H;Q<n=+C5DfDjEHFqH[IaJ)LZMZS1SCT^Z_[3]v]w^1^S_o`*ajapaxb)b0b4bkd[evf/fPjSjTjUlQm5mNmXn^n_pFpuq8",
+        jing: "$c%h&(&.)U*L.?/80@1J1R2d3$424@4OBIBKBOF'I6K[K^KjOCVFWoZ@ZI[F[S`<bwc2lQnFoRoSqMqTrEr_wWxI,'c+$+)/^/_1H2:3'4695:uCgD[HBH^HdL7LGPzXRY3ZS[a[b[j[n[y]$^kafb=bHd.dve/hbmGnVo1obp:u]v@vDw<whyM,0Z8h;&BxHrI?QiTpYF[t`E`H`K`L`Nbec.d(iXnBpkrfs7s:vPvZxC",
+        li: "$d(b)R)])m+c/a/j1^2K2`353]4%4'4?5/6m6p7(767A7D7f7h8M9@;);P;v=K@=@D@c@fBREUG4JcK5KrM:NQO'R(R]S=SDSTV%Y]_d_h_n`'acdadse&jXm)m8mTm[n_r0rPrisot0t?u3uPv=vHvQvUx:xJxUxl,&D(@(k(v)*)R)]*c*f0C0R0S2c2g386M7f9Q:U:t;W@c@nB7B8BQBWCZCdF;FmFtH*HAI/I2I;IOKcKoLPMsN+NqORO`PxQ%S%SNS]SaUzVPVQVVVcX*X0X9X[ZH[M[s]N^=_l_xaJaqb%b>bXc&e+fhglh*i`jdp's9tku%ugvNvmw)w/x0,$@$D%2&<(2(L)<*g+&+:+e.+/'0)0V0f1)1+15313C4C6b7Z:=;J=e>SA<BTDaG4G5GKHbIPJcJgKiLwN.N:NRNVP;PoQvR$R;T$TzV=X@Y3^P^Q^R_&_9`4`=iij4kWl4mxn'nFonoxp*pSpVq@qFqvs/t%u)uPvQvVw4wM",
+        pie: "$fMMk]k^rF,.[8LQpu2,5OU?",
+        fu: "$g%H&V'9'?(1)N)Z)^)r+C+`121v2R3Q5J959<9s:$;;?(BvC:C]G`H'I1I5IrJgKQKiL;MoNaO%OEP(PbRaS*VfW'WWWqXZZ+Z9[A[l^>^EcfdxeDeheif<fDgqh>l+nQo+oOsCtquGu]uzv%vzwZy2ygyp,$x.f171[2e3L6v9=<S=J>(A@EXEsFoHvJAJLJ`JgJnM[OKS&SKVzW$WbWvY'Y+YT[P]T]_^9^[^t`Rb:bZc_chcsdGdpduf&fUgghTh^iXjBjPk^n>npovpBpCplq8s6skt;tEtauIuNv'v<vowOx$y+yK,%D&f)[*S*V*h+1+`+d.c.g.u1x2P2S2h3j3w4T4t5>5@6j7T9R;f>+>g?X?n@=@j@xA>B0BMCaF:F`FbGWGcJuK[K^LJM6NcNhO9P6P:S3SD[_[`]2alb2bvdMdRgKh)iwkJl6m2m@manmp=pyqEqJqXqsrtsSvdvgvlvswbwc",
+        nai: "$j(J*fHFHuI^N3O+Ygj[k>v(,.]59KUlQlRoCp;svxk,/L44HyNiRsww",
+        wu: "$k$s%g%t&t'7)0)K*d.r/M/s3O4/4h596.6c8r8s9&939F;V<<=uAwBTDtE]FXHeISJiK*K.L&MOPBQUR2R?SbT[TwVQXOYKZ/]P]R]r_<_e_f_u`Sbyd*e(e)e2gijkmsoBogp1qBt%t't.v&x9,'0*;*T+f/K/L/S031a252f4m6O8S='=k>%?5?EAtB4EWF^F_GyHOJ&LTR(RpTcW8Zf[;_BadqRrit>tVurw%,&i(W+c/B0O8F8b8c:l<Z<^B*DZHSIFK.K]LBNrQRQcQdT0W:X9[e]H^0_@_D_a_n`chijEmrnyr8rZrls`tCuNuWukxAxQxR",
+        tuo: "$n&Y(+(X)=9n:2<*<cB_E0IOLNMQReUXXx[7e$e/fMfOfPgOh/l3t6t?uOulyl,$;%i':'L.(.A/C0N0O0P3XC1SESFTq_.a:ctoroxw2xm,(V2?2[7'7d;oB;BDM;P$QaW][g].]/e3fagWgXgkh/h0i$iPi[imj$lcm.mdnqqtrXuCwpwtx9",
+        zhe: "$n%O6n;4<N<u>A@<CtMF_PbCeFegjSkPq@qAt6ugxb,&Z*l2O4'P_RqS5UNaUallGm?yU,%j)w+J+b/^/w/x2`4D5/7r:A:P;C;M=DA7CYF8F?FtGVGlHWICJDQBS]XUgXmnt5uv",
+        ma: "$o%Y+g8U;^=i>b>cI2LlMLN]XCf3k?tK,%<6JBNBoDOEUH&LaLbQ:RxU6VjWtj`xM,&2*0/P/y/zJ:TEYlgRh3ikj*klo&t.vvvx",
+        me: "$o@0@:@NXC,:O,vwvx",
+        yao: "$o$w&w)%*2+:+w.l5E8D:B=+=]C<E'H)I@J0L%L`O@Q1Q7R<SETLU]U_X8[p]&^H^gaLf%iyj@jrkUl?qyrgtUtyv6,$*%*%5&@*o+W6:79<s=)?@@^AEC7DHDnFMGwH4KbMANVP/R;URVlZTZ[Z_ZhZkZl[1[2]s_?c:g+glh8lBnNpcrJsTu;vjynz%,%$'V(;)(2D5;5X707b:6:7;S==EuGLJ/J;JVJePySsW7X'ZZ]r`rcZd^dyeTeihho/o`q.q`r*syt7umxNy%",
+        zhi: "$r%Q(Z)j*/*R*k+E+]/Z1u2m3N3x456T7$8&8p9X:AB6B7B^BxDBDEF*F2GTIbJ@JxM]P6S;TIV[VrW)W.WrXaXcY6Zo[Q[`[w[x]E]]^dbCbNc[cbdBe5eHeIevfMg'g+g@h'i5jBj[k)k>kCkElulvm+m^o*o_ooq&qXtMu)uAurv:vCvuw4x$xOyKyd,$<%B&+&s(d(r*P*[+0.U/3/W/X080Y1$1_2+3w4K6t707A7c8J8i:Z<G?^B<CaD$HMI0IKK$KRKzL'LALBLQLwOgPNR[S+VOVnVpVxW'W>WUWgXEXQXTXhXqXvYCYDYeYtZi^EcOc`dYd]dxf5fqg:hJhYjXkgm.m:mJmfn<nlnxoHqAqOr=r>rArBt8t?tYuYx?,(8)7*B+G+s/e072/222U2V3`4v5Y6=6U6]7:8J<4=l=m>>>t?]?w@F@[B4BLBhCNCQD.D`DbE>EtF0GGGPHbKGKiMINePlQ>Q`V;WmXf[r]M^L^U^dg]gdh6i)i8iEjBnIqUqxr<s_t;uEw`wl",
+        zha: "$t+A3U3g6v8P9v::;5<z=?=MHQOd^%dqf'f=g9iwjik9sdumusutv5v?,$&%:&[4r6F8r<%<g>gAZJJL2O&O+PFSA^uc[celnu@,*`*j6V7c98:^:n<6EEN%S:WtZ.[:_KeCmAmip<pOxVxY",
+        hu: "$u%%%A%e*+1;5]5f9g9w;o<+=0=Z=^>W>d@9A5BwGHGIGLJGKbLWMGMHPARlVtWsZ*Z=]l^2^3^r`Ld1dQdSdTdXdYdZd`dkeUesjZk8nvp:pDs*ttvs,$A$B&0&2*?/n0)0H0w2H4@4B5P7>7J7K:?;+<o=Z>z?[C2D0G7GmIJIKI^V6W.]=_<`6aobTd9dwfHfZo%qRt2t6tVuFxRyj,%n&.)O)P)X)`/$/N1e6Y6^:R;9<$>6E_GILNMkRvS;SZ^T^k_CbJc*f$kdltnKnrovq>qVrksNs]sesrtouRudv)",
+        fa: "$v':(G.$1C7dBqCCFHImS>ZXvk,'+0U0t2B;MF6GLL&N@NBQLS?]W^'jDjZjcv1,&^'pMrN7S%Z;[Bk@kD",
+        le: "$w%X&@4a89>e]5ds,$d&@/+0oAiEISU]'`Gmzsr,[abAe]fto9ozq1",
+        yue: "$w0&0(0/2L:l;@<F?XIFN9R:RjUx_7_K_md)e&eVhEm)s$s%s>tevH,$d&@'&(v11;;@yE`R<RhVfX2_?_^`yaCaNb.b?c:h8qq,)%*<*=8i8k<cATAzB6B9D[EIO7P<VVW7WLZGZH[GkPttu%wLy_yn",
+        lao: "$w(B.^4A4B4m:T;2;c>$>uJ;MDSeUQ^`bpbqh0k_s[vn,&@'Y2m3?8e91=3AmCMFULVMaSvUlZX`[b3dCholClDlelqvPy;,+I0EE6E<FxMDN0Q(ULWdX7cUk3m`",
+        yin: "$x'<(c0w1Z6V8^8q;n=)?H?q@8@xA(AKB1C6CBC`DhE1GwJQKfKoOxQCSaT+T=UyY?Y_Z)a2afb7babbcPo*s:vqwg,'n(C(R)?)p*3+?+Q.k1I1Q1`494L5T5i6[7+:;:<=&BuC]CoFHHJM0MXMeN4SpTaU_W^Xt[(]rakdLf2fjo(teuiv/vfvq,$7&%&)(v*A/q0I2w7$7*739&9];VADAfF7LLMMOAOOP_Q0WrX4Z`[h[w]_]j]q^(^:^K_X_g_q`j`zb=bHe<e@fihBj+mQtExjxyy@yF",
+        ping: "$y)_191x2(9YBaE:J`QYQfRsW3WDWZX1XobIb[u>,(.0x2(3$4(>/EqIaIlJOSQSt[q_9`:j&mNnnsluGvMx`,%C(b*a+<7h<2EzFMKtPZbtgTm1p8",
+        pang: "$z6w=tGXM&Q2X]Xk[9[ooG,/k056i<>PIU?_jlmnBnqo4q4s3,/55fB3I._7`&nzq/yLyN",
+        guai: "%&7bH(^D_$fJuBv4,^djU,",
+        sheng: "%'%(+13K3R4l6+99AnFSGBJdTXc(nsp9q=q>s1u/yG,%L'^*t+R134`555a9J>@B&C.F(G0J5J;JNOMOtP8[V]Gf>g/gOi1mDmanwuJ,&@:t?)?kP*SA[l]L]hs5x<",
+        hao: "%*)6+k/^859e:w>)?'?C?y@*G%I%^j_Tp<pXqEr(r.r7rWyA,+w.12`3r6o7.9>:6;Q;`DTDYDcNQNYNcNeNhNlXM[U`zlYmCuo,$f'+'/'Q'n)b*K0s9?;;>0>OK`LET:Y:c[dDnx",
+        mie: "%.8>:?;8NtX)chjM,(n6l:e;p=/P:VI`0`L,%d'80z1T5OV<p$qr",
+        nie: "%.<]>1?M@7@`@o@rB2O.O/S*U*UhV;VngvhMhoiOjokFmKn6uM,&5)33%5wL4_ea'c%c)m0mer6r<uDwt,(m1/;ZByC9C;CtDpQBR+RRTAV.V^VgY4Y7Zh]U]xcjd@xz",
+        xi: "%2)D)[+m.]0L1i5s626K6g8w9V:;:C;Q<)=6=T?+?A@O@lF3FwGhHXK/LbMaMdQMQ^QaQnQxToUGUmV&V+VsW?[H[[[r]H]S]m^F^R^_^n_5_O_[`3`Na]a_bcbdd1dQdSdTe0e?eFk7pFq<qNqQrIrqtMtsu@vPw_y]yy,%O%u&g'(']'o)m)r)z*D*G.l/B1]1b2V3h4b6P6q7Y7p8[8^9C=I=[=c=z>2>[?4?6?:?K?l?m?n@F@sB0B6BJBVB^CXDpEuFrI%I?M6N`OnPmQqRLRtSuT^UHUqV&W]WzY(YQZN[:b&bqc1cgdoeTfRfkgKgQh*hXhwk1kHkiklkmnRnSp<q;rMrNs4w'x7yFyw,$F$[$m%B&m'*)l.)/7/90'0@1?1U2d3_5*595[5_616`6d6f8P9Z:%:K:]<e=Y=Z>.>5>[A/A3AQAcCmD)DvJsKFKMKYKgL<LtN5NVNzO(OTPFPGPpRbTBU%UDVZVxWvX`Z@Zv[M^3^9^J^O^z_3_r`.dde^f6fHfdfvi/i;igl)n)nnoBoapvq9rbtew<xI",
+        xiang: "%3&'&+(C.U/g4w51748O:d<;@LGWJ6UKV^X_Y*].`fq/rYvS,$f'K)B5R8PFLI@IROkW7YO_7dVefh%iAj'jujzkkqUt9y'yW,'6*1010`1a4R4_81<T>%BdKzL7L8LCPcPvUFVXYaZ=ZX];bIbOcpe6eWfQfYfrg?icjQmKn1oRocp&pPvR",
+        shu: "%8):)a*=*>/h0H7g:FEyF)J3KNNwPkPvQiQwXuXz]Z^Q^R^p_Ld/eagogyhfjpm2nJnRqnqprds.sesfshtAtZu0vKxE,&]&x'i*y+M.?.@0K3t8/8B8z97:*;/=]?QG3H7HxKMKPKQMtXjY6[X[ma2bwcId)dcf(hPj]pYr]vQxO,$%$I&('O'Y(M)m+Z1>1^3+4p4x=i@4@mBuC(EQF_GfHoL1PCRgTr]<]r_ZmIoqowrssFw3x2x3yf",
+        dou: "%9):0:0>8I8y;Y;aeenro'tvx<,'b.32X4]:]CWLFQb[&[I`.owvn,&6*X<j=aIAKXL)M2O6QJW?Z+Zo[j]Oeefyl%l&l*l.l/",
+        nang: "%</q@@@i@sc/j;lEm]rt,)_3U;>;e,1:fYf]g;x[",
+        jia: "%=&v'h(I*v.&/)4.7m;A;L>OB5ClH7H<L)LpO<OiRcWb[O[i]T^xd=d@eBf2f;figEgelXnunxuDuEx.yt,$u%4%m(5.$0f292pBBD>DAEyF.JHL0M/Yg]bbclanvolphvTwHyl,+K+T2>2n3.>3>W?:@]BEHeKQKbOsPIQYTCWPWjY=bwc$d)d*h%j&qor@rTvT",
+        mao: "%@0b0f0o0q6UDtGkLPRxT[WOa5cAd_oJpgqrtiud,$?+v.=.H0u5/AqBQD9GSNIP&QJRQXM]feqjHlFt_uPuSuTy8,%;.V.l0&2Z5L>R>Y?1@VEXLHL]M/P8P]R_WXXXk<kIsR",
+        mai: "%B'p405)6<>qCnGD,oNoOvg,&P'a1Q?'?UHFJW_h_i`0tXv`va",
+        luan: "%C%Q%T6[AhAiHpJ_NRNqO1SHV8gAmQrvvy,)T78;U;gN:N;jtoZr(r),'7)L5qNgQ8VerSu*uLyz",
+        ru: "%E(u/D0C8y=p?xHrI*LfN2O*UzW6dyg6llrcsxw+,(S/O2'4y6d:7E+^&fYgbiYn1v3,$>$w&_'b.h0t2t434uH/JqL=N?Q+X5ccdGosqNqprG",
+        xue: "%F3*8v?dBpFmNmO(RZRzUcZg^NnCncw<,&o161@6o9S;%@@C:KiKyR&ZJqBsSub,$*'E1J2K6^:(=)AZC%FsGxH&_0`ga]oNq3t`uB",
+        sha: "%I*l.A/?2p3078;i<(<?<S=<=_WKY2gWgXjvswt)wR,%/&f*1*_+T.4079s>eCcLURyT>^laecMgahCkskzw4x:xc,&/3AT7X%ZEZM_TkUlimymzpZ",
+        na: "%J0d6=8u9:;*>7IJJse_fIfzg6hLjf,XC]H]KcChEnG,$>$Y2&2]9%>C>FEVJzKOO;TMW2Y8_1`lly",
+        qian: "%K%P%S&^&p'M(;)V*W*q+o.O/K2)2A3/6'7C;L=vB%B&D`EtF>FtHvK_L8N7NKNvRCRHTZU(]c_Y_t`yaib=e4e@fKfegYhWhgi*itj_kRkWkdm>m?mAs7t$xZy_,%;%b%z'V(L(f)c)i*+*7*Z/J/Y2;4H8Y8Z:I;L<e>ZB)B3BCEeN_UI[Q^X^x_U_f`pa4aBa`e8fogeh6ipkBnQptr.t*tCukv8vcyd,$N&1&?)V*6*G.>4>9::/;6=@=N=RE[FJH?J9JMO*O8OBP5P9Q7RXSiU*V9VuW6WCWEWW[daec;hmhpi'jHkskto2q[ryu_w:w@",
+        suo: "%L%n+y;H;e=h>*>/JhLt`TdcgWgXjxqzwQx?,676`DdFwFxGvHCPb`C`FcXfLfiihk=w4w5,$x.<46AaINSpSyTITOX?mj",
+        gan: "%P&_'o*K1X2&9lB`Q<Q>Q@QAX0X7]Aa=lBmkn<owt&u`wf,%8'.'u/h0s447z939c;kEOEpJ.KvNvOcRoXDY2]+^R_i`farcqhRn7t)uE,1q7_@/@9A+A@A`H>M(jWlRokq?qOyj",
+        gui: "%R(O+Z2t2v3m3o5a5h5i5l7>AxC?IUJSL^M<MZO6U[UmV&WBXIXiY0Zi^lkAkcm_m`p=qUspukw&wMy[ya,%v&4&9&:&z(2(Y)2)9*g/15:64<3D2FPH.H[I6MkN>NNPKQPQlR*ShSmW<X(Zg]o`4`=oEut,%%).+E/O0?2v4g5I6(6J8)<O?$@SB/BaEFEMG:K?KNU:V4Z>[<]@^zaZi%l8l;l>m[o]olpCq:qXyZy^",
+        jue: "%W*B+p1=2J3e5r777h8v?<?J?d@ZCiFmIFNXNYQtQvT'T9U[U`Z7Zfbkc$d$eWg=h$hkk[l'mYnhw^,'E'F)/)q.X/m16;O>9?X@'@pA%A>A?DfE=EaEcF5H2HXKiM4RCRTRWS$ZGd7dXg>hpqctW,&[&g)v*E0F0G2]5J5T5u6/686<6T6c758r:e<.=L>cAGASB/DDDEDxO>UGUWVhYLgjjtq:qaqbtD",
+        liao: "%X.a?)MWPCPLQ&Q/Q0QuU4UTUUY@YUbJbxjykXl)nSntrBrm,&Y';898e<A@*@m@qDoHWKYM]QxZc[9[D`Og*g@iiilm8q'qI,%N((0=0E=]?rD$DKH;JRLKN[UJVsYMYhdedljytQux",
+        er: "%_(J(l/r0.002l:7;uPqPrPsS1YxZ$t4vhvix%,&q.*1Y2%AHFKb5lNlQlvm=o?vE,'i1R2r8>>u>z@NB$F$G.HhJ^PXWe]?^GeZfph>kKkLmLpGr9uF",
+        chu: "%`)y+r../</e1q202C2S477:?.D?GVL_R6X*YD^Oahc+j:k8kJmyo<tWyV,$@$T$r&U'['f(0(`(m)%)m*J0n6g6h9v<XBIFfHsJsRMScV4WY[N[R_ocwh_l`ldqdt^wm,$H$S(N)W+h0S6L6_9>=q>$>`AXD>DUDdL>P+QoXBZ<]R^j^vslwBxvy)y:",
+        kui: "%b+Z2i5i5l=9=S>zGgHLLnMbQ9RvV1V?_daDaEb]dEiDpyqk,$5$7(]+B6'8o>IBaOFQGQPR*UB[%[<_W`U`wmUmWm[mdoEqKyt,$/&a's)9)C)j.w9tBcD*DwI`L6SJSYZq^1bWbzcSf7fEg.g=hwjClC",
+        yun: "%d'G+e/t555:9B:x=1A3H;HjIBN[_C`ea>aHale]erp2q3qgu+,$l'<+*+8.y.z/w343D6Y9:>M?$?0?7?;?ZBxEbJ^OvULXN^:^V_ZcRf1f6fOfVh?iHlZm&p]tZvuwgz(,$;$^&Q&o&s'((J(a/)4*>f?d?z@>A'HNIvKUKjL4LDM7MqMyOIQP[p]V^/_8_jaNavb&b5b?bEezgMgby'y1",
+        sui: "%j*N;:>@D1G]JuMsQIR7Tfoe,(**a*b.>2t7&9f9t:x>r?U@EHqI7PKQ'Q*S7T]W1X)YmZ+Z5drfQg$g6g_hxi]qVt7vxvy,*)4i8u:y<v?WIkImJYU2U@Ud]z^'^A^B^qa4b*jok'",
+        gen: "%k%l:finj.vt,seuj,BU",
+        xie: "%n&3'^+/+8+J.G/i0x13445(656:6N6_84=f?Y@?CGEiGdHHHOJeLMNNPIQ[QjQrSMUkYR[e^eaTa_c>ftgEgeirjDjel9lWlzmJnwoqr6uIvbwrxB,$:$t%/%?&f*50c1E1t4z6q9O:`:z<&<U<V=L=i?3@L@P@tD@DuE$GaU9VkX:bYcid1d>dNdmesf+f:gXgohSikivkjn[oKoMoQq*,'L'N(1.T.i0W0l0n1J203l4I5%6E6I6M9Q:3;Y=(=<DmDoJXK*`qa'a@aSawb:d)m[pCxTxkxnxxyc",
+        zhai: "%p)'*i+N.;6n6v:s@(GZO7PFevfdh*k.lIm+nfni,%J(7MOSHW?ZZaakv,>s@AP7x]x^xc",
+        tou: "%s+Q+RD?H2I`L*L]a%ednBo&,cEf(,(zI9QJSPbxeAjZw.",
+        wang: "%t&<'$0DI.Q+Q3Q4Q5[<[B[E[O]F]h`JePp*q_sPsQsXtlxu,/]:^EEOfe@j;j<j=j>j@wIxG,*M+A.J8vFDG^HIHklO",
+        kang: "%u'35YA/M7U5Xv]kbAe'ef,&88*<CBqS*Ypafbk,E9JvOYU&W<Yw[8oM",
+        da: "%v3U5L9i:%:i=m?RCQF]GzI]^5`abedvjWko,/A016@<M@SJnJzMCP2]H]X^.gNjxlzv?vS,'B0[4/7mBmH<HMHTHXIdJ(SlT)Ux`oa/abyTyV",
+        jiao: "%w(R)%.l.s/>3b3n4u8'96=F>H>J>V>m???`@ZJ9J^MgMnNHSFSIUOUZU^]&](^o_TbWbmc5g3gHghj/jykMkvl;mXn&n3nEnWnYnho$q$r&r]v[yP,&R2=5f5g7(7i8N90;D;]<s>*>S@'@<CCDtF9HkM_NTNmNtRbRfV%Z0ZcZm]3]y`Wd@gYgwhqiso<oapfq>qPr5stv%v&,&G(6)c+90:0K5J5T5u6/686m:h;%?=AxBZC+F'FnFuGQGUKLMON4NHNlPVUHX.eQfuiSj.mYoTpMrKtHtPuyyb",
+        hai: "%x9x:I=k>.@?EkI8NpOffs,.m2n=RD@dQo8,HVJZKDMVN&eNfTh?hFj1jc",
+        heng: "&$;><6JD^a^m_`knw%,&i'U3G<uFOoAod,([1lV)r>rPuI",
+        peng: "&$*E.63^5C>tDYEVEnZN[/^@_8bSewg^ggh9i;j<k'sAwoxmyTyi,&.&d0x3q4(8$8.98=S?TL[NUSRStTJU(UXYG](_j`'dEgknnqFszuGw7,%>(l08092mCMEjFIRAVCZ1bBbFgti+kRk[kkrwu^",
+        mu: "&%&j1t4nBmF9IqJ;JiS6WhWlasatfAr8r9s_sn,$>&`&a+h.'.0.G0.<?AjAlArB'C'JXJ]JiJtJuK0OaQ0SLYqfsg*iinzsHu(wQwU,*LC'PEPJWN_4_HaH",
+        ting: "&))3);+66l7+8kAmJnKzTWX?XKXlYZY^Yb]8gawUwj,$E%E/2314n9y<r=N=PFdJPJR^MdqlUmRmcmkmlohs=wAyu,+n.U8R9TJiQVWwZD_La1c&d+x@",
+        qin: "&0)7014s8a8b;]>0?KB;CsL5LoP/P4P;P@PRTiU(UNUVXFY;]cb6c9c:e@eYh8j'j1l5lTo9pCx=,'y*)/t6W9j:pFGGFGKMWRRRSX;Xe]7dhm%n=tKt[x5x8xE,(S*G/E/o0c245=5e8YAHOKO^QjW8XQ^]`ec?hJj8mkqWrx",
+        qing: "&0*m.D/_1T3B4[6f<VATD3GpP$XDY$Y8`7b@hWlPlQqRqqy<,&F(6(T)&+)+R.i.r.w4F4S537R:@J6T$TQUg^ke8e<j.u$y[,.A5e95:<<fExF;GMKoR<V1`C`D`JbMcnn0p`wK",
+        bo: "&1&a'Y(1)>.g.w3?3G4Q6@6B;3<d?5@5FmO)UMW+[6a[cafcgRj9l%l/lYlZu^v%wX,$x(+(.)D+/0i1*2W4M4s60?1A_C=DJEvIGIIN<N=NqO=SWTTUvVGVZX`Z1^o`K`k`rbuckj%n)ndo]q&s*s@u7x2xtyf,%g'.(n*m2f2g2p4^5&8T9s:iB)BQCEDAKfOkP/P@QWT'VTWGWKWTY2e`f4fxg4gAgDghh@iIirjqjtm8oSp>r^uO",
+        lian: "&5.L3i5m5n>??DDkH?HhLOMXMuW(Y3^6^fb3bZcwk/n5n]xQ,$C%b%w(L(z*I+++H3A5?697v8I9Z9m:';0;4<k>O?C@IFvGfHGUIY_`qa@aFf.fuh0hUkMl6mBmVmYm]m^p(q`qhwXw]y.,%@&7'?'I(t(u/<0i3D3E4A4l5W:FD3H]IMLjN<RcS*SoTVUiX<YZkhneo7pT",
+        duo: "&6&Y1d2k2x3A3M9o:]:q=?@%@PC=C>DCDdFTFUGmGnH8HiHqLNQ8T(Xe`cbgg)g*hYn+n4n:nDslsmt7t?u2uOuPv&w=yn,.80N0PJjLSTLe*iKs),2j3RA^BXB[BqCSE)E*E=O_UsWa]8]=]z^+^MeMfngWgkkcs3",
+        men: "&7&k*?]z_^`&`McGcYe8h=nqr4yX,/i=q@:EbHHQ]QiYsx+,)MS&W$YkYp[([9a2",
+        ren: "&8&9&?&]&l&z292:G>I4J/R1R9]6];]<e6sit4vZv^x%y+,AnVtX@XxY>c?cSd/e'h=hFn/p?tDvIvpwt,232l6y8K;g;tE/ENG=NwO.OEPj```dakb1e8eOfel_rJ",
+        shen: "&>'c(W)<)d0=7T7U7V7W8q9f:XDcIhJPJwKyLoN>OSOjPGR4SYWfZ4aZame+eZjbn*pLrUr[ujy+y;yx,$q.g0$2x4>4?4e4f7D:b@&F)J0J7J=JILuMHP0P6QvRZR^SYW0WEZRaTaVbKbLbhbncjhWjCjQnXn]okp@w>yXy_,%3%k'=+^+_335y727I839A;G<J<q<x=$DzK%PLQkbnh<lnn+nOo6o@plrmwT",
+        ze: "&B)'+N2O3'9v;y<U<Y>]MAT?WMWkX@emfdgxlIp5pI,&K*d/60@0m1G6S7.9N;DNfQ4Q_RVV1Y.]]_*`2lns(,&40k4f98:D>s?q@AA$HmeCthxmy.",
+        jin: "&C&H&N'<)/.K/(/J1e424@4O6a7<;n?V@)CsDUE5F6G'IAK_M>MkN+P4QGV`VeY;`?b6jLo(q%q'tf,%'&=*=+=1p2K2o637_9p:2=F>h@ZF8FuGMH$H<H`HuOSRRRSS=WDWS]']@]zcUc^eXfCiWrBvOvdx=xE,%E'y254n5m666::O=B?a@.@eHOHYI]NWNXO1R]VlXe`ffCg7g_v0w)y;",
+        pu: "&D.[5G?IAMA[AoCwDpFIdteyh'l4lJmcmdqLr$r>rhskuw,&w'z.L2]6K9%:D:h<5=MDjH]LOQsY'Z/^[ggrarbw*wwx;y`,$W$X9S:s=K@(DJMTQuU1UZX8YNYR]Nmu",
+        reng: "&Kdw,Vdtb,H6]m",
+        zong: "&L*8*U+F.5DzOIT^TdU2[a^U`U`qhFiRj+k6pasWu*xhyu,&C8>8F8g>+?N?Y@HCwD1KpMLTPUfYYbGbSbxe(eQe^ezf/f<faflfxg2hGi:l*pKz$,%'.s>;CJCLD2S2V%h_hvj>kYk`l9nHnV",
+        fo: "&M&w(1BixM,,",
+        lun: "&O'P(m*YA?AQD6KkT$T%`2ephVxX,0D486ITeUiY:eFhHlfp2tTx%,.*9@<&C<FPG@R6]^nC",
+        cang: "&Q&y'Q*7+q1_5cTq,)N0E6k:NDXElH0_sr1s%sOtp,$c'z/W?iV]scu5",
+        zi: "&R*b0W3<8E8p9Z9]:><G=y>3ItIuJ)JUNVN]N^NcNzO&T>Tz_'t/v`wzyR,%1'_0;1^3g4[5x6r6z8(9VB.E@I&JTJwPCPDRnW_XBXlXuY`]Ya[b*cDcbeUedgji?lVnjnooDr4t5uVuXupv*v]wxyV,%M'5*$6B7P7Q9X=2>y?9@_@cAFA[AqFBFaGaL?NoO`ROSbT/XpY+c4c5kCn.o*pns;wyx`xcxoyE",
+        zai: "&R.(/@0l:`AsOcTKdzePvx,1O576N<)<*=0JTJwQ?f[wx,?fF/GOMB",
+        ta: "&T)$+x=m?v@XEFENF<HxO5SlfMgDjRl=,%)%M'h.D013a6@6b8+9i9wAkCIE%E4ViWuan,4+8z;8B5C1CnDGDPDqJ3J8P$RJSlStW]ZiZv[%['[>[Za$a:aQmGo.q*",
+        xian: "&W&X'W(7.P.p.y/$0$1F7Q9l:4:N;1;N<Q=v>[CYDAEeFvI&IaJCJPJaK6K;KtM$MTMUMkNKO]Q'Q(R'RNSVSgUiX.YYZ<Zx]ibuc&c.cXgLhRi8jDjIkQkakfm5mCpqq9rCtVu<,%b'6'e)8)i...`1b2w305u699@:n;i=%@WC?CfD<DzE&E5E;EkEtF=FeItLYMbMiOjP(PlQzSpVKVmWeXFY_]t_8aZb9byczdFdhdye9eif^g0guh&h6hQiNk7k>kBnspmqsr.rGs+tnu<wMw],'I('(*(q*Z*n+7+a1_1c4J5+5E6%8a8w9_:z=j?T@0@BAEBYBpD<DiEJFWMJMiN<PpPzQ$QGQrRDRxS.U8VLWvWyXgZ%Z&[4]>]S]W]f]i^D_wadb9b;cKcfepg)gLm]p+pNshtUtVt_uUv3vSvmxJ",
+        cha: "&Y(o+52p307[=M=j@1C@I$JOP=RJTeVTe.e?gfgoiPivjhk*t(utv5ws,$&%a(A/<DGKBU.XCc7rIsLt&uBv$v0,1t7z8'<UChQ'SFSkV:XwY]`^f1g+",
+        hong: "&Z7I8=8o9%97:Z;`=e@;CNI/JXOAOHR.V*Z.ZbaGaoiFkkq*,/b050r1u2Z2i5)536(8@9<;w=2>&ELEVIRSwT/[S[g_Pb(c;cNcddnh4h@kTkYktm*u>vhyPyQ,&z'R*%6n6s;j=S=V=XE^F^G1GBONPUQHQZSIYyZ=ZVZX[5_V_f`vl(lbrEuMw/w2",
+        tong: "&[(5(n*t.u5%8J:Y>;A<C.RyS4S?X[[$_>b'bOglq)rRsYw6w],&I'P.I2l9$<d=.@/BSCLDmL:LIPLR'S_T5XpZ2[h^*^Cb)dIdSdehrqEv6,%<*@1`85A2IDMHP4PSPdWoeUmTpH",
+        dai: "&b(y.'7Y909>C(D;GzRhVyW8WAWHYA[G^:cQdVrMuYxv,*h*u+m;=DQEnGYJ/^d`Vcvf9hcsR,*].z2A507e<@>j?(@UBXD'EKETEdG<HgIXNx`$`8h(mFqnwAwW",
+        ling: "&c'a1V2X7y9NACBtG_IsKJNGRdRqT&Uu[@hhpVsDuQxTy/,)<)a1(479T;x<W@MA1C3EmFsI_NPSSWPXaYF[^][cneLi'k$k0kem4s&tvxC,%6%X&u)&*x1[2@3N7WB?EcF>LrNCOgR8WUZ3]d_<_P_^_b_d`:bcd&h&m+nDpaqqu>v1v]xtxuyByU",
+        chao: "&e&n3b3n4u8t>yV6VHVIZ>]yeRkMptsS,&/&R)l7W8m<@>'>5?.ATPE[4[>aeeKi.jelX,6>7>:UAOFoLIOFW0vcwiws",
+        chang: "&f&h'O*.*F*O+Y._/Q0+6i7B;t>^@.B0E.EmK>M@Q%WJYJ[_]t`%`On8p>pir*yW,.K3o3s>ACyETG;GeH8IeJ4J[K>n:pkq1tox&xY,3P3U8nR/R`X_YbYcYjZLZr[Lasl1nAoopfprx*ye",
+        sa: "&g6)jvkim1,(i111]8t;Sh*oTy$,&n'S7ADoODU8Vx^;`ka$dQduga",
+        fan: "&m1l1m1n4z5`7`?5FLI'KQMiMjVmWt]IbndxfTo`obt+uWwYxGxx,&H'8/0/@0z7N;*;A=@>p@2BfBvH_J_K(K*OGRuVR]a]d_Ja1aSe_g%g?kIl=qNrorruQ,&A'J(?))1$4]6p>p@GD=EMEgFdFzHRNpUAU]Vydbe(e=e>fho[tO",
+        miao: "&n4>7J=OICL:MSXWY'YIiMtL,4J54E?OzQNXP[Y_Teqf*g*iFiitz,($J_sIuY",
+        yang: "&o(&(E+z0Y4E4k6R9tBhCAH*IyL$RUTCTF[K^'^ta1abc`e:f(iXm/nGp(pNqwtJu[vr,$0$M%k&b*r.c.n.x1;1U8<:W<.<c<y>sETFBGeKdL@M%N&P+PYVHWfXfcrjujzk)o*,+2.L7Y9d<TEiFVP>S(S<W&[i[v]l_;`'`xd]dre:eXh*nlr0rCtlu=",
+        ang: "&o6RR=p4pntm,O@nH,N$jY",
+        wo: "&s*[++6M9C:R;l=.KRKSL7WVd3gChBhPi`l@o%te,$'/v3C3V3[4t4u9o:9>)D5I)QMT8Zt[)f4n9pMqqr/wZy3,'a+r/(C4gMy5yJyM",
+        jian: "&u(v)p)w*h+?+o.j.t/;0Z1I1Y333E3L3S3p3q3u3w@nA%BPDSD`E9F`HwJ<J=P'PuWFX3YeZUZ[[g`Vd+d6dKdNf^g_h3i>iAitjElAlymCoZqts7u5v$vfx(xRyZyvz&,$=%'%n&j'9(8(Q)>*k+K+L.C1T2;3I4_4j5N5O6)869A:P:g;5;:;?>T?P?kAUAyBCCrEeF:G]GcOCOUPpQAQzR+R2TETXU)UpV$V*VAV^Y_]C]i^A^Z^f_3_v`Sa$a9bUdZegfKgCgSiBibl&mjnCpdr@s$s]sgshuvvJwlxLyJ,$`&&&O&r'P'q)E/l0q2o3G4U4W545E5p5s6%7U9=9U9r:C:r;>;@='=E=w>'?@?V@OAhB2B>BlC2C]CjG0NwO.PRQNQ[R1SUSWT9TxUQUbUlV7V8VRVUVYXMXmZ&Z'[6^^`_aJaMa_ahemf(fjgHkbninonwo?pUq0q[r[s'ssurv2v5v6vC",
+        fen: "'%+X.o2<8hB<BABUFYHIHmILRDVpX%Yp]naBbopBs<sBtox6y9y:,'R.b/q9q;7<1=u@(@1DeE]Q^S1XL[Wahb4bicQhIk&kKkXqWtN,$]&`*N*O1z7.>4><E&FyM4OHUw^E_6f.fSg@gOlxodpoqYw&wax&x4",
+        bin: "'%.+/BOq[.jslrngxKyS,%r(I+;+I/57::&:G:K:lE]H6HwS1gdicq/qn,)k>/>9?E?FJwV2Y>_mc1ced3jwk)k?kXkjky",
+        di: "'&'y)g+3.F6u9Q:b;[<5<a>F?tB$BJBNBrChCmD*DsF*F7FRHAJzL0M;RrU7UnW/XSYcZ5Z:[?^9bBe&f/fXh^iNidk)n$nOozt7ttu2uqwqwxxv,$Z&>.V2U3F4v6s7F=hB(C$EMF]IvKRNJPOPfSGU&U*UyWHWkXi]I]Z`$aRc(eoiRk3kvmJn)pUtstyvvwix9,$&%9%^%c%h(7.I.t/a2Q5z626C7X9I9P<9=5>:APCXD0EbHiI<I=IqJ4JFK:NxPHT`YG]&]s`aaLb_gVjak8nMts",
+        fang: "''*Q5TB@ChD^IR[9dbmmo?oPp;pJtn,/k3vApIVOyPHVqcWhLnDrvtU,*27<<+B3JxO3RqW=[uk9lwp4qjsd",
+        pei: "'*(?)X9cDGI+IDJKKFL>UIW$^$f1m6oDoLv%v2xd,.6092v4.BrFTG5nAnu,%.1M3V3W?R@sG3GgM%M`R=Xj[n]X_Ng^",
+        diao: "'.1U272U8:8HH[QVZ(ZJ[+e&h[yD,/:GCMSO6QbTWZe[7[k`EdK,%9'v)p*p6r8@9'<r>HNjOQPyQ;R3RdV'VzWqX'^p_Eldm7n5pjqCqKs$x8",
+        dun: "'/8g?kA.B?FOFPFQXG]b`9bik`l6n@,$U'>0(8`<D@%BRDsOlOqS:U1V),.9B.CTD@DLDWI1IlJEO?W/b^cviN",
+        wen: "'02D8z9/9K<=EhI9Zz]L]MeTj&j`nbpjwd,$l%D*m+9/i4P4x6Q<4EYFYGxHyM*M9Y^YzZ?c@cAd^f6fOgMhKiHmLnMo^tBwR,*7*8/S/t>7FcFgGeTLZPZUZ[[&[0[=[N_5aNb5cFf<gcgnlsnvo4ptqZqlx6",
+        xin: "'2'S)d*)?j?mA'IKMwNeYH]1]2]j`Pa4o6pGt]tw,)f*4<F>4OmVKoqrUtQw>,'T1O4`747=EJGnK$NGO<QOUNVQXJYK[ccLgNgQg_",
+        ai: "'6/01]7X:V:e;K<.=g>9>P?bCfDwEbFyK/K@M*N%Tua9cIcSgNhCnKnMplr1ra,)o*$+k6V6e:C>)A;H5HeMgNWNaNnR/ReS[SnT[UKV?dBsu,&:'0(O9Z;*;<?lE1Q:SgV$Y'^)^2_t`6`;f*gJorr;",
+        xiu: "';)e)q:Q=`@&OrRbRwXdst,&E6Z7=8A=$FAFnHQX>b_dlg3gGhvk4o`opr7rCu:,/C2L3q3r>KQ%QCScTSTtU7XFdpfBg6k:kOmcoIrLuHxW",
+        xu: "';'`(g)H+@0s4e4f6`7l8?9_=(==>_?.?EAtCbFEGMIaIlL+L[M^XM[R^N^n_(`Bahd.hpi^n%n2otp$p^pzqis8sFvd,$.%e)k)s*'*B*F*w/r/s1v2H405I5K6*6g7J838H<t=V>m@VDlFCFRJsKaOTOZOdP5QKRTS)WdYZYcbRdPdje&eaeef(f=gsi&i)mAmMo)tI,$I$k%D%Q&e'r(0)Y)])^*k+;.W3'6v7C7K7t9G9j:Y<$<W=8?;K*LTM1MlPiV6_FbRbTcrcsiGkqlHlXou",
+        tang: "'@*F+*+j.)/n3r;R<i>hBYDPERTrVxa1czjTk;rxxs,%H&V'@/V3o5j657r;[=E?+@7A+H)RNU>Wr_]bMbabfkFlhpxq9,$u'D.q/I/fA9AjC_D&E4L:N'SxT@TkUEViX2Y5YAZr^4aXf3f>smx0",
+        huo: "'C(N)s3J3s8W9w:5=(?w@M@^GxHnJ7ZvZw`Cd8gnhplpm7okro,(J0*215l859u:?:m;n;o?'E*N.P1R<RFV0WJW`XmXrXsZAZy_nlclrqzs^w^,$L(U0u9v=[>o@EAYK)OWRzV0W>XiYVYo^s_S`5achq",
+        hui: "'D(@.h/i5j6/:J:l=3>X?7?G?X@4@wA&A6AeDdFTKPL6MmNNPKR*R+WdY0YfYhZnZpZq]'])^u^v_&_;_Z`Rb1b^cjfvgKimktq4qDqhr=s9wMyq,$4%x'H'p('(2(o+B+Z+[+b/90j1M1N2C5I6'7)8Q8o9X9u:_;s;v=:===C>M@J@RDxFXGQHcHnL>M=Q*Q=R0WZY%Z8_ydWgHgPhkiIkpkql.l?t6v.vY,%z&W'2'3(G)5*&*F+.+/+q/O0H2<4$8+8:8g9[:j;/;A;v<G<a=r?6@^FCG[HsIOPiU2UgZw[U^+^M`Ybycad4f'm_o:vy",
+        kuai: "'D))/:2+:p?eAqBMEDFJVBYO]YlUods9,)v2C9XCQDyHn^QbtoSq],$/$UKRLegjogpK",
+        cui: "'F*3.21b<><IF:SuSwTn]_`$azk=yH,%C&+.94:8::8>$?UG'H>KlLpNgUe[CajbCcYeEfQi]k]kwoIoLp*qJqSqmxU,2$4XAlTh^Sc=",
+        che: "'K)h+0509U;UBsHqQDQy[=]%e=hviHkFl$l&,92=<=L=iA)QyS9T6T7m3w=,+VEDG8H_bd",
+        chen: "'Q*p+q/`=o@IEpF1GyOkPw]`a4f5hGn(nPqFrjvOwSx5y;,$n&B).0$0%>GA9G+KeM&MBQUTDTkU^XoY[Z@e)n6r+umw$w6,&+'g/g1w5'789+9a:';X=$=P?O?uAKALB1B>CZESH.HfKwN*O4S8]6]b_It2vHxfxgy>",
+        xun: "'R(q+K4Y4j5*5+6&:F?2?L@/B9D%E_FuG8H]JFN`NrPYPjS+VGVaVdY`[I[m^]aYiUmbosrft*vLwP,&r*x+X.)/M2)2J2P8_8n:B;h=_>M?A?x@4@Y@j@rCGE'FIHSJYPRR:Y.[(c9ghqov:vc,&?&F'U'Z(d0I0Q6q6z7)7u;p;r<PHCI'I4J2KILWN@V&c_gZh:inoUo_pQst",
+        chi: "'V'l(_(p*+.@4S4`5S6]8/888A98;'<j=E>(?6?`BrC3F$HQIELgQDZ1[([4[5[u^w_)avbBbYcNe/f0fsg%gnk1mOn/o)t:uSuq,&D*(*[*^+@/R0T5;7y<'<l=X?qC+IfLcLgLwM5N%P7PSQh]*]L]q^c^i_qayd]kZk[l$l(l^m'n.o'o;pQuZvHx?,*5*W*b/`2i2j3O497G8A8y:.=d?0A.AIAtBXCAH^H`IpJ5JAJHJcP1PWPoS)_:e;fggYiolSr'rNsHsMsOt:u?vqw6xexpy=",
+        xuan: "'W/92o7Q8C:P=5=AEAGcIaLEM3MvOUZH^J_s`va'c7coiLnUoQp?pSpxqcqdr@wr,$K$L's155*8%<Y=6>PE>EtFhFkGVHEI'L1N'N2PGPRQERDU3Ww_4dDf^fwg5hml'l@y/y0,$y%l''(R(g+[.]0h1]2_9J9g:u;D=0@7ELG;I3JNP%QbS[TUW[YIa7dVh:hOnu",
+        nu: "'X+d48HsNlVxZ?^*jC,SP]^o2,gxj%",
+        bai: "'Y(F9A;FXKfVfWg$h?i.jqlZm&n1u^v],CkIcNCNDYA[db2bDd6,'W5$?t@Caz",
+        gu: "'Z.*.x1O7w9[:);D;E<@=r>UADDZGUJ%MNNkQ=SvT<VRVS^2aPe0eUmtt<uvwvxp,%&%P'W(e+]/[0[0q3k:H:kAzB5LkO'O.O_R3U@WMY<Yk]M^h^v_Vb^fHjEjIk*n;p%qkuKwnxB,$n'M*s*y1;6@7S<0=Q?:@]ElEmFiGCGoIQM>OeOjReWFXa^bc^cuf0g/jRmCn7pgr+sru8ugwzx$",
+        ni: "'['](6*X/I/P5z9LBdDMDRIXI^KYM9N@O$QFQ_R$^C`6aScSe_f+fYholooTphqPr;uSy=,(M/.1/416a:(C6CmKSPBQ2XZa]fFmQmjnmpnqGr)u6,'j*[+D.@6R9%>TBRF=I0KvOaW_^F_YgBn<phvKy+",
+        ban: "'_4*60B8BXIpR;^)e<eAfFjUjVmlnlnmp6sBtbuV,5oARFSIMITM<MhXXacd&h]n@rsrw,.H/>47BNGyH(OCP?W5Z][m`pb]cxloqY",
+        zhou: "'b(s//0p9R9T:&:D</=$?U@'IYKgOKVDW*[bi'poq;qKyD,2&3p<n=(F>InK^NxO*O[Q7RaTp^m`sa0a3axb/c8fJg+h5h[kyn2n_nprjvixIyc,'`7^9p;:<:<X<r?K@qEsF.F<GFGRI[KqM&Pa_RguhDhXi^jNn8rMuJ",
+        qu: "'d't(82T4:5_5u6$7L7M7i9jB[K8QRRLRkUA]0bRdWf8nTo0s&sF,)M)V)m.S264;4o;J=g>FA(HTHhN5R5UmW+[Z[o]paEb6cmd'khl7l`neo$r&u1wjyI,&T)'*k*u+(/*/i0;1A1F1Z1m2a5k5r5v677f7k8r<<AUAWAnAsDrE'E:E`VaZJZY[T]%gmgoiCipkMm(o>oQr%sBu(u@vivjvovtwHwhx;y0yI",
+        ci: "'e'w(S+B0W2q2u9Z9]<GC2N.VTXYagsvuZvc,)d*R0y:>EwF%IbIqKxNOU;VFW2b*bWd:fLuuuwwf,'5++/80_7q<;?N@oAJBFGpGqGwH)^geHeVj_jum4r$svswuiy7",
+        beng: "'f=t>jCgD@DYEoH^T7U%j$,1?G5G=IzJCJDL[VqdEeAg'i5xH,*:BgD4HwIVU(YDYxa9",
+        ga: "'h:*>T>g?iH7H<PtQ$Q6ousH,EG,EENYRnVmlB",
+        dian: "'n((+i0V79@VBbCMF0FiHJH_K`KsU&V)V9V:XU`XdehTmUmpn9yb,%Y%l'*'G+Y3c6n9[<hErG$JKJNL/LeMBMwN1N8TgUt[6`Q,$M&E+oBKCPCqOrWQ])_A`McPcQdBiRwDy9",
+        tian: "'n*<0P9;<&E[EfH%HtKXQQ]K_2`1i)jbqHvW,*s0X4+4I5CG2H/HrJ1J2JFJNJbJhLeOjPrU/UF[6cuePnfp8r_rexP,5`63?QM9PzQGRaWQWyZg[Y`F`OePr5t&t1w+",
+        bi: "'u(*(1**+D5O8`9r:k<H><BHDjFhH4HoIMIgJtKeMqN<QNT3VhWvWwXEYPYuZQZRZY[>]3^G^Pa&a*f<n7n^oMs=ssuNv*ww,$)$s+o+p+q+t+y.:060k5]7'7?8v:4>U?LCVDgDhF2HfJVJWJgJyKWKmLhLiNFN[Q.Q/TvW%WXXSXVYU]A]B]u^4^`^a_m_zabaicKckeJfegZhBjgkdmInPnbpjqarxt:uLvVvsxXxq,%&%O&;'F+g/G2F3J4S4m4r6W7i<>=h>U>x?3@2@P@pBoCxDQDRGrIgJUK4LGLVLXP)T*T]UoW^YrYsYtZ5[.[/]Ia<aVb(eDf@gCh.iDjkkHlUm3njpqrasSt?tKwqxM",
+        zhao: "'v/y8(</<3>yC9I[V]eLfUoVp`rVsSu'y7,(X0Z:E<R>n@QA4A5CEH3O/P_R4]8^gj(jSjompmvmwx>,7g<=A?AdN^O/P&SEVqgrmOqK",
+        shao: "'v4;546X8(;(JbPpZFguoYt5uex4,8q=A>B@0EzPcY7^Lcpe2h`s:t/txwLy5,&p2GF4K7a6b@kTmh",
+        zuo: "($(2)5+4:+;S>sBFRSRTVLXf^%hOl0pZumv&,G4W*XgY=Z3]]^Jc'g9ntu@w1yAyB,%)2E98M<Oo](eC",
+        ti: "(')y*J+%2z367'<?<k=[@+@2HAL0LLQSQgQjTGZ5[h[u_R_V`G`H`rd^gThyiNidm+s5sGw1xAxv,*@+<374v8;F]GWI5PAQFU&U=WgX3Y4]ha&dkf3i$iEjNtsvK,&Y'C3_3h3i:)ArAzCDCgCrE(E@I@IbIqMhQES9XOcBd:hsj`k(kFkVkZmfnQpsrgsMsOt(t)tFuV",
+        zhan: "((+;.d6F?SMRQ`RuT;TOU=U>URUa^1`;d:dHdRj6o/o2oIocu:vBvowExz,$w'9)E.%.N.P0]5UG&O/OAOPR1TX[[aweIi;x*,'G):)h)i*t5l7R87;';+;`=OARFeFvGjJ[MaZ0_WdFdOdse4fRiMiWl[ojqAq[tjv'w[yi",
+        he: "()4L8F8Q9C9`9u9w:R;.<K=5=7=^>2?:?zC0FxIkP%S&`Df*mus+s;uUvs,$%)t.B0Q3Z5&9?=^>H?8?9@X@_CDD@MfNsO9O;O?ODOHTYV/X<_[aXb7c=h7l0l1u'vrwvxT,$r/M0y2J3s5B7H7J7x:4<1>N>O?2@XA5KENbP(V/Z7Z:Zk[D[X^T`?`@`AaFbgd.eRfsm&p6sWsesktyueusvbxhy?ya",
+        she: "(.6t7)HQHaPcZSapb>cuegfyg;h:iqjmjomK,(>)I*G0n3)3^4W72;FD*K.K/K4UwVerVrWrX,%a)x*v+?0a7?<*?D?H@iA0F1Zd[IawhYvW",
+        die: "(07s:;:b<?<zCFDmS.TJU7W[^<^i`hd>g;iqpfrlur,$P%u+6.T0eACAMA]IHK5KDKKKLPAPNTndRhilLlMn`rAsIuC,../&/e3n4H7V9F=%AMBBBKBeCcEwHlYfa@ncppr3",
+        gou: "(3+f0r587x9_<0BoCDGrGsJ:LmRYZVfRj0kVtguF,%^0=6C?)C9ExL.]`_d`ob^f)iOlIlJlKtXu+,*k2^4.5j657O8(<M>E?o@KJ.O@PBW;^eaPb%",
+        kou: "(3103a4D7v8%OoOzZZ^(e1eokImq,7CP)P5QSQcZr[Z^2`8tF,&0&9Nmt'",
+        ning: "(4)+*n/N1h:1?sN'O3P)P3P5P:PEfblsuo,'M(N1&9G:.C@E(JER9m;mhu5,'_V5kxtn",
+        yong: "(9)S.34U4V9z<p=c?cCjEHF/FlM8U)XwY[[0^T_E_F`Wa/aWaab?f`iVlCupvJ,%y/(1=3.5b7O9W;KAOAbJ>JBL6MpN6S`T5qbu&,$5+S7sC*CVJlL&LFMzQITmYE^h^xcHd;fNn*o1oKp_q7t=",
+        wa: "(:2/4F9C:':R:^;u<F=r>&JYK4KcLUR&Vz[Og<j]mV,226A7xIPIcIiJmS;ZKZaZg[*m7pppv,+32R4yK9agamb.wj",
+        ka: "(=6G:(:*:E<oCR,o/,2zPP",
+        bao: "(>)`/V2_3?3G53575?@5DpDqE)LZNiOOOeP8PQPT]/]xetf)r>r^rhuG,:h<]>y@eB]BjFJZ^]Qetnyu*x4yD,&R'.(K)f*Y2B3H3u3v4Q>??eB)P'VJWYZW_?`>eGeKflgij]kGm?p?qSqfu6xlyC",
+        huai: "(@:LBEFqG0[L]ocFcn,%c)24<;$lu,);)@404?C?yg",
+        ming: "(H1/1`8K9hJILvani3p@r%sO,%2206EDKOsPQQ[uf,$i/Q5h88L;MCPwX)qRu1",
+        hen: "(M:f?j[J_.ff,CBLC,8&a*",
+        quan: "(P0F2o4)4v52<bARAYD0HKJTKZNOS3V5ZD_4_b`EfnhDjgszy(ye,$e&'&h)L0h1o5q;h<vB*B+B>BcBdBeC+GgJeL8RJSe^$^ydAe1fMi9v=yq,)I.=1B6F8*<NB^CCF+GSMvPrUCX$ZeanckdIh;htk_n[q$xw",
+        tiao: "(Q</N)OZR^RpXb^gg7o&orpssIsntCx/,&cPXVyW9Zl[3]Rb$c*dKm<oGswtxxg,%*%9%:./5V8@9'<rA]BjHaPyQeT3X'a5kAmwo=pXxsyD",
+        xing: "(V*D0R2G:oC+CXJ'JpKaN?VFX6Zy^A`+`mlgpQrZt1,1Z3N6u>QC.D7GXNoOtQ<Sq_;_HeVpWqurRvAv`w;yS,+O1V6P6X9nJyKKMmO5PTPqQiW(Wb]7]Ff+fbhTj7m=nS",
+        kan: "(Y+20y2)2@4gBDDADyF.SdTOTZ`4dCeIvX,%n(Q*+*/P'R$ROS/U[[zwV,1XFGG'Zu[]cGl+ySyY",
+        lai: "(])n*6<'JlKdSfSpXq[W[cm9tGxPy4,)63@4D:%;(;.CpG.KcMsMyN/PoQ&^3^]`ta=wWx],(T5(8y?L?g@h@uIRKuRoX:c2c8h^n:rns<vn",
+        kua: "(`:KCPH6JG^rg4pz,$+d5o5s5,8EB*B_Pxjf",
+        gong: "(a(r0J0O4+5K5N7I;`=eEcO^OaVKVOW]YiZ'_3aGaoflfmmjt=vl,/P9<?GF?U7_ic2c5c;h4kTnK,*Q6K6[>i@?E$E+F%QHa+kNyMyRyXyv",
+        mi: "(e0u1&14:@>nEMNPOEOnOyS<WTWaWyZ;ZCZc^WcykKlbmNmxtk,$z&P(M(W/Z030S0k1n455+7G7q:(:+;2;X?BA*CxE6I?PMQQR(W%W4X.XV`LaQambgc.fvjnjvoXt(y],$e%p%w'w)*)>+w2e5M5N5U6)869y:$=6=AHvMuNDNENJQ.Yi`StpvDvEvUvzwv",
+        an: "(i*&+=/C6i6o:O;x<lCWD=DbLCO;R)R3RoS8X=Xtg/i]qYqvw.w/,.o1hBkEpLfOXO^jYo@pVvFxFy9yH,%?3]8[9^=3>A>QQ2RBX3Z^^$_>a(a)bGgImMrusKuZwU",
+        lu: "(j.M0K3[4]4o6H6J?N@3@EApBkC&EqErG*K?S/XNYBYVZkZldPi1k3l:lFm(m<rpu4vFy@,&N&X'd(j)(.M.R1B3x434Z7I7[8]9E:X:o<7?O@oE3EBG?HNHvI:J@OOOYQ3RGSlTCTZUZWQWVY;YvZ4^n`A`_`h`ia7a8b@e`gxi=j9o0q2qyrys1sYsasbtHwp,%N%P%`&U(])D)Q)_/c106b:8?4@aAmBfC=CzF)FmG6GEGTGkIYM[O[R:RiRkTNTdU.UeVKVPYO]4]g_ychd%gfhVi:k+lrlun?p(p3p:rFrqs%t]txu:v%v/v9vMw_",
+        mou: "(k4H7H9M:uDt^cmsu_w?,AjPVg*ii,+)9k<zC0SLaHrHvk",
+        cun: "(v2B8IGQN_PV]Dfpt3,94O$[wa^qC,K(",
+        lv: "(z)8+U.H/T5.6A8S9*;9C1QlQmQpTP[Mb8bDg:grh+oKx2,$o(m(q.F.v76:T=m@gEAQgW5Y0ZC_Ad`e.e`frg&i=iSpuq.q=q@yL,(.)S4'4FKZQKVHWpZC[@iaist>",
+        zhen: ")&)4+OB'EaEfJALrP&Q]W9W<WRZAf&g1gUiSjcnzpUsKtxu<vTwHwSyx,$N$w%+%l'$+72>5X6W8f9`DWF3F4GzH/IoJSJrL%P3P<P=PWSITyWAWaWnYd[j_:a$cLcud_fWf`hNiZm2nrrExlys,$<$h'h2M385S7L8j<8>e?C@<@gEfFjGJH2ItM3NdOtR(RhS_T;T<VoY1[x]Q_Mh'kip%qeu7wV",
+        ce: ")'+N0i0k7%72H$Y)_A`nblfumvv?,2A5$Jv]U^0^8^N_'`@b+vWxjy2,%+",
+        chai: ")*/G=%@eVTf@v.,BiM?W3n8t&ul,*+0e296t>@O%W'",
+        nong: ")./41$:t?WYog0g[,'m)C2I9n@TMlX+Y&Z6g^oYq^,'%4j;(H0H1N8kuxZ",
+        hou: ")1*G7*8L9$9%9_<xC7DoWQ[N,1SBsDBLyQDR]_RbQl/l7uxyR,=yI/KJL5PvSOf)jemJnRofp@pJxS",
+        jiong: ")2.X0a0j0nA1BgD'dfdg,0a2r9+<3<^=K>a>b?e@9Zod%dzr0r3,(f(k45HdI2Pcc>d0gph=",
+        tui: ")=)B.YFJK'Q?Z0Z5]@i$,'>?*Z>m7pr,%I(B(_+U+p/348;KCiD8I(^>c/c0c3d5hPjhlM",
+        nan: ")?6=<rA%A)IJJqL'MBcxexiEqstrun,$F5n?%JMJop[wTy1,/+9`A1J*^X_'",
+        xiao: ")@)Q)u+u3*4G9e:H:j;0<g=^>Q>V>o>v?%@A@Y@aJ9KMNdObOhPnT2XgZ^^obmipl(mwnCn`naq1q`rSu;uCv[x1,);*8*E+W+e1s3(3/3i8E:v;t;u<z=b?9?pCjDnDqLHLMNbNiPcT)T1Z.Zp]?^K^Y_1_D_g`J`^dfhtkrn0qLwLxz,&l'*'n)J)U+R/u0+0N12768$8^8t9zBzI7KlQAX>_JdWiKj)jdjrk$lJr&r?t/u<",
+        bian: ")A5y6D7kG[S%Yl[j][`oddeQiWp],/f/g<L?(A[DCE)E^ImL&SOTtYRZ]]m_5a1aGbNewf0iMiTr;sGtgy7,'u.`3m5G5p9D;L?&@JGtGzH$H%H'H*H+H7H8IxJ`JaNLS`Z4a3aKnXnYq&qwsY",
+        pian: ")A+'A2LSdd,$($OAQBEDCE)H6Hw_Mf0iMl)oBp3,5K9H=7?%?8BgCdRyh4hZhjhlj2jAjjm$sY",
+        cu: ")E68?:LV[D^4c%,'f*qD)LsMIO+`9avfgoo,%r6;8LAUAbAnAsCICbD%DBDCMfcYv;v>v@v_wg",
+        e: ")F+..r5H6e6k8i9+9G:8:O;&?3?[A8CKDXDwE&IcIjJLK%K@KAKBQdRAS)SJSKTMY/_<_q`Sa3d[eJj?jNjdl_mzu%,)0*L*i1h325<FZG9LfLmNXPjS(S2SJSiU:V>p`tmwPy:,&X*3+X.G5c7+8N9N:c;O<%=.=zEUEqG?HUIwIzJQL0O=O]QsS6VOXEXvZR[Q[k]$]+bUbibjcCcDd<d?ebexfzhRlgnko0p'pwrRrhrisPuSufxUy4",
+        guang: ")I.`0%:9C;JEX=XAYMg(knw(,2.8a;q<E<H<I=;BnE1F<Sgo7r0r3uy,F(IEQ1w*",
+        ku: ")J2j;/=X@QAZDNXQXjYNe)g4ghsEu=w3,$A=`C>M.RrT*XWZbZvd?hgnku4,2k3F4@BCKBMQjbmZyq",
+        jun: ")L/30z8Y9)B=CkJFPMS^cEgjm6mMq7wexq,/a2P:B=g?zFaK1NyO(O)TS[f^:^s^zw?wsyo,*>.$265Z?BEGKdOPP`Q&S7W9]D^W^fc)edg&hQj9mep]r_r`rcvAvIvOyZy^",
+        zu: ")P*36*68;+;kSuT8^4oUusyH,AFF+W&X^YK_(d$hVxKyC,$O7n<3B'CFSsTHTQYH]'`n",
+        hun: ")T*`ALK]KnQ)]e`Ma`h`pAp_x`xg,+32G3`4E585^5r6^=_=xFXGQOvQ1Q9Q>v_yv,%e6N9L<VFrZS[Oejg(lDxD",
+        su: ")Y+^.z=d@kB%D1EJEKGlLyOraIaJbjkKwgy2,%3&L&S'D)1+(1%1w336U6_8X8dEDFEHYJ<U9YKYMYwZz`>azb'cVf_fiihmrmtpytrwJ,%_(+(^(j6Q7F:*<7=;AeD(IIJ7JBM?QSefiJj?mqoVtMuc",
+        lia: ")l*4,,",
+        pai: ")v:cYd[ZfGhexd,0>244a5=AVBZCh^_`c`e,$4FQHjSf",
+        biao: ")x.J/XF&KLM)Wi[*kSt5vA,&W(<4@7@:c;o?M@aCnMGUaZD`+p1q2q6qt,%Z(>1s3S4L9B::?yRmTqVIY@Y^dKdPdYdidjdkdmdte%e&ijj3jJk5q2v=",
+        fei: ")z375e708_<OHZI+KUKVQhX^Y+YL_xdlnkpeqbrTsEtPv3xc,%9'+'R(w0V4)4R:MBrC4CiL+L`McSK]__aeYi+kxn?nTnbnjnkpEtaxDx[,&Z+u.60D3X8x<l?+@WUcY.]Y_U`7`P`Qe'e)e*etgGhdhnn;pdx5",
+        bei: "*'*;+7+S+t.I4Q5Q679A;FGYNbXr_]_y`^`ubTixp3tPtQv2wTx&xdxfyO,=tAwBKC(C`FcGDO5T`TiWl^_b]ngqau),$z(9+W2b4%8T9(>d@;EkFOGZK8KhL/PQQQUyW3]0`ta<aRj^rzu]",
+        dao: "*@26282g8$>J?hG$PZPmRQSXUEUFUtWCX(]7`.h5hAjAlfsnxNy`,%p(:(D._=s@]ICOIONWIWTX/Y]Yf^gdKh+kylArksJxQ,/[1g1j3QCkEAH8J'N]]T^7^Il^p/",
+        tan: "*A+x.Q/587<c>E>L?/?0BCBQB]D<FVF[FnG.KTZOZTZ_]>^S`Fbfc'c1hujum%mRpKrDrQ,$j'G'k*<.55Z7;8k8l9d;Z<[?uHmL?L_MEN7U+ePg[j2j8r[r`xN,(A2H4q5=91:q:w<w=G>a>q@HKrMcMnN6PKRUWOXkc9",
+        chui: "*C8xAVByCc`KhHjOw>y.yL,%_<8TL_$p6x),RNT&Xc]ac6y`",
+        kong: "*SD8NZSi^k`0hzyJ,3URsTMZP^wkA,E5RIa8s2",
+        juan: "*T4C4Z5$6^9IARAYCpHDHKJ8JvKZUmV&VbW5ZD_G`EbEgwhDsNw0wry(ye,353f=aCYDvIdPUPiQ(dOd[fnhujOjmonp5qfx6,&$1<32;DL2Q[QbR>TFUfXhY6ZX^W^fa7e:eYuQyx",
+        luo: "*]/k3&:E<_@h@uP[S(grhBk4m)m8m<mLm[ruyc,)Q1D1f1g4Q8+:R=3BLD/E:FDMJN9NqSDSoT4Ul]n_/aLdCh)hojAjpp&pSr%vaxpy;,$v)A+*/m0b3Z5q5w89BTDaE0IfJfT[VcXbYC^mc%fZhCi<iVj0jKmSrOtd",
+        song: "*^.71Q8CJVO=T5TxU1Xy]X]q_aa?aMb5c3gyiRk+tatcu7ufx7xY,$J(=4*7a9xTG[im$mbx(,718e<(<dI)TGbVcyf2hIk]",
+        leng: "*_1A;hD]E>T&aAy/,$DPuT_YF,':C>",
+        ben: "*c=IBABBH+H0HRHWhKl*scvYwY,$30l4N8.<1B=Jq]Vk`u=,0D?3@PISRQXY",
+        cai: "*g+L<9D>KIOs[)dpdshtt2x_,+xD(Q6eCfdh$x.,%t2x>h@@BkCKNM",
+        ying: "*o.R<V=P>k?Q@TEEGUKwLDLdLwN6N:NLO0TsV*V0XRYX[3]JaCc?kBkZm;mDoypRqMqmsVu[wBwUx>,$M$`&p)=)A2^506%616u748?8D:/:0:J:[:r:w;1;6;R;_>>>C>V?D@=@bFWGnH%HLI>IrJ*MYN3O3O:P+R_T:TsVUWoYya;aMebfBgzi(igj*j+j6m&q?qXu?ucv`vbw`waxwxxxyy<,%7'k(x+%.M.n/1/T0d1=4<5i9x:d;=?A@+A*EBHLKeT1UUV3Xr_`a3bDc(d/d7d8omr6sGs^sftLt[tqu&uuv(",
+        ruan: "*sDvG&L4kbs@,(SG_I(TlVCejlPpO,EYFSGA[q",
+        chun: "*u;IL9`jp0pWqxsFtXz',%X')(Z2h4A5v757kB?GUQ@_@cJhAnEojq<t<wcxWy4,$9%F//1*?cFZMbMpRT]Gn3nas?sTu`",
+        ruo: "+$7eL(U0ZGgchN,$/4Q>1@f_2_bu3,$bL.nto5so",
+        dang: "+*/70822?lB)CSFrL$OGTCTrZja1gGlMmWwI,(()U/)8P9L;[FVHUHjIhK8O]QTRwU%V7^6`N`lsWv[x<,&h)10U3&4o:x;_=:AoIjUuWnZz_BwN",
+        huang: "+90B2$=>E%E=FZHYLAOmT@VEW_[k^M^h`iaNakiVpvpwrLsP,$b%7(e/n5Y6p8a<m>R?2?r@kDiGpHZMZNMNdNpUuZ(_G`Yfcn+sDvLy^,.^0C1K7w9f9u=&AuJ%SBT2U>Y%^%bCf%hondoWpztNw'w(",
+        duan: "+M3NE?L=o3o=ys,+O+c>KGiRdTz[r`HaHemiLlSpiym,3pDeS=SVXz",
+        ou: "+P5u6$8V9%9?>ZEs]sb4,(p)j*>+N+a0B7m?cIYIwX8lipTq0,&C()(H:I;wTPqmt9u3",
+        zan: "+T/Y/l/u:G=*?8@jOtfqi[kdm3m@mPpOqar5w@,'`:S;TI3I<IDX4ZI`(`]`abV,52;E;]?M@&A&B%B&CwLkLqLvRuTwTxUOUYf[ro",
+        za: "+T5W9m9v:G=*?:@b@j@oVgdqfqsyw@,0<0MSZc[cer$r*,4[HHP2^l^w_)b>lv",
+        lou: "+U.H3%=W>SEzJZKCP>QeTlU;Y>bDj*k5,$c&Q6+7]7b?SIuM2MTMUQg_Y`?ljlosQ,$2%q/./n:G>^E;JGTsY*]9_yaYjpjzt>",
+        sou: "+[1K7o7r=q>C>DY(Y5gyh.jFjtk+l(lam'y5,(y)y6XDNMPQWa2sN,$6$j'X(@/=L9MtT8TWY$d_dadxf9g0i&",
+        yuan: "+a/v0e1.3(71737G9B:x=5?aA0A7APAXA]A^AgCECZEgGjIQI_LILcLsNCOMOvZH^B_G`>a^i<istNy%,$K%0%>'g(u/x3V4C4O4T4X4d5m6668;CA:D6DMGjOiP@Wc]<_&erf;iVkGn3tMttuaz&,$C$R'A'^*D+i.;.d.v/:1Y273M3Y3t42:2>f@>FlGhHZIeJ6JdK'M5OZR0T?]PcNgsi3lpqTqzs+sXsgu0uAubwfwrx(x/",
+        rong: "+b+v0vB>LeLuN1O4OlSWTgTsUsd0j2j;rrv>,%%%@%G%y.+.J6]:s=Y?F@bCJGuYlYndJfShek8n6uhv2v^,$p/0/?/@0p41EpSwY?h7",
+        jiang: "+f/%4t5X5ZE<FjGWHTHgHkJ2PePfU3Z2ZLZMZPZak@kTwN,&1'j)$+G/Q1e2<5'7B8=BUD]JlK<KGKHV9blbsdUgThniokullq7v+y?,$1%v';/2/r:1:S;u=bMKN(N2];a`cRoHq%",
+        bang: "+hC[EWW@WYWmX'[/g^h2j<oGwmxexf,%.2RA^E_T3U?Y@ddfGhdpssK,$G*2*:+0.5:+=>K&K+SmY;aBjs",
+        shan: "+n.V/52V2a3C3_6;<s=H>MB.CrFFFGIxJ+MrR%UaWfZxdjgbhqi6i8jQkQkzlGnXqOt)v/v?yj,'''q*H/G8k8w9B;Y<e>Z?/?>CHF0K`L/PqUkWWX&Yr]Ffzg;imkJkLogqQqYrmtAu9,0L0X1v5]7%9q;3;m@)A)ABBPEOJmL^NkPnU`VwYnYoYu[*]C]KfGi6jImtoYoZq;qA",
+        que: "+p6Z6bCiESFMSh_raFb.j3n:nDxw,%I/=<B@GGIMRO%T*T<T^U4U5V6VSiyj$,$A*EAiZbZl[W[[^Zs&uX",
+        nuo: ".//m='Jsa<c]c^gPi=jCjPjfx+,$y'J.3YVZ:b[bpbzlP,2i2j9i<iCfIhSKXV^X_'",
+        can: ".0/A7T7U7V7W=J>M@jN$Nx`Z``awaxaybzi8kHkQs7,*z+25F9Y<+@D@wHgYr`(b<,'<*C.K1@1D:HTae/e_i@j@wPwX",
+        lei: ".1/S/p4a7O>eC4E;G(G:M2lDm0,&M(%(g(h)[141l3;4&;GI+K@M=MrRAUDU`V2VMVNWCX5aYcfdMfmgngth/ifj7kNlTmz,%T&J'&(5)3)4)?)H1%8B;F<BG2MSPfRGUnV>V_YW_=`3bfbucTdEoptvxL",
+        zao: ".425;W;f=Y?]b/opu1v@wtxj,9K;y>w@CHCHiNGNH[E[J`;bjs7,'f(Q*R:vAyD5DOIJJCN/Vf",
+        cao: ".4>NQyU@aXadaqc<kxlOs/s0,&;7hbdn'sPsovC,%J/_4M4hLdTyi0x.",
+        ao: ".82/7=>=>>BjC'FaFdH`HdHfLXLkMIRORgU?UoY<b(c@eEelfQkDl[n0uywu,0p7H9D9^?O?_@iDaDbHFP/UWl3l8l<m`spt],%o/b2:4e:M:NEeJ>KlTXTdTeYe^8^Ci?jFo8q(t6wn",
+        cou: ".<1[,$W5DpR,FYGb",
+        chuang: ".>2;2Q2h313;3W=:?9WuXH]uaRk$sY,'PAJAXA`KqM;U]ZjZn[=,Zm[1",
+        piao: ".J3`4p>RM0[1[taroask,+%7TB[ILNrQjW:`+ftidl4wO,'c/hN)ZtcVdfdge$iAjJlToD",
+        man: ".NCnF%IzK(M4QcWg_^b*b<kGs2,&<&_6$737Q8'9U9b?fDZQ]QiRKd^fpie,%V%f)2+H/Z0*1E4c:T=CLRTYTlYBa2cXdAf?g8knkooAq5",
+        zun: ".Z?4FQPiUYfph(kpvf,'%;5gBj1,2o:gJKPkUIoXq=sDtY",
+        deng: ".c2'?FFWM[UWb`dG,(_9.:j;r@$HPNAQuUo[v]x`XsV,5o=fD:JjLUUSYU^?",
+        tie: ".j9UW&^1,m?xo,*w?.@RBKOwPtU[UpWSeIf&iT",
+        seng: ".n,,kp",
+        zhuang: ".uG@GAGGHVI0IGK$WuXBXPd%d&d'kuwOwp,&?5r82=fBmBwb1bevRw0,3%3?",
+        min: "/&1D2W4R9KC*IoRnSr]L]M]z_v`pa)b$bvf9h<mrn'nIp+p.qj,.W194P5I5^8bEYF/G(G/G[LjO1OrS'TV]P]l`Te[epiUjJu.,1(?bOdR?STZ(Z?[7[?o;q6quwdwe",
+        sai: "/1>4>l?nEX^7a@iJ,.&.>`mpa,?p@zcAnnpv",
+        tai: "/E178.AFBeGzH&H1HcN5Nh]C]a]pajf$ldn_oyu?,(E/A/c/d1:6?<`<a@BF*^ca%nWnirDrqtwx?,'dB<K2M8OXW+dSh(j(m>pB",
+        lan: "/H0N7C<7?u@qBJFoFvKmNDNJNURPT_X/`AcHcXcmfaj%lhmBmZnnnpqtvI,$k)F)X)Y2_777w9F:A;@;H;c;d<q@5@A@U@`@zA.A0I$I=_u`vaAc+gfh.iDj[yz,%/'x)+)/4B4d4s5.575b5x6.:b;W=JDlM]VSVkYQZc[Saici",
+        meng: "/L1)4_GuGvNfQ2X&XkcRcTcli7l`res]x8,'A(B.Q.Y6;:1D'E.IxJUN*OQQmR=RHVDsAs_w:x_,$?&B*'.&.x000rLbLgQLRjXo_@_l`1`2cdfUkIn%nGtrv*wdwewm",
+        qiong: "/O6SMvO8`kbVw5,'S>0>3>i??FhGNHXI4IAPwQYZMZO[0[H]j]vs2ud,(%(C+C+FACBbJrPm",
+        lie: "/R1G2M41444K:=;9CuCvJJV%VJ]Hg8g>h;m$vpxl,+z1V2L<w=H>t@B@c@hBYCqD+DuE/e+mEofuq,+42yA_D_I&dTkrkzmRoyrA",
+        teng: "/bWc,7%7n?WL(L9a.a6f]pqqM,(:)G/U8H9oJ]_vh8i.ibo+x1",
+        long: "/d:/:y@FC$C%G1G2Q2R.UJV'V(Yo]+f]m=pprss^vDwn,%q)51A5k7/7^;'@uF7I9M^PJRIS^T4VWVX[A[K[_]k_i_ta>m9mmo+u^,(y14165)=`@8DgTvVN]5]u^N_z`9i`tzyKyPyQyW",
+        rang: "/g51@UFsG6cpmF,;>@xE7INX1Z9ZFh%,(o;4;U;lDnl$",
+        xiong: "/w/z2*5<5B:[Gc]f^znU,/l2*>>>C?<?=o=o>t0,7;7j8<<'<5?b^_",
+        chong: "/x1<>ID9ORPSSjSk]$]ObMbriojz,042q3.82A&FQL9XKenjjkVrLsUv4,)n.p0P1h3kCyNSPbX1]o",
+        dui: "0&0(0/<;C8DTEZPWP]Pl^VbhbicUn+n4n@tZ,:=:Q:y;)LlTbUMVrds,'[:_;7G+I%UMUVYP[b]]]ybrr7",
+        rui: "0&0(0/7tG3`Te_u$w[,'N/`GqJ:QI];eZgFtPuJ,&H&I&c(X(Y*9.?Q=QxU2XN",
+        ke: "0'2r3+4N4X5w8+9`:I=lBnDOGEJkOTPdRXS'T`ThUl_0_Na6a7iaj?n>v'y3,%N&T*/+U+V.q4U5.6>:C<QAKB%BFF&KwLmQVSDT*TuU@UOV0V@XOYHZw[>ehi@knsFu'y&,'@*d.R1S2J8q<mB+EvGDMsOfP^R7WHX&X]Z2bqc<d1d9h`j<jl",
+        tu: "0*021M2.8N;M<HA=AHAaAbAjAlD[DfEQFfO<QkS[TmU:XhYF[T^<_MgohJikk)ws,(7/T2y3+5`8rH7LJM'X=XAY6ZW^;pbvww[x1yT,$JAMBvHJI>MNO'ObQJR)S0VtgEhNrVres)sUt+tWxG",
+        nei: "0E0d;*Ju,.d.e2toup9,JzRMeag%mmn2",
+        liu: "0K2N3l@>EjLhNBTvY1cgjyoEoNoXv+v;wDwa,%F'4'X272E6B899;:f?J?aF1FpGsH(HaJZJpK3KCM>M`T9TZU<UYZceGi8jajkkf,$K$l(F0%39CvJ1R*SrT4T_U<XKY9YJ_%_kdcdedhdzf8g5h2hGi*iOjGl:o%spt<uouwvG",
+        shou: "0[7a7j;q?.CJGOGRO:P^dndohZmemy,3OCKDrE2LWM@e:i4pwsE,TWg<yt",
+        ran: "0c0h9O>rIwLQub,'T><?b?vF'g4nJtu,$)*T*i212=2Wk;kE",
+        gang: "0g182P3=DVE7RMRWSzd%d&d'e'hXjntBxt,%f5'>;>?AsB;BqKZRsTh^Ue?hDiwj)jKn5,NtR2T.W4",
+        gua: "0m2e323P3c6L7z9C9[:R<WBcP?fgg&hnvWwV,*2>xIFd5f4jMjUnh,2v3e8=9M<DAYC^PzQGWydLdUhzr:uG",
+        zui: "1+7.9k>@?$?rUDUpqJs6sNvg,%o&u'r'w)J:8HzQ'WOYKd*h'jT,&]036BGsM.MUMdR+R@",
+        qia: "1H5w6G:CB*SBW4_6a6f*f_hcialX,+&23SkUGo&yZ,2nBHM:a.jm",
+        mei: "1L@:B<E+EuIdL2L@LHLiMhP.TRTY]*f4gZmEoFpYu&v<wl,$I$Y%d(n+3+i+j000?0J2s565>5B>d>k@6DFEfFbGTLEP%P9PaQBW)WiYs_Ibgjyk/oJoipNuHw9z',.e28B@E8L+MPQLSeSjY)Y/_Oaml?lGs[ujwIwZ",
+        zhun: "1P1a<;AvDIODQz]bp/,4A6<Y?ZVe5nE,1k7B9.<uHK",
+        du: "1j3D5p7P>fE/I<IVJ:NAXen[qSqnt>y^,(t+F+J+m3>4]4p:]AWAcB@BXCNDwGOI.O0Q+QCXy]&]1_kn4t1vk,/K111C3^5d8l;B;b<j=_?`@3@kL)MjRLS/VEY(Zd[I`bafb+b/i1k%wOw^",
+        kai: "1z2%2w3V4b>KCTEIHPR8TuYk]m_@a0aUa]b2ihr',$^)o)r:C<:=1,$.=cF*S'SqT5UaWsXLXsYvZj[Ad`",
+        hua: "2H3f5P648i9D:n>pCyH9J7KuKvMYM`Snj^k<l8t[u.wLyY,&(&y6x9/DLJQK+K7S)TBU@bJgIrdtStTxA,$0&N)$/H6E8/8m9C9M:W;0<K=[NqNrQcRlU/WziHj/tJw0",
+        bie: "2[2bZ][ybUv%v*,MDMzw&,)N*q0<4aD7oOq4woy]",
+        pao: "2_5I9q@5C)HCXTejfE,1)<]<_=JA8C/IIKtNwSTVEVTZDosxu,(>2B2C4(B7BGEnP'WY`V`wv=v?vh",
+        geng: "2f;?CeDxS]XXgSs(x'yh,2d>EJad;d<dieyf@hskDkOlWm+w(x@,?S@rKcd(jimppRs@ua",
+        shua: "2n;s,lO,8Z",
+        cuo: "3)347/GaU'U+XsgQi&j=l0,H1LRM?PhRcUEfLoewCwG,$Q$s%i)Z98ClITJILqMxQFRfSkXGXWv4v8",
+        kei: "3+Pd,,",
+        la: "3.<T<v@WBzfCieifjDm$m9ovuT,$1)66&@hI8M$SNUPkbp<qgqwwoy;,(4.%.Q.y1'GuGvJbVDY_a?kenU",
+        pou: "389p:zC]JtKFecehgqh]xf,B9^[,34",
+        tuan: "3ZA*A+A`AcEwFKZmb;enibkL,&'(H5G5e7l>YD=K?KE`1c$,3y>XTRt4t^",
+        zuan: "3zi[mS,`)aIgJgigph(it,?mDkDuOyV@VdWM",
+        keng: "438lB>BGI>gYi?kR,+RB2SdT(TI,8WQ?S@TfX=[o",
+        gao: "4P9'94H.S_jHtT,%R%S%g&7'Z(P(sDYNQNVQ4QHW@WBWqY)YiYj^P_`b`fXi^k(k/q+r9wy,'l(I8d<_K_QzT:XDY:b'f5k.k/t0tSx+",
+        lang: "4T;6<fCoElM'ScY4njsLsMsZw`,%$&A)w2a=TC_FlH+T.Y*^>s<wN,$=$o%4+f/48ME.KPKTKaQMT=XPZB[HhL",
+        weng: "4k>%EOHbTpmHr),6jIXJ)QRj5kWmZ,$q&x/;SvsiunxX",
+        tao: "5E8$:M<CH0H3HUM%W`Z8aef%hbjYw'xN,%V(D1y3=3O4$7$::H'WKd=e=fTfbhyi7xV,.03L6u7o:5;kBjFhHnI+M_R4]e`sa%aOb$b6eFf:fOh5h]x'",
+        nao: "5R9aCVDeGeKhM(NsSSUdV4^+_B_p`dc/gFjykjwG,'23yD?E0E9GlSjThU'oWozpXqp,+L0M7[:aU=WlZ/[;l'",
+        zang: "5cEYHVYt,ALk.oUqrr'r1yk,&3'z???J@1@:@bQDh$itk&",
+        suan: "5o,C^LNW(]5^G^r`),$BMR",
+        nian: "6(:m<$D)J?X2Yj]d_l`IfBhMkql7m4,$w3*4>69>DU8XHXd`BawsB,&'CpD6D]FLGYGjm<nJp9pirQw5",
+        shuai: "6AVlW7k(,EAJ?fQi],/s2$",
+        mang: "7&8@;$GPJfQ2Xk]G_DsPt9tI,.Y/D2S8)AoB1CWLKOeOfT3T;].t4uzv5wdwe,(`+0000mJpNvQtWfhK",
+        rou: "7KL1O?iGuc,$a4g>jGZI1X6agbOmxocp_yE,.a;5CeFTS4aAauhxnbsJ",
+        cen: "7T7U7V7WCdRGU8,/h36Yr]@`(,",
+        shuang: "7_ExNFNMb),)H1A88;';BAGV[fNsd,U'^t_ci9iejPt@u$v.",
+        po: "83;3>`@GBWHcKHP_R[RmYdjUmopTsk,(^0i1D1F1q5J628O:R=8DJF$NkSVSX]g_)atg%kd,$P%uHjL`M@MrN7N`P3U4VrWI]0bbd'gqkHlF",
+        a: "8T9`<8=_,p>,RHXS]+",
+        tun: "8]9;<;?=A.B?QzXG]bbip/rHsR,//34=yq_qjt<,+$48=s=uER_[e7fclkp2w=",
+        hang: "8lCUH+I>V^]koAtOw%,/y]>^/d0hjrutc,*P1V3$>lHPJvbYczlj",
+        shun: "8m,$U'=PRQeQoQwrg,&bbPcqka",
+        ne: "8u9:9L;*e_,KTPP,77;z",
+        chuo: "8v;@<J@[JlJmKhL(NT`KdUfulK,*N3R3yUh_?eKgAi.,AkBwC6FEG`H3H4I_MEQgTQVGeny&yH",
+        wai: "9C:R=&GiTB,*X;$[x,cW",
+        guo: "9C:R<^=(>Y@vA9A@AEAGAJAUD&DlF4T*WNWjZ`Zd`:aucLi2k%mzu(y?,$+&$(e3C3l4u7`9oCvM)RB`4bIeDm@mKp4pJq3wz,&*)e.D.N0$3[3dFFHEIyKpOMS+UtXCekg'g>",
+        qiang: "9E;w<:=a>:F5F?FbMKMtUBYQZMZPZad7d9dIeqjak:k@o.u8yJ,%`&n(96R7e<K?IANAPCsDUElH0KHRs_sg.gLjwk+k5k;kAkQpFsX,%U&5'>(w.'4O:&B:CoD/SzTgU3XTXtYTsc",
+        pen: "9J=I=Q?g,*C5M9qIUO8l:yN,",
+        pin: ":W@JJ.K&M.N0fTfw,$g/HAhEhG%R?S1V=Z<mF,'](b0x>n@Icgd3dHgPi]",
+        ha: ":_Hc,c],**+>.mP^X&",
+        yo: ":v;z=L,,",
+        o: ";&=.?T?w,^W,",
+        n: ";V>5,,",
+        huan: ";g=4=5@]AgCZDiH@HNMvNOOXP+PNS:TVX9_ja(c7cth4iYlRm:w9x),&3)e*A*O2/2Y3E4h849M9_<x=p>lBvCADPE8EjG`HoIELXM+PeQYbvd;dgexgUiQirk<n*v;xZxd,$C(=;[>&>8>L>bG(HVIWJZKILsSRUqY&YX[$[^^c^uihkvmvnPnZp[qdrWv&",
+        ken: "<1CHFe_9c=i+,FHSpn&nInU,3)3f>(>MRpy@yF",
+        chuai: "<Jibj5,*(q5qH,C[",
+        pa: "<XI;VqW%^/dui/tY,/58TA6GHNK^<l[rpu7yh,2OB(WA",
+        se: "<Z=bEXYQcDfukKlNvV,&)*]*_1^3K4Y9(9)9r9z:iG'GrHpMQZ%Z7ZEb+gRsi,'>:[G&Q5SpU6X+Z@Zv_3dn",
+        re: "='`lhN,4Q=G?du3,",
+        sun: "=JN`NreIh1j7j8jw,%=%TCTDI]9^%_6`Zve,$g&t'HT6^Ve5e?st",
+        hei: ">.?1,8u,w7w8",
+        dia: ">8,,",
+        de: ">aB$XS[Y[v[z_:_z`]ozxb,3eNJ,*]RwX[",
+        dei: ">a[Y,,",
+        kuo: "?=Y=e7f[fgg(lw,85:LXmXr]wy=y>,+8PzQGWyZa[V_pa=aWatbmkPkw",
+        ceng: "?>QLQoULs3s4,'Q[u,D;iQ",
+        ca: "@1@bf@lim1,VJV_,J@",
+        zeng: "@mF=FDbXs3s4,'Q?jHRJ%RgUn[ue(f[g8i:inji,:Z@$A(LYQpXAl7ob",
+        nin: "A$^[_ofk,oR,",
+        kun: "A:BZDQDaGJGNKnSsSt_Igmp8q:xC,2z8G=w?gCtG:H9PnT?WGY1YEdtwu,.13(3/3K3o>MMgRKX^ZAZN[Eh[k6k7k>n>pes4sZu[",
+        qun: "AAG^O`SPW>,*=^sk9k:,3;3BC&IKvA",
+        ri: "ABol,.c,2)NwO.OVg`iq",
+        lve: "AdP[hs,K%K'YN,QhQmXH",
+        zhui: "BVFBH]K9`gibyL,0;IkK9TLV.];eBfEi>iPpApz,92?x@wI%MeRFRYV*Xd]y^ShWj=s1",
+        sao: "DKLqadc<e9hUi9j>x4,.O6DM3R8g)gVijiqqi,/Xdahei5jDk4o$oiq'",
+        en: "H>S0_/jl,?0,$d",
+        zou: "HML_i'iKj4y5y6,$W^^eSwm,99<hA:A;K;KsL@Lh]Zi4iyn(nEpcw$y/y8yo",
+        nv: "Hr_+sH,0/aWm=,1L1NO)W%",
+        nuan: "Hzqu,4k5e>]>^,ey",
+        shuo: "I)aJjJnJnRsJ,%])y1w<p@lDpRUSxTx_D,$Z8i8k<cPnT%VFWV",
+        niu: "IHNn]g^+e;elfQt^,/o0/<2AfAgBzcFhOwK,OGW@`h",
+        rao: "J]Mce>m*wG,'2Z.gDhhvU,&V4bJL^<fLfq",
+        niang: "JoN&NI,,MYN>NF",
+        shui: "K9W:gOh/,/$/%/*393<Q)WCY/Y8p/,3@8i8k8o<c<pZ*",
+        nve: "Kl,KbMATF,)R",
+        nen: "L4MCMJ^[,,",
+        niao: "LzMxN8QI,&a6aoyu`,%y2;3*4;qCu+",
+        kuan: "OpP9PJx3,)x***.[?[@qv,VMjvk*",
+        cuan: "V7l<m@mImP,(l)S+C/8:S;T?iA2ZIZs[?[@[F_h`D,DMDtQ[V`YS",
+        te: "]?]@b%,B/B<om,06R%X;",
+        zen: "^&kd,,:m=H",
+        zei: "d?,,0g?<@Zn]ohpI",
+        den: "e3eK,,",
+        zhua: "ebgCl@,(1A4A5`nqZ,kS",
+        shuan: "fovM,&'3PdApZ,Ym[)",
+        zhuai: "fx,Ph,B`G>",
+        nou: "jC,%Z(SE+kPlk,SuUX",
+        shai: "jvmTq0rw,^5_p`3`MaK,9Z",
+        sen: "y*ym,&*,4P",
+        run: ",'73H8cQoqT,YzZ6[2",
+        ei: ",*$,8P<e",
+        chua: ",*',",
+        gei: ",dHhl,",
+        miu: ",g*ii,:B=F",
+        neng: ",oC,/L",
+        fiao: ",,5?",
+        shei: ",,8o",
+        zhei: ",,HW",
+        nun: ",,w%"
+    }
+      , N = function() {
+        for (var e = [], t = 36; t < 123; t++)
+            44 !== t && 34 !== t && 92 !== t && 45 !== t && e.push(String.fromCharCode(t));
+        return e.join("")
+    }()
+      , H = function(e) {
+        for (var t = 0, i = 1, n = e.length - 1; n > -1; n--)
+            t += i * N.indexOf(e.charAt(n)),
+            i *= N.length;
+        return t
+    }
+      , U = {}
+      , j = {};
+    for (var K in R)
+        for (var J = R[K].split(","), $ = 0; $ < J.length; $++)
+            for (var q = J[$], Q = 0; Q < q.length; Q += 2) {
+                var G = q.substring(Q, Q + 2)
+                  , Z = String.fromCharCode(H(G) + 19968 + 6976 * $);
+                U[K] ? U[K] += Z : U[K] = Z,
+                j[Z] ? j[Z] += "," + K : j[Z] = K
+            }
+    R = null;
+    const X = function(e, t, i) {
+        var n = []
+          , o = "function" == typeof t;
+        e = String(e).split("");
+        for (var s, r, a = 0; a < e.length; a++)
+            s = e[a],
+            j.hasOwnProperty(s) ? ~(r = j[s]).indexOf(",") ? (r = r.split(","),
+            r = o ? t(s, r) : "[" + r + "]",
+            n.push(r)) : n.push(r) : n.push(s);
+        return n.join(i || ",")
+    };
+    function Y(e) {
+        const t = X(e)
+          , i = [t]
+          , n = t.match(/\[[a-z,]+\]/g);
+        if (n)
+            for (const e of n) {
+                const t = e.replace("[", "").replace("]", "").split(",")
+                  , n = [];
+                for (let o = 0; o < t.length; o++)
+                    if (0 === o)
+                        for (let s = 0; s < i.length; s++)
+                            n.push(i[s]),
+                            i[s] = i[s].replace(e, t[o]);
+                    else
+                        for (let s = 0; s < n.length; s++)
+                            i.push(n[s].replace(e, t[o]))
+            }
+        const o = []
+          , s = [];
+        for (const e of i) {
+            const t = e.split(",")
+              , i = t.map((e=>e.charAt(0))).join("");
+            o.includes(i) || o.push(i),
+            s.push(t.map((e=>e.charAt(0).toUpperCase() + e.substr(1))).join(""))
+        }
+        return {
+            pyfirst: o,
+            py: s
+        }
+    }
+    function z(e, t) {
+        const i = [];
+        if (!e)
+            return i;
+        if (e.length > 60)
+            return i;
+        if (/^[\u4e00-\u9fa5]+$/.test(e)) {
+            const n = Y(e);
+            for (const o of n.py)
+                i.push({
+                    trueType: t,
+                    type: "py",
+                    match: o,
+                    label: e
+                });
+            for (const o of n.pyfirst)
+                i.push({
+                    trueType: t,
+                    type: "pyfirst",
+                    match: o,
+                    label: e
+                });
+            i.push({
+                trueType: t,
+                type: "base",
+                match: e,
+                label: e
+            })
+        } else {
+            if (/(?<=(?:^|[\u4e00-\u9fa5 ]))([A-Z][a-z0-9]*(?: ?[A-Z][a-z0-9]*| \d+)+)/.test(e)) {
+                const n = RegExp.$1
+                  , o = n.match(/[A-Z]| \d+/g).join("").toLowerCase().replace(/ /g, "");
+                i.push({
+                    trueType: t,
+                    type: "enfirst",
+                    match: e.replace(n, o),
+                    label: e
+                })
+            }
+            if (/[\u4e00-\u9fa5]/.test(e)) {
+                const n = e.match(/[\u4e00-\u9fa5]/g)
+                  , o = Y(n.join(""));
+                for (const s of o.py) {
+                    const o = s.match(/[A-Z][a-z]*/g);
+                    let r = e.toUpperCase();
+                    n.forEach(((e,t)=>{
+                        r = r.replace(e, o[t])
+                    }
+                    )),
+                    i.push({
+                        trueType: t,
+                        type: "py+",
+                        match: r,
+                        label: e
+                    })
+                }
+                for (const s of o.pyfirst) {
+                    let o = e.toUpperCase();
+                    n.forEach(((e,t)=>{
+                        o = o.replace(e, s[t])
+                    }
+                    )),
+                    i.push({
+                        trueType: t,
+                        type: "pyfirst+",
+                        match: o,
+                        label: e
+                    })
+                }
+            }
+            if (i.push({
+                trueType: t,
+                type: "base",
+                match: e.toLowerCase(),
+                label: e
+            }),
+            e.includes(" ")) {
+                const n = e.replace(/ /g, "");
+                i.push({
+                    trueType: t,
+                    type: "base",
+                    match: n.toLowerCase(),
+                    label: n,
+                    weight: -10
+                })
+            }
+        }
+        return i
+    }
+    function ee(e) {
+        return /^\/.+\/[gimuy]*$/.test(e)
+    }
+    function te(e) {
+        if ("string" != typeof e.code || !e.code)
+            return null;
+        if (!Array.isArray(e.cmds))
+            return null;
+        if (e.platform)
+            if ("string" == typeof e.platform) {
+                if (e.platform !== process.platform)
+                    return null
+            } else if (Array.isArray(e.platform) && !e.platform.includes(process.platform))
+                return null;
+        const t = [];
+        for (const i of e.cmds)
+            if ("string" != typeof i) {
+                if (i && i.type && i.label && "string" == typeof i.label && !(i.label.length > 60))
+                    if ("regex" !== i.type)
+                        if ("files" !== i.type)
+                            if ("img" !== i.type)
+                                if ("over" !== i.type)
+                                    if ("window" !== i.type)
+                                        ;
+                                    else {
+                                        const e = {
+                                            trueType: i.type,
+                                            type: i.type,
+                                            label: i.label
+                                        };
+                                        if (i.match && "object" == typeof i.match) {
+                                            if (i.match.app) {
+                                                if (e.match = {},
+                                                "string" == typeof i.match.app)
+                                                    e.match.app = [i.match.app];
+                                                else {
+                                                    if (!Array.isArray(i.match.app))
+                                                        continue;
+                                                    e.match.app = i.match.app
+                                                }
+                                                i.match.title && ee(i.match.title) && (e.match.title = i.match.title)
+                                            }
+                                            i.match.class && "win32" === process.platform && ("string" == typeof i.match.class ? (e.match || (e.match = {}),
+                                            e.match.class = [i.match.class]) : Array.isArray(i.match.class) && (e.match || (e.match = {}),
+                                            e.match.class = i.match.class))
+                                        }
+                                        e.labelCmds = z(i.label, i.type),
+                                        t.push(e)
+                                    }
+                                else {
+                                    const e = {
+                                        trueType: i.type,
+                                        type: i.type,
+                                        label: i.label
+                                    };
+                                    ee(i.exclude) && (e.exclude = i.exclude),
+                                    "number" == typeof i.minLength && (e.minLength = i.minLength),
+                                    "number" == typeof i.maxLength ? e.maxLength = i.maxLength : e.maxLength = 1e4,
+                                    e.labelCmds = z(i.label, i.type),
+                                    t.push(e)
+                                }
+                            else {
+                                const e = {
+                                    trueType: i.type,
+                                    type: i.type,
+                                    label: i.label
+                                };
+                                e.labelCmds = z(i.label, i.type),
+                                t.push(e)
+                            }
+                        else {
+                            const e = {
+                                trueType: i.type,
+                                type: i.type,
+                                label: i.label
+                            };
+                            ee(i.match) && (e.match = i.match),
+                            i.fileType && ["directory", "file"].includes(i.fileType) && (e.fileType = i.fileType),
+                            i.minNum && (e.minLength = "number" == typeof i.minNum ? i.minNum : 1),
+                            i.minLength && (e.minLength = "number" == typeof i.minLength ? i.minLength : 1),
+                            i.maxNum && (e.maxLength = "number" == typeof i.maxNum ? i.maxNum : 1),
+                            i.maxLength && (e.maxLength = "number" == typeof i.maxLength ? i.maxLength : 1),
+                            e.labelCmds = z(i.label, i.type),
+                            t.push(e)
+                        }
+                    else {
+                        if (!ee(i.match))
+                            continue;
+                        const e = {
+                            trueType: i.type,
+                            type: i.type,
+                            label: i.label,
+                            match: i.match
+                        };
+                        "number" == typeof i.minLength && (e.minLength = i.minLength),
+                        "number" == typeof i.maxLength && (e.maxLength = i.maxLength),
+                        e.labelCmds = z(i.label, i.type),
+                        t.push(e)
+                    }
+            } else {
+                if (i.length > 60)
+                    continue;
+                const e = z(i, "text");
+                t.push(...e)
+            }
+        if (0 === t.length)
+            return null;
+        const i = {
+            code: e.code,
+            cmds: t
+        };
+        return "string" == typeof e.explain && e.explain.length < 1e3 && (i.explain = e.explain),
+        "string" == typeof e.icon && (i.icon = e.icon),
+        "string" == typeof e.backgroundColor && (i.backgroundColor = e.backgroundColor),
+        i
+    }
+    function ie(e, t) {
+        if (!d().existsSync(e))
+            throw new Error("plugin.json 文件不存在");
+        let i = null;
+        try {
+            i = JSON.parse(d().readFileSync(e, "utf8"))
+        } catch (e) {
+            throw new Error("plugin.json 文件内容无法解析")
+        }
+        if (!i || "object" != typeof i)
+            throw new Error("plugin.json 错误的文件内容");
+        if (t && (i = Object.assign(i, t)),
+        i.platform)
+            if ("string" == typeof i.platform) {
+                if (i.platform !== process.platform)
+                    throw new Error("插件应用未适配 " + M())
+            } else {
+                if (!Array.isArray(i.platform))
+                    throw new Error("插件应用未适配 " + M());
+                if (!i.platform.includes(process.platform))
+                    throw new Error("插件应用未适配 " + M())
+            }
+        const n = {};
+        if (n.location = c().dirname(e),
+        n.isDev = !!t || s().dev() && !/\.asar$/.test(n.location),
+        n.isDev ? i.development && i.development.main && (i.main = i.development.main) : /unsafe-[0-9a-z]{32}\.asar$/.test(n.location) && (n.unsafe = !0),
+        i.main) {
+            if (!(n.isDev && /^https?:\/\//i.test(i.main) || /\.html$/i.test(i.main)))
+                throw new Error('"main" 配置文件不是 html 文件');
+            if (!n.isDev || !/^(?:https?|file):\/\//i.test(i.main)) {
+                const e = c().join(n.location, i.main);
+                if (!e.startsWith(n.location) || !d().existsSync(e))
+                    throw new Error('"main" 配置文件不存在');
+                i.main = "file://" + e
+            }
+            n.main = i.main
+        } else
+            n.isTpl = !0;
+        if (!/^[a-zA-Z0-9]{3,16}$/.test(i.name))
+            throw new Error("插件应用 ID 只能是字母数字组合(3-16位)");
+        if (n.name = t ? "dev_" + i.name : i.name,
+        !i.pluginName || i.pluginName.length > 40)
+            throw new Error('"pluginName" 为空或超过 40 位');
+        if (n.pluginName = i.pluginName,
+        "string" == typeof i.author && i.author && (n.author = i.author),
+        "string" == typeof i.homepage && /^https?:\/\/./i.test(i.homepage) && (n.homepage = i.homepage),
+        "string" == typeof i.description && i.description ? n.description = i.description : n.description = "",
+        !n.isDev) {
+            if (!L().valid(i.version))
+                throw new Error("无效的版本号");
+            n.version = i.version
+        }
+        if (n.isTpl && !i.preload)
+            throw new Error("preload未配置");
+        if (i.preload) {
+            if (!/\.js$/i.test(i.preload))
+                throw new Error('"preload" 配置文件不是 js 文件');
+            const e = c().join(n.location, i.preload);
+            if (!e.startsWith(n.location) || !d().existsSync(e))
+                throw new Error('"preload" 配置文件不存在');
+            n.preload = e
+        }
+        if (!i.logo)
+            throw new Error('"logo" 未配置');
+        if (!/\.(?:png|jpg|jpeg)$/i.test(i.logo))
+            throw new Error('"logo" 配置文件不是 png、jpg 图片');
+        const o = c().join(n.location, i.logo);
+        if (!o.startsWith(n.location) || !d().existsSync(o))
+            throw new Error('"logo" 配置文件不存在');
+        if (i.logo = "file://" + o,
+        n.logo = i.logo,
+        i.pluginSetting) {
+            const e = {};
+            "boolean" == typeof i.pluginSetting.single ? e.single = i.pluginSetting.single : e.single = !0,
+            "number" == typeof i.pluginSetting.height && i.pluginSetting.height >= 1 && (e.height = i.pluginSetting.height),
+            n.pluginSetting = e
+        } else
+            n.pluginSetting = {
+                single: !0
+            };
+        if (n.isTpl && (n.pluginSetting.height = 1),
+        !Array.isArray(i.features))
+            throw new Error('未配置 "features"');
+        if (n.featureDic = {},
+        i.features.forEach((e=>{
+            const t = te(e);
+            if (t) {
+                if (t.icon && !(t.icon.startsWith("dbicon://") || n.isDev && t.icon.startsWith("file://"))) {
+                    const e = c().join(n.location, t.icon);
+                    /\.(?:png|svg|jpg|jpeg)$/i.test(t.icon) && e.startsWith(n.location) && d().existsSync(e) ? t.icon = "file://" + e : delete t.icon
+                }
+                n.featureDic[e.code] = t
+            }
+        }
+        )),
+        0 === Object.keys(n.featureDic).length)
+            throw new Error('"features" 未配置任何功能');
+        return n
+    }
+    const ne = require("events");
+    var oe = e.n(ne);
+    const se = require("rimraf");
+    var re = e.n(se);
+    function ae(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    class ce extends (oe()) {
+        constructor(e, i, n, o, s) {
+            super(),
+            ae(this, "adapteOldVersionInit", (()=>{
+                if (d().existsSync(this.userPluginsPath)) {
+                    const e = c().join(this.userPluginsPath, "install");
+                    if (d().existsSync(e))
+                        return;
+                    const t = this.adapteOldVersionInitDelete()
+                      , i = []
+                      , n = d().readdirSync(this.userPluginsPath);
+                    for (const e of n) {
+                        const n = c().join(this.userPluginsPath, e);
+                        let o;
+                        try {
+                            o = V().lstatSync(n)
+                        } catch (e) {
+                            continue
+                        }
+                        !o.isFile() || !/^(?:unsafe-)?[0-9a-z]{32}\.asar$/.test(e) || t && t.includes(e) || i.push({
+                            dirName: e.replace(/\.asar$/, ""),
+                            pluginPath: n,
+                            updateTime: o.birthtimeMs
+                        })
+                    }
+                    const o = {};
+                    i.sort(((e,t)=>t.updateTime - e.updateTime)).forEach((e=>{
+                        const t = this.mount(e);
+                        "string" == typeof t && (o[t] = e.dirName)
+                    }
+                    )),
+                    d().writeFileSync(e, F(JSON.stringify(o)), {
+                        encoding: "utf8"
+                    })
+                }
+            }
+            )),
+            ae(this, "setPluginDirName", ((e,i)=>{
+                let n;
+                const o = c().join(this.userPluginsPath, "install");
+                if (d().existsSync(o)) {
+                    const e = A(d().readFileSync(o, "utf8"));
+                    e && (n = JSON.parse(e))
+                }
+                n || (n = {}),
+                i ? n[e] = i : delete n[e];
+                try {
+                    d().writeFileSync(o, F(JSON.stringify(n)), {
+                        encoding: "utf8"
+                    })
+                } catch (e) {
+                    new t.Notification({
+                        body: "无法写入 " + o
+                    }).show()
+                }
+                return !0
+            }
+            )),
+            ae(this, "apiServiceCheckUpdate", (e=>{
+                const t = this.accountCmp.getAccountToken();
+                m(this.config.checkUpdateURL + (t ? "?access_token=" + t : ""), {
+                    version: this.reportCmp.appVersion,
+                    platform: process.platform,
+                    plugins: JSON.stringify(e),
+                    mid: this.accountCmp.machineId,
+                    nid: this.accountCmp.nativeId
+                }).then((e=>{
+                    if (e.url ? (this._cdnCheckUpdateCache || (this._cdnCheckUpdateCache = {}),
+                    this._cdnCheckUpdateCache.url = e.url,
+                    this._cdnCheckUpdateCache.content = String(e.last_timestamp)) : this._cdnCheckUpdateCache && (this._cdnCheckUpdateCache = null),
+                    0 !== e.plugins.length)
+                        for (const t of e.plugins)
+                            t.name in this.pluginContainer && !this.pluginUpdateSet.includes(t.name) && this.pluginUpdateSet.push(t.name)
+                }
+                )).catch((e=>{
+                    402 === e.code && e.message.startsWith("https://") && this.emit("appupdate", e.message)
+                }
+                ))
+            }
+            )),
+            ae(this, "checkUpdate", (()=>{
+                const e = Object.values(this.pluginContainer).filter((e=>e.name && !this.pluginUpdateSet.includes(e.name) && -1 === e.location.indexOf(this.innerPluginsPath) && !e.isDev)).map((e=>({
+                    name: e.name,
+                    version: e.version
+                })));
+                if (e.length > 0)
+                    if (this._cdnCheckUpdateCache) {
+                        const i = t.net.request({
+                            method: "GET",
+                            url: this._cdnCheckUpdateCache.url
+                        });
+                        i.on("response", (t=>{
+                            if (t.statusCode > 299)
+                                return this.apiServiceCheckUpdate(e);
+                            t.on("data", (t=>{
+                                t.toString() !== this._cdnCheckUpdateCache.content && this.apiServiceCheckUpdate(e)
+                            }
+                            ))
+                        }
+                        )),
+                        i.end()
+                    } else
+                        this.apiServiceCheckUpdate(e);
+                setTimeout(this.checkUpdate, T(6e5, 18e5))
+            }
+            )),
+            ae(this, "testPluginJsonFile", ((e,t)=>{
+                ie(e, t)
+            }
+            )),
+            ae(this, "ffffffffServices", {
+                getPluginContainer: e=>{
+                    e.returnValue = this.pluginContainer
+                }
+                ,
+                getPluginConfig: (e,t)=>{
+                    e.returnValue = this.pluginContainer[t]
+                }
+                ,
+                getPluginUpdateSet: e=>{
+                    e.returnValue = this.pluginUpdateSet
+                }
+                ,
+                getDisabledCmdContainer: e=>{
+                    e.returnValue = this.disabledCmdContainer
+                }
+                ,
+                pluginInstall: async(e,t)=>{
+                    const i = await new Promise(((i,n)=>{
+                        this.install(e, t, ((t,o)=>{
+                            if (t)
+                                return n(t);
+                            this.pluginUpdateSet.includes(e) && this.pluginUpdateSet.splice(this.pluginUpdateSet.indexOf(e), 1),
+                            i(o)
+                        }
+                        ))
+                    }
+                    ));
+                    return i
+                }
+                ,
+                pluginUnMount: (e,t)=>{
+                    e.returnValue = this.unmount(t)
+                }
+            }),
+            this.innerPluginsPath = e,
+            this.userPluginsPath = i,
+            this.config = n,
+            this.reportCmp = o,
+            this.accountCmp = s,
+            this.pluginContainer = {},
+            this.pluginUpdateSet = [],
+            this.legalInstall = [],
+            this.disabledCmdContainer = {}
+        }
+        init() {
+            const e = d().readdirSync(this.innerPluginsPath);
+            for (const t of e) {
+                const e = c().join(this.innerPluginsPath, t);
+                try {
+                    if (!d().lstatSync(e).isDirectory())
+                        continue
+                } catch (e) {
+                    continue
+                }
+                this.mount({
+                    pluginPath: e,
+                    updateTime: 0
+                })
+            }
+            d().existsSync(this.userPluginsPath) || d().mkdirSync(this.userPluginsPath);
+            const t = c().join(this.userPluginsPath, "install");
+            if (d().existsSync(t)) {
+                let e;
+                try {
+                    e = d().readFileSync(t, "utf8")
+                } catch (e) {}
+                const i = A(e);
+                if (i) {
+                    const e = JSON.parse(i)
+                      , t = [];
+                    try {
+                        const e = d().readdirSync(this.userPluginsPath);
+                        for (const i of e) {
+                            const e = c().join(this.userPluginsPath, i);
+                            try {
+                                const n = V().lstatSync(e);
+                                /^(?:unsafe-)?[0-9a-z]{32}\.asar$/.test(i) && n.isFile() && t.push({
+                                    dirName: i.replace(/\.asar$/, ""),
+                                    pluginPath: e,
+                                    updateTime: n.birthtimeMs
+                                })
+                            } catch (e) {}
+                        }
+                    } catch (e) {}
+                    const n = Object.values(e);
+                    t.sort(((e,t)=>t.updateTime - e.updateTime)).forEach((e=>{
+                        if (n.includes(e.dirName))
+                            this.mount(e);
+                        else {
+                            try {
+                                V().unlinkSync(e.pluginPath)
+                            } catch (e) {}
+                            if (d().existsSync(e.pluginPath + ".unpacked"))
+                                try {
+                                    re().sync(e.pluginPath + ".unpacked")
+                                } catch (e) {}
+                        }
+                    }
+                    ))
+                }
+            } else
+                try {
+                    this.adapteOldVersionInit()
+                } catch (e) {}
+            setTimeout(this.checkUpdate, 5e3)
+        }
+        adapteOldVersionInitDelete() {
+            const e = c().join(this.userPluginsPath, "deleted");
+            if (!d().existsSync(e))
+                return;
+            const t = d().readFileSync(e, "utf8").split("|")
+              , i = [];
+            for (const e of t) {
+                if (!e)
+                    continue;
+                if (".asar" !== c().extname(e))
+                    continue;
+                const t = c().join(this.userPluginsPath, e)
+                  , n = t + ".unpacked";
+                try {
+                    V().existsSync(t) && V().unlinkSync(t),
+                    d().existsSync(n) && re().sync(n)
+                } catch (t) {
+                    i.push(e)
+                }
+            }
+            if (0 !== i.length)
+                return d().writeFileSync(e, i.join("|")),
+                i;
+            d().unlinkSync(e)
+        }
+        mount(e, t) {
+            const i = e.pluginPath;
+            let n = null;
+            try {
+                if (n = ie(c().join(i, "plugin.json"), t),
+                "FFFFFFFF" === n.name && !n.location.startsWith(this.innerPluginsPath))
+                    throw new Error("出错了");
+                if ("developer" === n.name && n.unsafe)
+                    throw new Error('"开发者" 需要到插件应用市场下载安装');
+                if (n.updateTime = e.updateTime,
+                n.name in this.pluginContainer && L().lt(n.version, this.pluginContainer[n.name].version))
+                    throw new Error("已存在版本 " + this.pluginContainer[n.name].version);
+                return this.pluginContainer[n.name] = n,
+                this.emit("mount", n.name),
+                n.name
+            } catch (e) {
+                const t = {
+                    error: e.message
+                };
+                return n && n.name ? t.pluginId = n.name : t.pluginPath = i,
+                this.reportCmp.info("plugin.mount.error", t),
+                e
+            }
+        }
+        unmount(e) {
+            if (!(e in this.pluginContainer))
+                return !1;
+            if (this.pluginContainer[e].isDev)
+                return delete this.pluginContainer[e],
+                !0;
+            try {
+                this.setPluginDirName(e)
+            } catch (e) {
+                return !1
+            }
+            return delete this.pluginContainer[e],
+            this.pluginUpdateSet.includes(e) && this.pluginUpdateSet.splice(this.pluginUpdateSet.indexOf(e), 1),
+            !0
+        }
+        _install(e, i, n) {
+            const o = d().createReadStream(i)
+              , s = c().join(t.app.getPath("temp"), I() + ".asar")
+              , r = V().createWriteStream(s)
+              , a = b().createGunzip();
+            o.pipe(a).on("error", (()=>n(new Error("安装包解压错误")))).pipe(r).on("error", (()=>n(new Error("解压写入错误")))).on("finish", (()=>{
+                const t = c().join(s, "plugin.json");
+                if (!d().existsSync(t))
+                    return n(new Error("plugin.json 不存在"));
+                let i = null;
+                try {
+                    i = JSON.parse(d().readFileSync(t, "utf8"))
+                } catch (e) {
+                    return n(new Error("plugin.json 解析错误 " + e.message))
+                }
+                if (e && i.name !== e)
+                    return n(new Error("pluginId 与 配置 name 不一致"));
+                const o = (e ? "" : "unsafe-") + I();
+                this.legalInstall.push(o);
+                let r = f().listPackage(s).find((e=>e.endsWith(".node"))) ? "*.node" : "";
+                if (i.unpack && (r = r ? `@(${i.unpack}|${r})` : i.unpack),
+                d().existsSync(this.userPluginsPath) || d().mkdirSync(this.userPluginsPath),
+                r) {
+                    const e = c().join(this.userPluginsPath, o);
+                    try {
+                        f().extractAll(s, e + "/")
+                    } catch (e) {
+                        return n(new Error("解压提取错误"))
+                    }
+                    const t = e + ".asar";
+                    f().createPackageWithOptions(e + "/", t, {
+                        unpack: r
+                    }).then((()=>{
+                        try {
+                            re().sync(e)
+                        } catch (e) {}
+                        try {
+                            V().unlinkSync(s)
+                        } catch (e) {}
+                        const i = this.mount({
+                            pluginPath: t,
+                            updateTime: Date.now()
+                        });
+                        if (i instanceof Error) {
+                            try {
+                                V().unlinkSync(t),
+                                d().existsSync(t + ".unpacked") && re().sync(t + ".unpacked")
+                            } catch (e) {}
+                            n(i)
+                        } else
+                            try {
+                                this.setPluginDirName(i, o) && n(null, i)
+                            } catch (e) {
+                                n(new Error("写入 dirName 失败"))
+                            }
+                    }
+                    )).catch((()=>{
+                        n(new Error("打包失败"))
+                    }
+                    ))
+                } else {
+                    const e = c().join(this.userPluginsPath, o + ".asar");
+                    try {
+                        V().renameSync(s, e)
+                    } catch (t) {
+                        try {
+                            V().copyFileSync(s, e)
+                        } catch (e) {
+                            return n(new Error("复制失败 " + e.message))
+                        }
+                    }
+                    const t = this.mount({
+                        pluginPath: e,
+                        updateTime: Date.now()
+                    });
+                    if (t instanceof Error) {
+                        try {
+                            V().unlinkSync(e)
+                        } catch (e) {}
+                        n(t)
+                    } else
+                        try {
+                            this.setPluginDirName(t, o) && n(null, t)
+                        } catch (e) {
+                            n(new Error("写入 dirName 失败"))
+                        }
+                }
+            }
+            ))
+        }
+        _hashFile(e, t) {
+            return new Promise(((i,n)=>{
+                const o = u().createHash(t);
+                o.on("error", n).setEncoding("hex"),
+                d().createReadStream(e, {
+                    highWaterMark: 1048576
+                }).on("error", n).on("end", (()=>{
+                    o.end(),
+                    i(o.read())
+                }
+                )).pipe(o, {
+                    end: !1
+                })
+            }
+            ))
+        }
+        install(e, t, i) {
+            if (!d().existsSync(t))
+                return i(new Error("upx文件不存在"));
+            e ? w(this.config.hashURL.replace("{query}", e)).then((n=>{
+                this._hashFile(t, "md5").then((o=>{
+                    if (o !== n.message)
+                        return i(new Error("HASH 验证失败"));
+                    this._install(e, t, i)
+                }
+                )).catch((e=>i(e)))
+            }
+            )).catch((e=>{
+                i(new Error("获取 HASH 失败，" + e.message + (e.message.includes("net::ERR_FAILED") && "win32" === process.platform ? " 尝试重启 uTools 解决" : "")))
+            }
+            )) : this._install(e, t, i)
+        }
+        setFeature(e, t, i) {
+            if (!(e in this.pluginContainer))
+                return !1;
+            const n = this.pluginContainer[e]
+              , o = te(t);
+            return !!o && (e && o.icon && (o.icon.startsWith("dbicon://") || n.isDev && o.icon.startsWith("file://") || (/\.(?:png|svg|jpg|jpeg)$/i.test(o.icon) && d().existsSync(c().join(n.location, o.icon)) ? o.icon = "file://" + c().join(n.location, o.icon) : delete o.icon)),
+            i && (o.dynamic = !0),
+            n.featureDic[t.code] = o,
+            !0)
+        }
+        removeFeature(e, t) {
+            return e in this.pluginContainer && (delete this.pluginContainer[e].featureDic[t],
+            !0)
+        }
+        getFeature(e, t) {
+            if (e in this.pluginContainer)
+                return this.pluginContainer[e].featureDic[t]
+        }
+        disableCmd(e, t, i, n) {
+            const o = this.pluginContainer[e];
+            if (!o)
+                return;
+            const s = o.featureDic[t];
+            if (!s || s.dynamic)
+                return;
+            const r = u().createHash("md5").update((e || "/") + t + i + n).digest("hex")
+              , a = s.cmds.filter((e=>e.trueType === i && (e.label === n || e.weight && e.label === n.replace(/ /g, ""))));
+            return a.length > 0 ? (a.forEach((e=>{
+                s.cmds.splice(s.cmds.indexOf(e), 1)
+            }
+            )),
+            this.disabledCmdContainer[r] = {
+                cmds: a,
+                pluginId: e,
+                featureCode: t
+            },
+            r) : void 0
+        }
+        restoreDisabledCmd(e) {
+            const t = this.disabledCmdContainer[e];
+            if (!t)
+                return !1;
+            delete this.disabledCmdContainer[e];
+            const i = this.pluginContainer[t.pluginId];
+            if (!i)
+                return !1;
+            const n = i.featureDic[t.featureCode];
+            return !(!n || n.dynamic || (n.cmds.push(...t.cmds),
+            0))
+        }
+    }
+    const le = ce
+      , de = require("png2ico");
+    var he = e.n(de);
+    class ue {
+        constructor(e, t, i, n) {
+            this.mainWindow = e,
+            this.mainWindowBounds = {
+                x: 0,
+                y: 0,
+                width: i,
+                height: n
+            },
+            this.isMacOs = s().macOS(),
+            this.isWindow = s().windows(),
+            this.nativeWorkWindowInfo = null,
+            this.mainWindowNativeWindowHandle = t,
+            this._refreshInit(),
+            setImmediate((()=>{
+                this.listenEvent()
+            }
+            ))
+        }
+        _resetInitPosition() {
+            this.mainWindowBounds.x = this.currentDisplay.bounds.x + Math.round((this.currentDisplay.bounds.width - this.mainWindowBounds.width) / 2),
+            this.mainWindowBounds.y = this.currentDisplay.bounds.y + Math.round((this.currentDisplay.bounds.height - 600) / 2),
+            this.mainWindow.setBounds(this.mainWindowBounds)
+        }
+        _refreshInit() {
+            this.mainWindow.isVisible() && this.hide(),
+            this.currentDisplay = t.screen.getPrimaryDisplay(),
+            this.displayCount = t.screen.getAllDisplays().length,
+            this._resetInitPosition()
+        }
+        listenEvent() {
+            t.screen.on("display-metrics-changed", ((e,t,i)=>{
+                this._refreshInit()
+            }
+            )),
+            t.screen.on("display-added", ((e,t)=>{
+                this._refreshInit()
+            }
+            )),
+            t.screen.on("display-removed", ((e,t)=>{
+                this._refreshInit()
+            }
+            ))
+        }
+        setNativeWorkWindowInfo() {
+            if (this.isMacOs && !this.isHadPrivilege) {
+                if (!k().isHadPrivilege())
+                    return void k().requestPrivilege();
+                this.isHadPrivilege = !0
+            }
+            this.nativeWorkWindowInfo = k().getNativeWorkWindow(),
+            this.nativeWorkWindowInfo && (this.nativeWorkWindowInfo.appPath ? this.nativeWorkWindowInfo.app = c().basename(this.nativeWorkWindowInfo.appPath) : this.nativeWorkWindowInfo = null)
+        }
+        _showLogic(e) {
+            this.mainWindow.isVisible() || (e || this.setNativeWorkWindowInfo(),
+            this.isWindow ? !this.nativeWorkWindowInfo || 0 !== this.nativeWorkWindowInfo.width && 0 !== this.nativeWorkWindowInfo.height ? k().focusShowWindow(this.mainWindowNativeWindowHandle, (()=>{
+                this.mainWindowShowTimestamp = Date.now(),
+                this.mainWindow.show(),
+                this.mainWindow.setBounds(this.mainWindowBounds)
+            }
+            )) : (this.mainWindowShowTimestamp = Date.now(),
+            this.mainWindow.show(),
+            this.mainWindow.setBounds(this.mainWindowBounds)) : this.isMacOs ? (this.mainWindowShowTimestamp = Date.now(),
+            this.mainWindow.showInactive(),
+            k().focusShowWindow(this.mainWindowNativeWindowHandle),
+            this.mainWindow.isVisible() || this.mainWindow.show()) : (this.mainWindowShowTimestamp = Date.now(),
+            this.mainWindow.show()))
+        }
+        trigger(e=!1, i) {
+            if (this.alwaysShow = e,
+            0 === this.displayCount)
+                return;
+            if (1 === this.displayCount)
+                return !e && this.mainWindow.isVisible() ? void this.hide() : void this._showLogic(i);
+            const n = {
+                x: this.mainWindowBounds.x + Math.round(this.mainWindowBounds.width / 2),
+                y: Math.round(this.mainWindowBounds.y + this.mainWindowBounds.height / 2)
+            }
+              , o = t.screen.getDisplayNearestPoint(n)
+              , s = t.screen.getDisplayNearestPoint(t.screen.getCursorScreenPoint());
+            if (o.id === s.id)
+                return this.currentDisplay = o,
+                !e && this.mainWindow.isVisible() ? void this.hide() : void this._showLogic(i);
+            this.currentDisplay = s,
+            this._resetInitPosition(),
+            this.mainWindow.isVisible() && this.mainWindow.hide(),
+            this._showLogic(i)
+        }
+        hide(e=!0) {
+            if (this.mainWindow.isVisible())
+                return this.isWindow && this.mainWindow.isFocused() ? (this.mainWindowBlurTimestamp = Date.now(),
+                this.mainWindow.hide(),
+                void (e && this.nativeWorkWindowInfo && k().restorePrevWindowFocus(this.nativeWorkWindowInfo.id))) : void this.mainWindow.hide()
+        }
+        setHeight(e) {
+            this.mainWindowBounds.height = e,
+            this.mainWindow.setBounds(this.mainWindowBounds)
+        }
+        setPosition(e, t) {
+            this.mainWindowBounds.x = e,
+            this.mainWindowBounds.y = t,
+            this.mainWindow.setBounds(this.mainWindowBounds)
+        }
+    }
+    const pe = {
+        Backspace: "Backspace",
+        Tab: "Tab",
+        Enter: "Enter",
+        MediaPlayPause: "MediaPlayPause",
+        Escape: "Escape",
+        Space: "Space",
+        PageUp: "PageUp",
+        PageDown: "PageDown",
+        End: "End",
+        Home: "Home",
+        ArrowLeft: "Left",
+        ArrowUp: "Up",
+        ArrowRight: "Right",
+        ArrowDown: "Down",
+        PrintScreen: "PrintScreen",
+        Insert: "Insert",
+        Delete: "Delete",
+        Digit0: "0",
+        Digit1: "1",
+        Digit2: "2",
+        Digit3: "3",
+        Digit4: "4",
+        Digit5: "5",
+        Digit6: "6",
+        Digit7: "7",
+        Digit8: "8",
+        Digit9: "9",
+        KeyA: "A",
+        KeyB: "B",
+        KeyC: "C",
+        KeyD: "D",
+        KeyE: "E",
+        KeyF: "F",
+        KeyG: "G",
+        KeyH: "H",
+        KeyI: "I",
+        KeyJ: "J",
+        KeyK: "K",
+        KeyL: "L",
+        KeyM: "M",
+        KeyN: "N",
+        KeyO: "O",
+        KeyP: "P",
+        KeyQ: "Q",
+        KeyR: "R",
+        KeyS: "S",
+        KeyT: "T",
+        KeyU: "U",
+        KeyV: "V",
+        KeyW: "W",
+        KeyX: "X",
+        KeyY: "Y",
+        KeyZ: "Z",
+        F1: "F1",
+        F2: "F2",
+        F3: "F3",
+        F4: "F4",
+        F5: "F5",
+        F6: "F6",
+        F7: "F7",
+        F8: "F8",
+        F9: "F9",
+        F10: "F10",
+        F11: "F11",
+        F12: "F12",
+        Semicolon: ";",
+        Equal: "=",
+        Comma: ",",
+        Minus: "-",
+        Period: ".",
+        Slash: "/",
+        Backquote: "`",
+        BracketLeft: "[",
+        Backslash: "\\",
+        BracketRight: "]",
+        Quote: "'"
+    };
+    function we() {
+        return {
+            goSetting: ()=>{
+                this.autoLoadPlugin("FFFFFFFF", "settings", "偏好设置")
+            }
+            ,
+            goAccountDb: ()=>{
+                this.autoLoadPlugin("FFFFFFFF", "accountdb", "帐号与数据")
+            }
+            ,
+            goPluginManage: ()=>{
+                this.autoLoadPlugin("FFFFFFFF", "installed", "我的插件应用")
+            }
+            ,
+            goPluginStore: e=>{
+                this.autoLoadPlugin("FFFFFFFF", "store", "插件应用市场", "&" + e)
+            }
+            ,
+            goInstalledPluginInfo: e=>{
+                this.autoLoadPlugin("FFFFFFFF", "installed", "我的插件应用", "/" + e)
+            }
+        }
+    }
+    const me = {
+        windowMethods: ["destroy", "close", "focus", "blur", "isFocused", "isDestroyed", "show", "showInactive", "hide", "isVisible", "maximize", "unmaximize", "isMaximized", "minimize", "restore", "isMinimized", "setFullScreen", "isFullScreen", "setSimpleFullScreen", "isSimpleFullScreen", "isNormal", "setAspectRatio", "setBackgroundColor", "previewFile", "closeFilePreview", "setBounds", "getBounds", "getBackgroundColor", "setContentBounds", "getContentBounds", "getNormalBounds", "setEnabled", "isEnabled", "setSize", "getSize", "setContentSize", "getContentSize", "setMinimumSize", "getMinimumSize", "setMaximumSize", "getMaximumSize", "setResizable", "isResizable", "setMovable", "isMovable", "setMinimizable", "isMinimizable", "setMaximizable", "isMaximizable", "setFullScreenable", "isFullScreenable", "setClosable", "isClosable", "setAlwaysOnTop", "isAlwaysOnTop", "moveAbove", "moveTop", "center", "setPosition", "getPosition", "setTitle", "getTitle", "setSheetOffset", "flashFrame", "setSkipTaskbar", "setKiosk", "isKiosk", "isTabletMode", "getMediaSourceId", "getNativeWindowHandle", "setRepresentedFilename", "getRepresentedFilename", "setDocumentEdited", "isDocumentEdited", "focusOnWebView", "blurWebView", "setProgressBar", "setHasShadow", "hasShadow", "setOpacity", "getOpacity", "setShape", "showDefinitionForSelection", "setIcon", "setWindowButtonVisibility", "setIgnoreMouseEvents", "setContentProtection", "setFocusable", "setAutoHideCursor", "setVibrancy", "setTrafficLightPosition", "getTrafficLightPosition"],
+        windowInvokes: ["capturePage"],
+        webContentsMethods: ["isDestroyed", "focus", "isFocused", "isLoading", "isLoadingMainFrame", "isWaitingForResponse", "isCrashed", "setUserAgent", "getUserAgent", "setIgnoreMenuShortcuts", "setAudioMuted", "isAudioMuted", "isCurrentlyAudible", "setZoomFactor", "getZoomFactor", "setZoomLevel", "getZoomLevel", "undo", "redo", "cut", "copy", "copyImageAt", "paste", "pasteAndMatchStyle", "delete", "selectAll", "unselect", "replace", "replaceMisspelling", "findInPage", "stopFindInPage", "isBeingCaptured", "incrementCapturerCount", "decrementCapturerCount", "getPrinters", "openDevTools", "closeDevTools", "isDevToolsOpened", "isDevToolsFocused", "toggleDevTools", "send", "sendToFrame", "enableDeviceEmulation", "disableDeviceEmulation", "sendInputEvent", "showDefinitionForSelection", "isOffscreen", "startPainting", "stopPainting", "isPainting", "setFrameRate", "getFrameRate", "invalidate", "getWebRTCIPHandlingPolicy", "setWebRTCIPHandlingPolicy", "getOSProcessId", "getProcessId", "getBackgroundThrottling", "setBackgroundThrottling"],
+        webContentsInvokes: ["insertCSS", "removeInsertedCSS", "executeJavaScript", "executeJavaScriptInIsolatedWorld", "setVisualZoomLevelLimits", "insertText", "capturePage", "print", "printToPDF", "savePage", "takeHeapSnapshot"]
+    };
+    function ge(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    const fe = {}
+      , ye = require("pouchdb");
+    var be = e.n(ye);
+    function Ce(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    class ve extends (oe()) {
+        constructor(e, t, i, n, o) {
+            super(),
+            Ce(this, "ffffffffServices", {
+                getRemoteDbDocCount: this.getRemoteDbDocCount.bind(this),
+                getDbStatistics: this.dbStatistics.bind(this),
+                clearDbPluginData: this.clearPluginData.bind(this),
+                getDbDoc: this.get.bind(this),
+                getDbInfoDocCount: async()=>(await this.pouchDB.info()).doc_count
+            }),
+            Ce(this, "pluginApiServices", {
+                dbPut: async(e,t,i)=>{
+                    e.returnValue = await this.put(t, i, !0)
+                }
+                ,
+                dbGet: async(e,t,i)=>{
+                    e.returnValue = await this.get(t, i)
+                }
+                ,
+                dbRemove: async(e,t,i)=>{
+                    e.returnValue = await this.remove(t, i)
+                }
+                ,
+                dbBulkDocs: async(e,t,i)=>{
+                    e.returnValue = await this.bulkDocs(t, i)
+                }
+                ,
+                dbAllDocs: async(e,t,i)=>{
+                    e.returnValue = await this.allDocs(t, i)
+                }
+                ,
+                dbPostAttachment: async(e,t,i)=>{
+                    const {docId: n, attachment: o, type: s} = i;
+                    e.returnValue = await this.postAttachment(t, n, o, s)
+                }
+                ,
+                dbGetAttachment: async(e,t,i)=>{
+                    e.returnValue = await this.getAttachment(t, i, "0")
+                }
+                ,
+                dbGetAttachmentType: async(e,t,i)=>{
+                    const n = await this.get(t, i);
+                    if (!n || !n._attachments)
+                        return void (e.returnValue = null);
+                    const o = n._attachments[0];
+                    e.returnValue = o ? o.content_type : null
+                }
+                ,
+                dbReplicateStateFromCloud: e=>{
+                    e.returnValue = this.dbReplicateStateFromCloud()
+                }
+                ,
+                dbPromisePut: (e,t)=>this.put(e, t, !0),
+                dbPromiseGet: (e,t)=>this.get(e, t),
+                dbPromiseRemove: (e,t)=>this.remove(e, t),
+                dbPromiseBulkDocs: (e,t)=>this.bulkDocs(e, t),
+                dbPromiseAllDocs: (e,t)=>this.allDocs(e, t),
+                dbPromisePostAttachment: (e,t)=>{
+                    const {docId: i, attachment: n, type: o} = t;
+                    return this.postAttachment(e, i, n, o)
+                }
+                ,
+                dbPromiseGetAttachment: (e,t)=>this.getAttachment(e, t, "0"),
+                dbPromiseGetAttachmentType: async(e,t)=>{
+                    const i = await this.get(e, t);
+                    if (!i || !i._attachments)
+                        return null;
+                    const n = i._attachments[0];
+                    return n ? n.content_type : null
+                }
+                ,
+                dbPromiseReplicateStateFromCloud: async()=>this.dbReplicateStateFromCloud()
+            }),
+            this.docMaxByteLength = 1048576,
+            this.docAttachmentMaxByteLength = 10485760,
+            this.dbpath = e,
+            this.defaultDbName = c().join(e, "default"),
+            this.config = t,
+            this.windowCmp = i,
+            this.accountCmp = n,
+            this.reportCmp = o,
+            this.windowCmp.getDbAttachment = this.getAttachment.bind(this)
+        }
+        init() {
+            let e;
+            d().existsSync(this.dbpath) || d().mkdirSync(this.dbpath);
+            const t = this.accountCmp.getAccountInfo();
+            e = t ? c().join(this.dbpath, t.uid) : this.defaultDbName,
+            this.pouchDB = new (be())(e,{
+                auto_compaction: !0
+            }),
+            this.listenAccountEvent(),
+            this.listenPowerMonitorEvent()
+        }
+        getDocId(e, t) {
+            return e + "/" + t
+        }
+        replaceDocId(e, t) {
+            return t.replace(e + "/", "")
+        }
+        errorInfo(e, t) {
+            return {
+                error: !0,
+                name: e,
+                message: t
+            }
+        }
+        checkDocSize(e) {
+            return e._attachments ? this.errorInfo("exception", '"_attachments" is not supported') : Buffer.byteLength(JSON.stringify(e)) > this.docMaxByteLength ? this.errorInfo("exception", "doc max size " + this.docMaxByteLength / 1024 / 1024 + "M") : void 0
+        }
+        async put(e, t, i=!0) {
+            if ("object" != typeof t)
+                return this.errorInfo("exception", 'params "doc" not object type');
+            if (!t._id || "string" != typeof t._id)
+                return this.errorInfo("exception", '"_id" empty');
+            if (/[\u{fff0}-\u{10ffff}]/u.test(t._id))
+                return this.errorInfo("exception", '"_id" contain unicode chars max value is U+FFF0');
+            if (t._id.length > 256)
+                return this.errorInfo("exception", '"_id" max length 256');
+            if (i) {
+                const e = this.checkDocSize(t);
+                if (e)
+                    return e
+            }
+            t._id = this.getDocId(e, t._id);
+            try {
+                const i = await this.pouchDB.put(t);
+                return t._id = i.id = this.replaceDocId(e, i.id),
+                i
+            } catch (i) {
+                return t._id = this.replaceDocId(e, t._id),
+                {
+                    id: t._id,
+                    name: i.name,
+                    error: !0,
+                    message: i.message
+                }
+            }
+        }
+        async get(e, t) {
+            try {
+                const i = await this.pouchDB.get(this.getDocId(e, t));
+                return i._id = this.replaceDocId(e, i._id),
+                i
+            } catch (e) {
+                return null
+            }
+        }
+        async remove(e, t) {
+            try {
+                let i = null;
+                if ("object" == typeof t) {
+                    if (i = t,
+                    !i._id || "string" != typeof i._id)
+                        return this.errorInfo("exception", "doc _id error");
+                    i._id = this.getDocId(e, i._id)
+                } else {
+                    if ("string" != typeof t)
+                        return this.errorInfo("exception", "param error");
+                    i = await this.pouchDB.get(this.getDocId(e, t))
+                }
+                const n = await this.pouchDB.remove(i);
+                return i._id = n.id = this.replaceDocId(e, n.id),
+                n
+            } catch (i) {
+                return "object" == typeof t && (t._id = this.replaceDocId(e, t._id)),
+                this.errorInfo(i.name, i.message)
+            }
+        }
+        async bulkDocs(e, t) {
+            let i = null;
+            try {
+                if (!Array.isArray(t))
+                    return this.errorInfo("exception", "not array");
+                if (t.find((e=>!e._id)))
+                    return this.errorInfo("exception", "doc not _id field");
+                if (new Set(t.map((e=>e._id))).size !== t.length)
+                    return this.errorInfo("exception", "_id value exists as");
+                for (const i of t) {
+                    const t = this.checkDocSize(i);
+                    if (t)
+                        return t;
+                    i._id = this.getDocId(e, i._id)
+                }
+                i = await this.pouchDB.bulkDocs(t),
+                i = i.map((t=>(t.id = this.replaceDocId(e, t.id),
+                t.error ? {
+                    id: t.id,
+                    name: t.name,
+                    error: !0,
+                    message: t.message
+                } : t))),
+                t.forEach((t=>{
+                    t._id = this.replaceDocId(e, t._id)
+                }
+                ))
+            } catch (e) {}
+            return i
+        }
+        async allDocs(e, t) {
+            const i = {
+                include_docs: !0
+            };
+            if (t)
+                if ("string" == typeof t)
+                    i.startkey = this.getDocId(e, t),
+                    i.endkey = i.startkey + "￰";
+                else {
+                    if (!Array.isArray(t))
+                        return this.errorInfo("exception", "param only key(string) or keys(Array[string])");
+                    i.keys = t.map((t=>this.getDocId(e, t)))
+                }
+            else
+                i.startkey = this.getDocId(e, ""),
+                i.endkey = i.startkey + "￰";
+            const n = [];
+            try {
+                (await this.pouchDB.allDocs(i)).rows.forEach((t=>{
+                    !t.error && t.doc && (t.doc._id = this.replaceDocId(e, t.doc._id),
+                    n.push(t.doc))
+                }
+                ))
+            } catch (e) {}
+            return n
+        }
+        async postAttachment(e, t, i, n) {
+            if ("string" != typeof n)
+                return this.errorInfo("exception", 'params "type" error');
+            if (!(n = n.trim()) || n.length > 60)
+                return this.errorInfo("exception", 'params "type" error');
+            if (!(i instanceof Uint8Array))
+                return this.errorInfo("exception", "attachment data only be buffer type (Uint8Array)");
+            const o = Buffer.from(i);
+            if (o.byteLength > this.docAttachmentMaxByteLength)
+                return this.errorInfo("exception", "attachment data up to " + this.docAttachmentMaxByteLength / 1024 / 1024 + "M");
+            try {
+                const i = await this.pouchDB.put({
+                    _id: this.getDocId(e, t),
+                    _attachments: {
+                        0: {
+                            data: o,
+                            content_type: n
+                        }
+                    }
+                });
+                return i.id = this.replaceDocId(e, i.id),
+                i
+            } catch (e) {
+                return this.errorInfo(e.name, e.message)
+            }
+        }
+        async getAttachment(e, t, i="0") {
+            try {
+                return await this.pouchDB.getAttachment(this.getDocId(e, t), i)
+            } catch (e) {
+                return null
+            }
+        }
+        async removeAttachment(e, t, i, n) {
+            if (!t || !i || !n || "string" != typeof t || "string" != typeof i || "string" != typeof n)
+                return this.errorInfo("exception", "params error");
+            t = this.getDocId(e, t);
+            try {
+                const o = await this.pouchDB.removeAttachment(t, i, n);
+                return o.id = this.replaceDocId(e, o.id),
+                o
+            } catch (e) {
+                return this.errorInfo(e.name, e.message)
+            }
+        }
+        async dbStatistics() {
+            const e = await this.pouchDB.allDocs()
+              , t = {};
+            return e.rows.forEach((e=>{
+                let i, n;
+                if (e.id.startsWith("//"))
+                    if (e.id.startsWith("//feature/")) {
+                        const t = e.id.substr(10)
+                          , o = t.indexOf("/");
+                        if (-1 === o)
+                            return;
+                        i = t.substr(0, o),
+                        n = "￰" + e.id.substr(2)
+                    } else
+                        n = e.id.substr(2),
+                        i = "/";
+                else {
+                    const t = e.id.indexOf("/");
+                    if (-1 === t)
+                        return;
+                    i = e.id.substr(0, t),
+                    n = e.id.substr(t + 1)
+                }
+                i in t ? t[i].push(n) : t[i] = [n]
+            }
+            )),
+            t
+        }
+        async clearPluginData(e, t) {
+            if (!e || "string" != typeof e || e.length < 3 || !Array.isArray(t))
+                return;
+            if ((t = t.filter((e=>!e.startsWith("￰")))).length > 0) {
+                const i = {
+                    keys: t.map((t=>this.getDocId(e, t)))
+                }
+                  , n = await this.pouchDB.allDocs(i);
+                for (let e = 0; e < n.rows.length; e++) {
+                    const t = n.rows[e];
+                    try {
+                        await this.pouchDB.remove(t.id, t.value.rev)
+                    } catch (e) {}
+                }
+            }
+            const i = await this.pouchDB.allDocs({
+                startkey: e + "/",
+                endkey: e + "/￰"
+            });
+            if (i.rows.length > 0)
+                for (let e = 0; e < i.rows.length; e++) {
+                    const t = i.rows[e];
+                    try {
+                        await this.pouchDB.remove(t.id, t.value.rev)
+                    } catch (e) {}
+                }
+            const n = {
+                include_docs: !0
+            };
+            n.startkey = "//feature/" + e + "/",
+            n.endkey = n.startkey + "￰";
+            const o = await this.pouchDB.allDocs(n);
+            if (0 !== o.rows.length) {
+                for (let t = 0; t < o.rows.length; t++) {
+                    const i = o.rows[t];
+                    try {
+                        await this.pouchDB.remove(i.id, i.value.rev)
+                    } catch (e) {
+                        continue
+                    }
+                    this.windowCmp.pluginsCmp.removeFeature(e, i.doc.code)
+                }
+                this.windowCmp.destroyPlugin(e),
+                this.windowCmp.refreshCmdSource()
+            }
+        }
+        getRemoteDbDocCount() {
+            return new Promise(((e,i)=>{
+                const n = this.accountCmp.getAccountInfo();
+                if (!n || 1 !== n.db_sync)
+                    return e(null);
+                const o = this.config.sync.protocol + "://" + this.config.sync.host + (this.config.sync.port ? ":" + this.config.sync.port : "") + "/db_" + n.uid
+                  , s = t.net.request({
+                    url: o
+                });
+                s.setHeader("Authorization", "Basic " + Buffer.from(n.uid + ":" + n.db_secrect_key).toString("base64")),
+                s.on("response", (t=>{
+                    const n = [];
+                    t.on("data", (e=>{
+                        n.push(e)
+                    }
+                    )),
+                    t.on("end", (()=>{
+                        let t = null;
+                        try {
+                            t = JSON.parse(Buffer.concat(n).toString())
+                        } catch (e) {
+                            return i(e)
+                        }
+                        if (t.error)
+                            return i(new Error(t.error));
+                        "number" == typeof t.doc_count ? e(t.doc_count) : i(new Error("no doc_count"))
+                    }
+                    )),
+                    t.on("error", (e=>{
+                        i(e)
+                    }
+                    ))
+                }
+                )),
+                s.on("error", (e=>{
+                    i(e)
+                }
+                )),
+                s.end()
+            }
+            ))
+        }
+        cancelDbSync() {
+            this._retryDbSyncTimeout && (clearTimeout(this._retryDbSyncTimeout),
+            this._retryDbSyncTimeout = null),
+            this.pouchDBSync && (this.pouchDBSync.cancel(),
+            this.pouchDBSync = null),
+            this.pouchDBReplicate && (this.pouchDBReplicate.cancel(),
+            this.pouchDBReplicate = null),
+            this.pouchDBReplicateCompleted && (this.pouchDBReplicateCompleted = null)
+        }
+        dbSync(e) {
+            if (this.cancelDbSync(),
+            this.pouchDB.name !== c().join(this.dbpath, e.uid))
+                return void this.reportCmp.info("app.dbsync.error.0");
+            if (!e.db_sync || !e.db_secrect_key)
+                return;
+            this.emit("replicate-start");
+            const t = this.config.sync
+              , i = t.protocol + "://" + e.uid + ":" + e.db_secrect_key + "@" + t.host + (t.port ? ":" + t.port : "") + "/db_" + e.uid;
+            this.pouchDBReplicate = this.pouchDB.replicate.from(i, {
+                batch_size: 10
+            }).on("change", (e=>{
+                e.ok && 0 !== e.docs.length && this.pullLogic(e.docs)
+            }
+            )).on("complete", (()=>{
+                this.pouchDBReplicateCompleted = !0,
+                this.pouchDBSync = this.pouchDB.sync(i, {
+                    live: !0,
+                    retry: !0,
+                    batch_size: 10
+                }).on("change", (e=>{
+                    "pull" === e.direction && e.change.ok && 0 !== e.change.docs.length && this.pullLogic(e.change.docs)
+                }
+                )).on("error", (e=>{
+                    this.reportCmp.info("app.dbsync.error", {
+                        error: e.message
+                    })
+                }
+                )).on("denied", (e=>{
+                    this.reportCmp.info("app.dbsync.denied", {
+                        error: e.message
+                    })
+                }
+                )),
+                this.emit("replicate-complete")
+            }
+            )).on("error", (t=>{
+                if (this._retryDbSyncTimeout = setTimeout((()=>{
+                    this._retryDbSyncTimeout = null,
+                    this.dbSync(e)
+                }
+                ), 3e4),
+                "FetchError" !== t.name && !t.message.includes("getaddrinfo ENOTFOUND")) {
+                    this._dbreplicateErrors || (this._dbreplicateErrors = []);
+                    const e = t.message;
+                    if (this._dbreplicateErrors.includes(e))
+                        return;
+                    this._dbreplicateErrors.push(e),
+                    this.reportCmp.info("app.dbreplicate.error", {
+                        error: e
+                    })
+                }
+            }
+            ))
+        }
+        dbReplicateStateFromCloud() {
+            return this.pouchDBReplicateCompleted ? 0 : this.pouchDBReplicate ? 1 : null
+        }
+        pullLogic(e) {
+            const t = []
+              , i = {};
+            e.forEach((e=>{
+                if (e._revisions && delete e._revisions.ids,
+                e._id.startsWith("//"))
+                    e._id = this.replaceDocId("/", e._id),
+                    t.push(e);
+                else if (/^(\w{2,32})\//.test(e._id)) {
+                    const t = RegExp.$1;
+                    e._id = this.replaceDocId(t, e._id),
+                    t in i ? i[t].push(e) : i[t] = [e]
+                }
+            }
+            )),
+            t.length > 0 && this.emit("pull", t),
+            Object.keys(i).length > 0 && this.windowCmp.pluginDatabasePullEvent(i)
+        }
+        listenAccountEvent() {
+            this.accountCmp.on("login", (e=>{
+                const t = c().join(this.dbpath, e.uid)
+                  , i = this.pouchDB.name;
+                if (i === t)
+                    return void (e.db_sync && this.dbSync(e));
+                const n = this.pouchDB
+                  , o = !d().existsSync(t) && i === this.defaultDbName;
+                this.pouchDB = new (be())(t,{
+                    auto_compaction: !0
+                }),
+                o ? n.replicate.to(this.pouchDB).then((()=>{
+                    n.close(),
+                    this.emit("switch"),
+                    e.db_sync && this.dbSync(e)
+                }
+                )).catch((t=>{
+                    this.reportCmp.info("app.defaultdb.replicate.error", {
+                        error: t.message
+                    }),
+                    n.close(),
+                    this.emit("switch"),
+                    e.db_sync && this.dbSync(e)
+                }
+                )) : (n.close(),
+                this.emit("switch"),
+                e.db_sync && this.dbSync(e))
+            }
+            )),
+            this.accountCmp.on("logout", (()=>{
+                this.cancelDbSync();
+                const e = this.pouchDB;
+                this.pouchDB = new (be())(this.defaultDbName,{
+                    auto_compaction: !0
+                }),
+                e.close(),
+                this.emit("switch")
+            }
+            )),
+            this.accountCmp.on("dbsync", (e=>{
+                this.dbSync(e)
+            }
+            )),
+            this.accountCmp.on("undbsync", (()=>{
+                this.cancelDbSync()
+            }
+            ))
+        }
+        listenPowerMonitorEvent() {
+            t.powerMonitor.on("resume", (()=>{
+                this.pouchDBSync && (this.cancelDbSync(),
+                setImmediate((()=>{
+                    const e = this.accountCmp.getAccountInfo();
+                    e && e.db_sync && this.dbSync(e)
+                }
+                )))
+            }
+            ))
+        }
+    }
+    class We {
+        init() {
+            const e = s().macOS()
+              , i = [...e ? [{
+                label: t.app.name,
+                submenu: [{
+                    role: "about",
+                    label: "关于 " + t.app.name
+                }, {
+                    type: "separator"
+                }, {
+                    role: "services",
+                    label: "服务"
+                }, {
+                    type: "separator"
+                }, {
+                    role: "hide",
+                    label: "隐藏"
+                }, {
+                    role: "hideOthers",
+                    label: "隐藏其他应用"
+                }, {
+                    role: "unhide",
+                    label: "显示全部"
+                }, {
+                    type: "separator"
+                }, {
+                    role: "quit",
+                    label: "退出 " + t.app.name
+                }]
+            }] : [], {
+                label: "编辑",
+                submenu: [{
+                    role: "undo",
+                    label: "撤销"
+                }, {
+                    role: "redo",
+                    label: "重做"
+                }, {
+                    type: "separator"
+                }, {
+                    role: "cut",
+                    label: "剪切"
+                }, {
+                    role: "copy",
+                    label: "复制"
+                }, {
+                    role: "paste",
+                    label: "粘贴"
+                }, ...e ? [{
+                    role: "pasteAndMatchStyle",
+                    label: "粘贴并匹配样式"
+                }, {
+                    role: "delete",
+                    label: "删除"
+                }, {
+                    role: "selectAll",
+                    label: "全选"
+                }] : [{
+                    role: "delete"
+                }, {
+                    type: "separator"
+                }, {
+                    role: "selectAll"
+                }]]
+            }, {
+                label: "窗口",
+                submenu: [{
+                    role: "minimize",
+                    label: "最小化"
+                }, {
+                    role: "zoom",
+                    label: "缩放"
+                }, ...e ? [{
+                    type: "separator"
+                }, {
+                    role: "front",
+                    label: "前置全部窗口"
+                }] : [{
+                    role: "close"
+                }]]
+            }];
+            t.Menu.setApplicationMenu(t.Menu.buildFromTemplate(i))
+        }
+    }
+    const Se = require("electron-updater");
+    class Pe {
+        constructor(e, i, n) {
+            var o, s;
+            s = ()=>{
+                new Promise(((e,i)=>{
+                    const n = t.net.request(this.config.newestVersionURL);
+                    n.on("response", (i=>{
+                        if (200 !== i.statusCode)
+                            return e(!1);
+                        i.on("data", (i=>{
+                            let n;
+                            try {
+                                n = JSON.parse(i.toString())
+                            } catch (t) {
+                                return e(!1)
+                            }
+                            const o = n[process.platform]?.[process.arch];
+                            if (!o)
+                                return e(!1);
+                            L().gt(o, t.app.getVersion()) ? e({
+                                downloadUrl: n.downloadUrl,
+                                newestVersion: o
+                            }) : e(!1)
+                        }
+                        ))
+                    }
+                    )),
+                    n.on("error", i),
+                    n.end()
+                }
+                )).then((e=>{
+                    if (e)
+                        return t.shell.openExternal(e.downloadUrl),
+                        void new t.Notification({
+                            title: "uTools 更新检测",
+                            body: "发现最新版本 v" + e.newestVersion
+                        }).show();
+                    new t.Notification({
+                        title: "uTools 更新检测",
+                        body: "当前版本为最新版本！"
+                    }).show()
+                }
+                )).catch((()=>{
+                    new t.Notification({
+                        title: "uTools 更新检测",
+                        body: "网络错误，更新检测失败！"
+                    }).show()
+                }
+                ))
+            }
+            ,
+            (o = "checkNewestVersion")in this ? Object.defineProperty(this, o, {
+                value: s,
+                enumerable: !0,
+                configurable: !0,
+                writable: !0
+            }) : this[o] = s,
+            this.config = e,
+            this.windowCmp = i,
+            this.accountCmp = n
+        }
+        init() {
+            let e = t.app.getVersion();
+            const i = e.split("-");
+            i.length > 2 && (e = i[0] + "-" + i[1]);
+            let n = "";
+            s().macOS() ? n = "res/iconTemplate@2x.png" : s().windows() ? n = parseInt(v().release()) < 10 ? "res/icon.png" : "res/icon.ico" : s().linux() && (n = "res/icon@2x.png"),
+            this.tray = new t.Tray(c().join(__dirname, n));
+            const o = [{
+                label: "uTools 官网",
+                click: ()=>{
+                    process.nextTick((()=>{
+                        t.shell.openExternal("https://u.tools")
+                    }
+                    ))
+                }
+            }, {
+                label: "帮助文档",
+                click: ()=>{
+                    process.nextTick((()=>{
+                        t.shell.openExternal(this.config.redirectURL + "help")
+                    }
+                    ))
+                }
+            }, {
+                label: "意见反馈",
+                click: ()=>{
+                    process.nextTick((()=>{
+                        t.shell.openExternal(this.config.feedbackURL)
+                    }
+                    ))
+                }
+            }, {
+                type: "separator"
+            }, {
+                label: "隐私政策",
+                click: ()=>{
+                    process.nextTick((()=>{
+                        t.shell.openExternal(this.config.redirectURL + "terms_privacy")
+                    }
+                    ))
+                }
+            }, {
+                label: "用户协议",
+                click: ()=>{
+                    process.nextTick((()=>{
+                        t.shell.openExternal(this.config.redirectURL + "terms_user")
+                    }
+                    ))
+                }
+            }, {
+                type: "separator"
+            }, {
+                label: "版本(V" + e + ")",
+                click: ()=>{
+                    process.nextTick((()=>{
+                        t.shell.openExternal(this.config.redirectURL + "version")
+                    }
+                    ))
+                }
+            }, {
+                label: "检测更新",
+                click: ()=>{
+                    process.nextTick((()=>{
+                        this.checkForUpdate()
+                    }
+                    ))
+                }
+            }, {
+                type: "separator"
+            }, {
+                label: "偏好设置",
+                click: ()=>{
+                    process.nextTick((()=>{
+                        this.windowCmp.ffffffff.goSetting()
+                    }
+                    ))
+                }
+            }, {
+                label: "显示/隐藏",
+                click: ()=>{
+                    process.nextTick((()=>{
+                        this.windowCmp.display.trigger()
+                    }
+                    ))
+                }
+            }, {
+                type: "separator"
+            }, {
+                label: "重启",
+                click: ()=>{
+                    process.nextTick((()=>{
+                        t.app.relaunch(),
+                        t.app.emit("exit")
+                    }
+                    ))
+                }
+            }, {
+                label: "退出",
+                click: ()=>{
+                    process.nextTick((()=>{
+                        t.app.emit("exit")
+                    }
+                    ))
+                }
+            }];
+            this.tray.setContextMenu(t.Menu.buildFromTemplate(o)),
+            s().windows() && this.tray.on("click", (()=>{
+                this.windowCmp.display.trigger()
+            }
+            ))
+        }
+        checkForUpdate() {
+            if (s().dev())
+                return void new t.Notification({
+                    title: "uTools 更新检测",
+                    body: "当前版本为开发版未开启检测"
+                }).show();
+            if (s().linux())
+                return this.checkNewestVersion();
+            if (Se.autoUpdater.listenerCount("update-available") > 0 || Se.autoUpdater.listenerCount("update-not-available") > 0)
+                return;
+            const e = ()=>{
+                Se.autoUpdater.removeListener("update-available", e),
+                new t.Notification({
+                    title: "uTools 更新检测",
+                    body: "已检测到新版本，已在后台自动下载"
+                }).show()
+            }
+              , i = ()=>{
+                Se.autoUpdater.removeListener("update-not-available", i),
+                this.checkNewestVersion()
+            }
+            ;
+            Se.autoUpdater.addListener("update-available", e),
+            Se.autoUpdater.addListener("update-not-available", i),
+            setTimeout((function() {
+                Se.autoUpdater.removeListener("update-available", e),
+                Se.autoUpdater.removeListener("update-not-available", i)
+            }
+            ), 1e4),
+            Se.autoUpdater.checkForUpdates()
+        }
+    }
+    function ke(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    const xe = [50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200, 250, 300];
+    class De {
+        constructor(e) {
+            ke(this, "mainServices", {
+                showPluginMenu: ()=>{
+                    this.mainWindowShowPluginMenu()
+                }
+            }),
+            ke(this, "detachServices", {
+                buildDetachPluginOptionMenu: (e,t,i)=>{
+                    this.buildDetachPluginOptionMenu(t, i)
+                }
+                ,
+                buildDetachPluginViewZoomMenu: (e,t,i)=>{
+                    this.buildDetachPluginViewZoomMenu(t, i)
+                }
+                ,
+                showPluginInfo: (e,t,i)=>{
+                    this.windowCmp.ffffffff.goInstalledPluginInfo(t)
+                }
+            }),
+            this.windowCmp = e.windowCmp,
+            this.appCmp = e
+        }
+        getDetachHotKey() {
+            return this.windowCmp.isMacOs ? this.windowCmp.pluginDetachHotKey.replace("Alt+", "Option+") : this.windowCmp.pluginDetachHotKey.replace("Control+", "Ctrl+").replace("Super+", "Windows+")
+        }
+        init() {
+            this.initPluginMenu()
+        }
+        initPluginMenu() {
+            const e = this.getDetachHotKey()
+              , i = [{
+                id: "detach@" + e,
+                label: "分离窗口",
+                icon: c().join(__dirname, "res", "menu", "split@2x.png"),
+                accelerator: e,
+                click: ()=>{
+                    process.nextTick((()=>{
+                        this.windowCmp.detachPlugin()
+                    }
+                    ))
+                }
+            }, {
+                id: "openDevTools",
+                label: "开发者工具",
+                icon: c().join(__dirname, "res", "menu", "tool@2x.png"),
+                visible: !1,
+                accelerator: this.windowCmp.isMacOs ? "Command+Alt+I" : "Ctrl+Shift+I",
+                click: ()=>{
+                    process.nextTick((()=>{
+                        this.windowCmp.openPluginDevTools()
+                    }
+                    ))
+                }
+            }, {
+                type: "separator"
+            }, {
+                id: "plugininfo",
+                label: "关于插件应用",
+                icon: c().join(__dirname, "res", "menu", "info@2x.png"),
+                click: ()=>{
+                    process.nextTick((()=>{
+                        const e = this.windowCmp.getCurrentPluginId();
+                        e && this.windowCmp.ffffffff.goInstalledPluginInfo(e)
+                    }
+                    ))
+                }
+            }, {
+                label: "插件应用设置",
+                icon: c().join(__dirname, "res", "menu", "setting@2x.png"),
+                submenu: [{
+                    id: "enterdetach",
+                    label: "开启自动分离窗口",
+                    type: "checkbox",
+                    click: e=>{
+                        const t = this.windowCmp.mainWindow.getBrowserView();
+                        if (!t)
+                            return;
+                        const i = this.windowCmp.getPluginIdByWebContents(t.webContents);
+                        i && (e.checked ? this.appCmp.addEnterDetachPlugin(i) : this.appCmp.removeEnterDetachPlugin(i))
+                    }
+                }, {
+                    id: "outkill",
+                    label: "隐藏后台时完全退出",
+                    type: "checkbox",
+                    click: e=>{
+                        const t = this.windowCmp.mainWindow.getBrowserView();
+                        if (!t)
+                            return;
+                        const i = this.windowCmp.getPluginIdByWebContents(t.webContents);
+                        i && (e.checked ? this.appCmp.addOutKillPlugin(i) : this.appCmp.removeOutKillPlugin(i))
+                    }
+                }, {
+                    id: "runatappopen",
+                    label: "跟随主程序同时启动",
+                    type: "checkbox",
+                    click: e=>{
+                        const t = this.windowCmp.mainWindow.getBrowserView();
+                        if (!t)
+                            return;
+                        const i = this.windowCmp.getPluginIdByWebContents(t.webContents);
+                        i && (e.checked ? this.appCmp.addPluginRunAtAppOpen(i) : this.appCmp.removePluginRunAtAppOpen(i))
+                    }
+                }]
+            }, {
+                type: "separator"
+            }, {
+                id: "out",
+                label: "隐藏后台",
+                icon: c().join(__dirname, "res", "menu", "leftup@2x.png"),
+                accelerator: "Esc",
+                click: ()=>{
+                    process.nextTick((()=>{
+                        this.windowCmp.outPlugin()
+                    }
+                    ))
+                }
+            }, {
+                id: "kill",
+                label: "完全退出",
+                icon: c().join(__dirname, "res", "menu", "close@2x.png"),
+                click: ()=>{
+                    process.nextTick((()=>{
+                        this.windowCmp.endPlugin()
+                    }
+                    ))
+                }
+            }];
+            this._mainPluginMenu = t.Menu.buildFromTemplate(i)
+        }
+        async mainWindowShowPluginMenu() {
+            const e = this.windowCmp.mainWindow.getBrowserView();
+            if (!e)
+                return;
+            const i = this.windowCmp.getPluginIdByWebContents(e.webContents);
+            if (!i)
+                return;
+            const n = this.windowCmp.pluginsCmp.pluginContainer[i];
+            if (!n)
+                return;
+            const o = this.appCmp.pluginIsOutKill(i);
+            this._mainPluginMenu.getMenuItemById("openDevTools").visible = !!n.isDev,
+            this._mainPluginMenu.getMenuItemById("outkill").checked = o,
+            this._mainPluginMenu.getMenuItemById("out").visible = !o,
+            this._mainPluginMenu.getMenuItemById("enterdetach").checked = this.appCmp.pluginIsEnterDetach(i),
+            this._mainPluginMenu.getMenuItemById("plugininfo").visible = !n.isDev && "FFFFFFFF" !== i;
+            const s = this._mainPluginMenu.getMenuItemById("runatappopen");
+            o ? s.enabled = !1 : (s.enabled = !0,
+            s.checked = await this.appCmp.getIsPluginRunAtAppOpen(i));
+            const r = this.getDetachHotKey()
+              , a = this._mainPluginMenu.getMenuItemById("detach@" + r);
+            a ? a.visible || (this._mainPluginMenu.items.filter((e=>e.id && e.id.startsWith("detach@") && e.id !== r)).forEach((e=>{
+                e.visible = !1
+            }
+            )),
+            a.visible = !0) : (this._mainPluginMenu.items.filter((e=>e.id && e.id.startsWith("detach@"))).forEach((e=>{
+                e.visible = !1
+            }
+            )),
+            this._mainPluginMenu.insert(0, new t.MenuItem({
+                id: "detach@" + r,
+                label: "分离窗口",
+                icon: c().join(__dirname, "res", "menu", "windows@2x.png"),
+                accelerator: r,
+                click: ()=>{
+                    process.nextTick((()=>{
+                        this.windowCmp.detachPlugin()
+                    }
+                    ))
+                }
+            })));
+            const l = this.windowCmp.mainWindow.getSize()[0] - this.windowCmp.config.initHeight
+              , d = this.windowCmp.isMacOs ? this.windowCmp.config.initHeight + 5 : this.windowCmp.config.initHeight;
+            this._mainPluginMenu.popup({
+                window: this.windowCmp.mainWindow,
+                x: l,
+                y: d,
+                callback: ()=>{
+                    e.webContents && !e.webContents.isDestroyed() && e.webContents.focus()
+                }
+            })
+        }
+        async buildDetachPluginOptionMenu(e, i) {
+            const n = this.appCmp.pluginIsOutKill(e);
+            let o;
+            o = !n && await this.appCmp.getIsPluginRunAtAppOpen(e);
+            let s = t.Menu.buildFromTemplate([{
+                label: "开启自动分离窗口",
+                type: "checkbox",
+                checked: this.appCmp.pluginIsEnterDetach(e),
+                click: t=>{
+                    t.checked ? this.appCmp.addEnterDetachPlugin(e) : this.appCmp.removeEnterDetachPlugin(e)
+                }
+            }, {
+                label: "隐藏后台时完全退出",
+                type: "checkbox",
+                checked: n,
+                click: t=>{
+                    t.checked ? this.appCmp.addOutKillPlugin(e) : this.appCmp.removeOutKillPlugin(e)
+                }
+            }, {
+                label: "跟随主程序同时启动",
+                type: "checkbox",
+                enabled: !n,
+                checked: o,
+                click: t=>{
+                    t.checked ? this.appCmp.addPluginRunAtAppOpen(e) : this.appCmp.removePluginRunAtAppOpen(e)
+                }
+            }]);
+            if (this.windowCmp.isMacOs)
+                return s.popup({
+                    window: i,
+                    x: i.getSize()[0] - 84,
+                    y: 56,
+                    callback: ()=>{
+                        s = null
+                    }
+                });
+            s.popup({
+                window: i,
+                x: i.getSize()[0] - 220,
+                y: 48,
+                callback: ()=>{
+                    s = null
+                }
+            })
+        }
+        buildDetachPluginViewZoomMenu(e, i) {
+            const n = i.getBrowserView();
+            if (!n)
+                return;
+            const o = e=>{
+                const t = parseInt(e.label.replace("%", ""));
+                n.webContents.setZoomFactor(t / 100),
+                i.webContents.executeJavaScript("window.api.localStorageZoomFactor(" + t + ")")
+            }
+              , s = parseInt(100 * n.webContents.getZoomFactor());
+            let r = t.Menu.buildFromTemplate(xe.map((e=>({
+                label: e + "%",
+                type: "radio",
+                checked: s === e,
+                click: o
+            }))));
+            if (this.windowCmp.isMacOs)
+                return r.popup({
+                    window: i,
+                    x: i.getSize()[0] - 126,
+                    y: 56,
+                    callback: ()=>{
+                        r = null
+                    }
+                });
+            r.popup({
+                window: i,
+                x: i.getSize()[0] - 262,
+                y: 48,
+                callback: ()=>{
+                    r = null
+                }
+            })
+        }
+    }
+    function Ie(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    const _e = new class {
+        isFKey(e) {
+            return e.startsWith("Double") || /^F([1-9]|1[0-2])$/.test(e)
+        }
+        _getKey(e) {
+            if (e.startsWith("Double")) {
+                const t = e.replace("Double", "").toLowerCase();
+                if ("darwin" === process.platform)
+                    return "ctrl" === t ? "control" : "alt" === t ? "option" : t;
+                if ("control" === t)
+                    return "ctrl";
+                if ("option" === t)
+                    return "alt";
+                if ("command" === t)
+                    return;
+                return t
+            }
+            if (/^F([1-9]|1[0-2])$/.test(e))
+                return e.toLowerCase()
+        }
+        register(e, t) {
+            const i = this._getKey(e);
+            i && (this.keyAction ? this.keyAction[i] = t : (this.keyAction = {
+                [i]: t
+            },
+            k().fKeyTapEvent((e=>{
+                this.keyAction && e in this.keyAction && this.keyAction[e]()
+            }
+            ))))
+        }
+        unregister(e) {
+            if (!this.keyAction)
+                return;
+            const t = this._getKey(e);
+            t && (delete this.keyAction[t],
+            0 === Object.keys(this.keyAction).length && (delete this.keyAction,
+            k().stopFKeyTapEvent()))
+        }
+        isRegistered(e) {
+            if (!this.keyAction)
+                return !1;
+            const t = this._getKey(e);
+            return !!t && t in this.keyAction
+        }
+    }
+    ;
+    class Te {
+        constructor(e) {
+            var i, o;
+            o = {
+                setOpenAtLogin: (e,t)=>{
+                    const i = n().get("openAtLogin")
+                      , o = !0 === t;
+                    n().set("openAtLogin", o),
+                    i !== o && this.setOpenAtLogin(o),
+                    e.returnValue = !0
+                }
+                ,
+                setSpaceAsEnter: (e,t)=>{
+                    n().set("spaceAsEnter", !0 === t),
+                    this.setSpaceAsEnter(!0 === t),
+                    e.returnValue = !0
+                }
+                ,
+                setShowHotKey: (e,i)=>{
+                    if (i = _(i),
+                    _e.isFKey(i) && _e.isRegistered(i))
+                        return void (e.returnValue = !1);
+                    const o = n().get("showHotKey");
+                    o && (_e.isFKey(o) ? _e.unregister(o) : t.globalShortcut.isRegistered(o) && t.globalShortcut.unregister(o)),
+                    n().set("showHotKey", i),
+                    this.setShowHotKey(i),
+                    e.returnValue = !0
+                }
+                ,
+                setPluginDetachHotKey: (e,t)=>{
+                    t = _(t),
+                    n().set("pluginDetachHotKey", t),
+                    this.windowCmp.pluginDetachHotKey = this.getAppPluginHotKey(t),
+                    e.returnValue = !0
+                }
+                ,
+                setAutoPasteLife: (e,t)=>{
+                    t = parseInt(t, 10),
+                    n().set("autoPasteLife", t),
+                    this.clipboardCmp.autoPasteLife = t,
+                    e.returnValue = !0
+                }
+                ,
+                setPluginOutTimer: (e,t)=>{
+                    t = parseInt(t, 10),
+                    n().set("pluginOutTimer", t),
+                    this.windowCmp.pluginOutTimer = t,
+                    e.returnValue = !0
+                }
+                ,
+                getAllSettings: e=>{
+                    e.returnValue = n().getAll()
+                }
+                ,
+                setMainPlaceholder: (e,t)=>{
+                    "string" == typeof t ? (this._setMainPlaceholderTimeout && clearTimeout(this._setMainPlaceholderTimeout),
+                    this._setMainPlaceholderTimeout = setTimeout((()=>{
+                        this._setMainPlaceholderTimeout = null,
+                        t ? n().set("mainPlaceholder", t) : n().delete("mainPlaceholder"),
+                        this.windowCmp.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.changeMainPlaceholder(${JSON.stringify(t)})`)
+                    }
+                    ), 500),
+                    e.returnValue = !0) : e.returnValue = !1
+                }
+                ,
+                setTheme: (e,i)=>{
+                    ["system", "dark", "light"].includes(i) && t.nativeTheme.themeSource !== i ? (n().set("theme", i),
+                    t.nativeTheme.themeSource = i,
+                    e.returnValue = !0) : e.returnValue = !1
+                }
+                ,
+                setMainWindowOpacity: (e,t)=>{
+                    if (this.windowCmp.isMacOs || this.windowCmp.isWindow) {
+                        if (t < .2 || t > 1)
+                            return void (e.returnValue = !0);
+                        this.windowCmp.mainWindow.setOpacity(t),
+                        this.settingMainWindowOpacityDelayTimer && clearTimeout(this.settingMainWindowOpacityDelayTimer),
+                        this.settingMainWindowOpacityDelayTimer = setTimeout((()=>{
+                            delete this.settingMainWindowOpacityDelayTimer,
+                            n().set("mainWindowOpacity", t)
+                        }
+                        ), 3e3)
+                    }
+                    e.returnValue = !0
+                }
+            },
+            (i = "ffffffffServices")in this ? Object.defineProperty(this, i, {
+                value: o,
+                enumerable: !0,
+                configurable: !0,
+                writable: !0
+            }) : this[i] = o,
+            this.windowCmp = e,
+            this.clipboardCmp = e.clipboardCmp
+        }
+        init() {
+            n().has("openAtLogin") || n().set("openAtLogin", !0),
+            n().has("spaceAsEnter") || n().set("spaceAsEnter", !0),
+            n().has("showHotKey") || n().set("showHotKey", "Alt+Space"),
+            n().has("pluginDetachHotKey") || (this.windowCmp.isMacOs ? n().set("pluginDetachHotKey", "Command+D") : n().set("pluginDetachHotKey", "Control+D")),
+            n().has("autoPasteLife") || n().set("autoPasteLife", 5),
+            n().has("pluginOutTimer") || n().set("pluginOutTimer", 3),
+            n().has("mainWindowOpacity") || n().set("mainWindowOpacity", 1),
+            this.setOpenAtLogin(n().get("openAtLogin")),
+            this.setSpaceAsEnter(n().get("spaceAsEnter")),
+            this.setShowHotKey(n().get("showHotKey")),
+            this.windowCmp.pluginDetachHotKey = this.getAppPluginHotKey(n().get("pluginDetachHotKey")),
+            this.clipboardCmp.autoPasteLife = parseInt(n().get("autoPasteLife")),
+            this.windowCmp.pluginOutTimer = parseInt(n().get("pluginOutTimer"));
+            const e = n().get("mainWindowOpacity");
+            e >= .2 && e < 1 && this.windowCmp.mainWindow.setOpacity(e)
+        }
+        setOpenAtLogin(e) {
+            t.app.setLoginItemSettings({
+                openAtLogin: !0 === e,
+                openAsHidden: !0
+            })
+        }
+        setSpaceAsEnter(e) {
+            this.windowCmp.mainWindow.webContents.executeJavaScript(`window.spaceAsEnter=${!0 === e}`)
+        }
+        setShowHotKey(e) {
+            if (_e.isFKey(e))
+                _e.register(e, (()=>{
+                    this.windowCmp.display.trigger()
+                }
+                ));
+            else
+                try {
+                    t.globalShortcut.register(e, (()=>{
+                        setImmediate((()=>{
+                            this.windowCmp.display.trigger()
+                        }
+                        ))
+                    }
+                    ))
+                } catch (e) {}
+        }
+        getShowHotKey() {
+            return n().get("showHotKey")
+        }
+        getAppPluginHotKey(e) {
+            const t = ["Alt", "Shift", "Control", this.windowCmp.isMacOs ? "Command" : "Super"];
+            return e.split("+").sort(((e,i)=>t.indexOf(i) - t.indexOf(e))).join("+")
+        }
+    }
+    function Fe(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    class Ae extends (oe()) {
+        constructor(e) {
+            super(),
+            Fe(this, "pluginApiServices", {
+                getUserServerTemporaryToken: (e,t)=>{
+                    t.startsWith("dev_") && (t = t.replace("dev_", ""));
+                    let i = setTimeout((()=>{
+                        i = null,
+                        e.returnValue = {
+                            error: !0,
+                            name: "exception",
+                            message: "请求超时"
+                        }
+                    }
+                    ), 2e3);
+                    this.getUserServerTemporaryToken(t, ((t,n)=>{
+                        i && (clearTimeout(i),
+                        e.returnValue = t ? {
+                            error: !0,
+                            name: "exception",
+                            message: t.message
+                        } : n ? {
+                            ok: !0,
+                            ...n
+                        } : {
+                            error: !0,
+                            name: "not login",
+                            message: "未登录"
+                        })
+                    }
+                    ))
+                }
+                ,
+                fetchUserServerTemporaryToken: async e=>{
+                    e.startsWith("dev_") && (e = e.replace("dev_", ""));
+                    const t = this.getAccountToken();
+                    if (!t)
+                        throw new Error("未登录");
+                    return await w(this.config.temporaryToken, {
+                        access_token: t,
+                        plugin_name: e
+                    })
+                }
+            }),
+            Fe(this, "ffffffffServices", {
+                getMachineNativeId: e=>{
+                    e.returnValue = [this.machineId, this.nativeId]
+                }
+                ,
+                getAccountToken: e=>{
+                    e.returnValue = this.getAccountToken()
+                }
+                ,
+                getLocalAccount: e=>{
+                    const t = this.getAccountInfo();
+                    t && delete t.db_secrect_key,
+                    e.returnValue = t
+                }
+                ,
+                renewLocalAccount: async()=>{
+                    const e = this.getAccountToken();
+                    if (e)
+                        return await new Promise(((t,i)=>{
+                            this.remoteAccountInfo(e, (e=>{
+                                if (e)
+                                    return i(e);
+                                t()
+                            }
+                            ))
+                        }
+                        ))
+                }
+                ,
+                setOpenDbSync: async e=>{
+                    const t = this.getAccountToken();
+                    t && (await w(this.config.dbSyncURL, {
+                        access_token: t,
+                        sync: e ? "open" : "close"
+                    }),
+                    await new Promise(((e,i)=>{
+                        this.remoteAccountInfo(t, (t=>{
+                            if (t)
+                                return i(t);
+                            e()
+                        }
+                        ))
+                    }
+                    )))
+                }
+                ,
+                logout: e=>{
+                    this.logout(),
+                    e.returnValue = !0
+                }
+            }),
+            this.config = e,
+            this.machineId = k().getMachineId(),
+            this.machineIdSign = k().getMachineIdSignature().toString("hex"),
+            this.nativeId = k().getNativeId(),
+            this.nativeIdSign = k().getNativeIdSignature().toString("hex"),
+            m(e.muserURL + this.getAccountToken(), {
+                mid: this.machineId,
+                mids: this.machineIdSign,
+                nid: this.nativeId,
+                nids: this.nativeIdSign
+            }).catch((()=>{}
+            ))
+        }
+        getAccountInfo() {
+            const e = n().get("account");
+            if (!e)
+                return null;
+            let t = "";
+            if ("object" == typeof e)
+                t = A(Buffer.from(e.info || "", "hex"));
+            else {
+                if ("string" != typeof e)
+                    return n().delete("account"),
+                    null;
+                t = A(Buffer.from(e, "hex"))
+            }
+            if (!t)
+                return n().delete("account"),
+                null;
+            let i = null;
+            try {
+                if (i = JSON.parse(t),
+                "object" != typeof i)
+                    return n().delete("account"),
+                    null
+            } catch (e) {
+                return n().delete("account"),
+                null
+            }
+            return i.uid ? ("string" == typeof e && i.db_secrect_key && (i.db_secrect_key = A(Buffer.from(i.db_secrect_key, "hex"))),
+            i) : (n().delete("account"),
+            null)
+        }
+        getAccountToken() {
+            let e, t = n().get("account");
+            if (!t)
+                return "";
+            if ("string" == typeof t) {
+                if (t = this.getAccountInfo(),
+                !t)
+                    return "";
+                e = t.access_token
+            } else
+                e = t.token;
+            return e ? A(Buffer.from(e, "hex")) : ""
+        }
+        init() {
+            const e = this.getAccountInfo();
+            e && (this.emit("login", e),
+            setImmediate((()=>{
+                this.remoteAccountInfo(this.getAccountToken())
+            }
+            )))
+        }
+        remoteAccountInfo(e, i) {
+            const o = k().getRandomKeyAndSignature();
+            w(this.config.profileURL, {
+                access_token: e,
+                mid: this.machineId,
+                mids: this.machineIdSign,
+                nid: this.nativeId,
+                nids: this.nativeIdSign,
+                key: o[0],
+                keys: o[1].toString("hex")
+            }).then((o=>{
+                const s = o.timestamp
+                  , r = o.sign
+                  , a = o.user_info;
+                if (k().compareYuanliaoSignature(a + s, Buffer.from(r, "hex"))) {
+                    const o = this.getAccountInfo();
+                    n().set("account", {
+                        token: F(e).toString("hex"),
+                        info: F(a).toString("hex"),
+                        sign: r,
+                        timestamp: s
+                    });
+                    const c = JSON.parse(a);
+                    o && o.db_sync !== c.db_sync && (c.db_sync ? this.emit("dbsync", c) : (this.emit("undbsync", c),
+                    new t.Notification({
+                        title: "uTools",
+                        body: "帐号数据同步功能已关闭，请知悉"
+                    }).show())),
+                    "function" == typeof i && i(null, c)
+                } else
+                    setTimeout((()=>{
+                        this.logout(),
+                        new t.Notification({
+                            title: "uTools",
+                            body: "非法签名，已退出帐号，请知悉"
+                        }).show()
+                    }
+                    )),
+                    "function" == typeof i && i(new Error("非法签名，退出帐号"))
+            }
+            )).catch((e=>{
+                401 !== e.code && 403 !== e.code || setTimeout((()=>{
+                    this.logout(),
+                    new t.Notification({
+                        title: "uTools",
+                        body: "帐号 Token 已失效，已退出帐号，请知悉"
+                    }).show()
+                }
+                )),
+                "function" == typeof i && i(e)
+            }
+            ))
+        }
+        login(e, i) {
+            if (this.loginWindow && !this.loginWindow.isDestroyed())
+                return void this.loginWindow.show();
+            if (this.loginSuccessCallback = i,
+            !this.loginSession) {
+                this.loginSession = t.session.fromPartition("utools-login:" + Date.now());
+                const e = this.config.loginURL.match(/^https?:\/\/[^\/]+/)[0];
+                this.loginSession.webRequest.onResponseStarted({
+                    urls: [e + "/*"]
+                }, (e=>{
+                    if (e.responseHeaders["access-token"] || e.responseHeaders["Access-Token"]) {
+                        const i = (e.responseHeaders["access-token"] || e.responseHeaders["Access-Token"])[0];
+                        this.remoteAccountInfo(i, ((e,i)=>{
+                            this.loginWindow && this.loginWindow.destroy(),
+                            e ? new t.Notification({
+                                title: "uTools 帐号登录失败",
+                                body: e.message
+                            }).show() : (this.emit("login", i),
+                            "function" == typeof this.loginSuccessCallback && this.loginSuccessCallback(i))
+                        }
+                        ))
+                    }
+                }
+                ))
+            }
+            const n = e.getBounds()
+              , o = s().macOS() ? 528 : 500
+              , r = Math.floor(n.x + n.width / 2 - 280)
+              , a = Math.floor(n.y + n.height / 2 - o / 2);
+            this.loginWindow = new t.BrowserWindow({
+                resizable: !1,
+                fullscreenable: !1,
+                movable: !1,
+                minimizable: !1,
+                maximizable: !1,
+                focusable: !1,
+                width: 560,
+                height: o,
+                x: r,
+                y: a,
+                autoHideMenuBar: !0,
+                frame: !1,
+                skipTaskbar: !0,
+                parent: e,
+                modal: !0,
+                backgroundColor: "#333333",
+                webPreferences: {
+                    nodeIntegration: !1,
+                    session: this.loginSession
+                }
+            }),
+            this.loginWindow.removeMenu();
+            const c = ()=>{
+                this.loginWindow.isDestroyed() || this.loginWindow.destroy()
+            }
+            ;
+            e.once("resize", c),
+            e.once("blur", c),
+            this.loginWindow.once("closed", (()=>{
+                e.removeListener("resize", c),
+                e.removeListener("blur", c),
+                this.loginWindow = null
+            }
+            )),
+            this.loginWindow.webContents.on("dom-ready", (()=>{
+                this.loginWindow && this.loginWindow.webContents.insertCSS("body{overflow: hidden;}")
+            }
+            )),
+            this.loginWindow.loadURL(this.config.loginURL)
+        }
+        logout() {
+            const e = this.getAccountToken();
+            e ? (w(this.config.logoutURL, {
+                access_token: e
+            }),
+            n().delete("account"),
+            this.emit("logout")) : n().has("account") && (n().delete("account"),
+            this.emit("logout"))
+        }
+        getUserServerTemporaryToken(e, t) {
+            const i = this.getAccountToken();
+            if (!i)
+                return t(null, null);
+            w(this.config.temporaryToken, {
+                access_token: i,
+                plugin_name: e
+            }).then((e=>{
+                t(null, {
+                    token: e.token,
+                    expiredAt: e.expired_at
+                })
+            }
+            )).catch((e=>{
+                t(e)
+            }
+            ))
+        }
+    }
+    function Me(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    class Ee extends (oe()) {
+        constructor(e, i) {
+            super(),
+            Me(this, "clipboardPluginId", "clipboard"),
+            Me(this, "autoPasteLife", 5),
+            Me(this, "updateTimestamp", 0),
+            Me(this, "cancelWatchTimeout", null),
+            Me(this, "maxGroupFolderNum", 6),
+            Me(this, "maxGroupRecordNum", 100),
+            Me(this, "getRecordFolderNames", (()=>{
+                if (!V().existsSync(this.clipboardDataDir))
+                    return [];
+                let e;
+                try {
+                    e = V().readdirSync(this.clipboardDataDir)
+                } catch (e) {
+                    return null
+                }
+                if (0 === e.length)
+                    return [];
+                const t = e.filter((e=>/^\d{13}$/.test(e))).sort().reverse().slice(0, this.maxGroupFolderNum);
+                return e.length > t.length && e.filter((e=>!t.includes(e))).forEach((e=>{
+                    re()(c().join(this.clipboardDataDir, e), (()=>{}
+                    ))
+                }
+                )),
+                t
+            }
+            )),
+            Me(this, "initCurrentRecordFileStat", (()=>{
+                do {
+                    try {
+                        const e = this.getRecordFolderNames();
+                        if (!e || 0 === e.length)
+                            break;
+                        const t = c().join(this.clipboardDataDir, e[0])
+                          , i = c().join(t, "data");
+                        if (!V().existsSync(i))
+                            break;
+                        let n = V().readFileSync(i, "utf-8").split("\n").length;
+                        (0 === n || n > this.maxGroupRecordNum + 1) && (n = this.maxGroupRecordNum + 1),
+                        this.currentRecordFileStat = {
+                            folder: t,
+                            number: n - 1
+                        }
+                    } catch (e) {}
+                } while (0);
+                this.currentRecordFileStat || (this.currentRecordFileStat = {
+                    number: 0
+                })
+            }
+            )),
+            Me(this, "appendRecordItem", (e=>{
+                if (!e || !this.currentRecordFileStat)
+                    return;
+                if (this._prevRecordItemHash && this._prevRecordItemHash === e.hash)
+                    return;
+                if (this._prevRecordItemHash = e.hash,
+                this.currentRecordFileStat.number % this.maxGroupRecordNum == 0) {
+                    this.currentRecordFileStat.number === this.maxGroupRecordNum && this.getRecordFolderNames(),
+                    this.currentRecordFileStat.folder = c().join(this.clipboardDataDir, Date.now().toString());
+                    try {
+                        V().mkdirSync(this.currentRecordFileStat.folder, {
+                            recursive: !0
+                        })
+                    } catch (e) {
+                        return
+                    }
+                    this.currentRecordFileStat.number = 0
+                }
+                if ("image" === e.type) {
+                    this._currentClipboardImageRecordCache = {
+                        key: k().getClipboardChangeCount(),
+                        buffer: e.buffer
+                    };
+                    const t = c().join(this.currentRecordFileStat.folder, e.hash);
+                    try {
+                        V().existsSync(t) || V().writeFileSync(t, e.buffer)
+                    } catch (e) {}
+                    delete e.buffer
+                }
+                const t = F(JSON.stringify(e));
+                V().appendFileSync(c().join(this.currentRecordFileStat.folder, "data"), t + "\n", "utf-8"),
+                this.currentRecordFileStat.number++;
+                const i = this.runningPluginPool[this.clipboardPluginId];
+                if (!i)
+                    return;
+                let n = i.view;
+                if (!n) {
+                    const e = i.detachWindows[0];
+                    e && (n = e.getBrowserView())
+                }
+                n && ("image" === e.type && (e.value = c().join(this.currentRecordFileStat.folder, e.hash)),
+                n.webContents.send("append", e))
+            }
+            )),
+            Me(this, "getRecordItem", (()=>new Promise((e=>{
+                const i = Date.now()
+                  , n = this.getCopyFiles();
+                if (n) {
+                    const t = u().createHash("md5").update(JSON.stringify(n)).digest("hex");
+                    return e({
+                        type: "files",
+                        value: n,
+                        timestamp: i,
+                        hash: t
+                    })
+                }
+                const o = t.clipboard.availableFormats();
+                if (0 === o.length)
+                    return e(null);
+                if ("text/plain" === o[0]) {
+                    const n = t.clipboard.readText();
+                    if (n.trim()) {
+                        const t = u().createHash("md5").update(n).digest("hex");
+                        return e({
+                            type: "text",
+                            value: n,
+                            timestamp: i,
+                            hash: t
+                        })
+                    }
+                    return e(null)
+                }
+                if (!o[o.length - 1].startsWith("image/"))
+                    return e(null);
+                if (s().linux()) {
+                    const n = t.clipboard.readImage("clipboard");
+                    if (n.isEmpty())
+                        return e(null);
+                    const o = n.toPNG()
+                      , s = u().createHash("md5").update(o).digest("hex");
+                    return e({
+                        type: "image",
+                        size: o.byteLength,
+                        timestamp: i,
+                        buffer: o,
+                        hash: s
+                    })
+                }
+                k().readClipboardImage((n=>{
+                    if (!n) {
+                        if (!s().macOS())
+                            return e(null);
+                        {
+                            const i = t.clipboard.readImage();
+                            if (i.isEmpty())
+                                return e(null);
+                            n = i.toPNG()
+                        }
+                    }
+                    const o = u().createHash("md5").update(n).digest("hex");
+                    e({
+                        type: "image",
+                        size: n.byteLength,
+                        timestamp: i,
+                        buffer: n,
+                        hash: o
+                    })
+                }
+                ))
+            }
+            )))),
+            Me(this, "clipboardServices", {
+                readAllRecords: ()=>new Promise(((e,t)=>{
+                    const i = this.getRecordFolderNames();
+                    if (!i)
+                        return t(new Error('剪切板存储路径 "' + this.clipboardDataDir + '" 无法读取，可尝试手动删除它解决!'));
+                    if (0 === i.length)
+                        return e([]);
+                    const n = {};
+                    let o = 0;
+                    for (const t of i) {
+                        const i = c().join(this.clipboardDataDir, t, "data");
+                        if (!V().existsSync(i)) {
+                            re()(c().join(this.clipboardDataDir, t), (()=>{}
+                            ));
+                            continue
+                        }
+                        let s;
+                        try {
+                            s = V().readFileSync(i, "utf-8")
+                        } catch (e) {
+                            continue
+                        }
+                        const r = s.split("\n").reverse();
+                        for (const i of r) {
+                            if (!i)
+                                continue;
+                            const s = A(i);
+                            if (!s)
+                                continue;
+                            const r = JSON.parse(s);
+                            if (!(r.hash in n) && ("image" === r.type && (r.value = c().join(this.clipboardDataDir, t, r.hash)),
+                            n[r.hash] = r,
+                            ++o >= 500))
+                                return e(Object.values(n))
+                        }
+                    }
+                    e(Object.values(n))
+                }
+                )),
+                clearAllRecords: ()=>new Promise((e=>{
+                    re()(this.clipboardDataDir, (t=>{
+                        if (this.currentRecordFileStat = {
+                            number: 0
+                        },
+                        t) {
+                            if (!V().existsSync(this.clipboardDataDir))
+                                return e();
+                            const t = V().readdirSync(this.clipboardDataDir);
+                            if (0 === t.length)
+                                return e();
+                            t.filter((e=>/^\d{13}$/.test(e))).forEach((e=>{
+                                const t = c().join(this.clipboardDataDir, e, "data");
+                                try {
+                                    V().existsSync(t) && V().writeFileSync(t, "")
+                                } catch (e) {}
+                            }
+                            ))
+                        }
+                        e()
+                    }
+                    ))
+                }
+                ))
+            }),
+            Me(this, "mainServices", {
+                getCopyFiles: e=>{
+                    e.returnValue = this.getCopyFiles()
+                }
+                ,
+                getClipboardImage: e=>{
+                    if (this._currentClipboardImageRecordCache) {
+                        let t;
+                        if (this._currentClipboardImageRecordCache.key === k().getClipboardChangeCount() && (t = this._currentClipboardImageRecordCache.buffer),
+                        this._currentClipboardImageRecordCache = null,
+                        t)
+                            return void (e.returnValue = t)
+                    }
+                    if (s().linux()) {
+                        const i = t.clipboard.readImage();
+                        e.returnValue = i.isEmpty() ? null : i.toPNG()
+                    } else
+                        k().readClipboardImage((i=>{
+                            if (i || !s().macOS())
+                                e.returnValue = i;
+                            else {
+                                const i = t.clipboard.readImage();
+                                e.returnValue = i.isEmpty() ? null : i.toPNG()
+                            }
+                        }
+                        ))
+                }
+            }),
+            Me(this, "ffffffffServices", {
+                getCopyFiles: this.mainServices.getCopyFiles
+            }),
+            this.clipboardDataDir = e,
+            this.pluginsCmp = i
+        }
+        init() {
+            k().clipboardWatch((()=>{
+                this.cancelWatchTimeout || (this.updateTimestamp = Date.now(),
+                this.emit("change"),
+                this.clipboardPluginId in this.pluginsCmp.pluginContainer && (this.currentRecordFileStat || this.initCurrentRecordFileStat(),
+                this.getRecordItem().then(this.appendRecordItem)))
+            }
+            ))
+        }
+        isPreCopy() {
+            if (0 === this.updateTimestamp)
+                return !1;
+            const e = Date.now() - this.updateTimestamp < 1e3 * this.autoPasteLife;
+            return this.updateTimestamp = 0,
+            e
+        }
+        temporaryCancelWatch() {
+            this.cancelWatchTimeout && clearTimeout(this.cancelWatchTimeout),
+            this.cancelWatchTimeout = setTimeout((()=>{
+                this.cancelWatchTimeout = null
+            }
+            ), 300)
+        }
+        getPasteFormat() {
+            if (s().windows()) {
+                if (t.clipboard.has("FileNameW"))
+                    return "files"
+            } else if (s().macOS()) {
+                if (t.clipboard.has("NSFilenamesPboardType"))
+                    return "files"
+            } else if (s().linux() && t.clipboard.has("text/uri-list")) {
+                const e = k().getCopyFileNames();
+                if (e && e.length > 0)
+                    return "files"
+            }
+            const e = t.clipboard.availableFormats();
+            return e.length > 0 && "text/plain" !== e[0] && e[e.length - 1].startsWith("image/") ? "img" : "text"
+        }
+        getCopyFiles() {
+            const e = k().getCopyFileNames();
+            if (!e || 0 === e.length)
+                return null;
+            const t = [];
+            return e.forEach((e=>{
+                if (!V().existsSync(e))
+                    return;
+                let i;
+                try {
+                    i = V().lstatSync(e)
+                } catch (e) {
+                    return
+                }
+                t.push({
+                    isFile: i.isFile(),
+                    isDirectory: i.isDirectory(),
+                    name: c().basename(e) || e,
+                    path: e
+                })
+            }
+            )),
+            0 === t.length ? null : t
+        }
+    }
+    const Be = require("child_process");
+    var Ve = e.n(Be);
+    const Oe = {
+        "iPhone 11": {
+            size: {
+                width: 414,
+                height: 896
+            },
+            useragent: "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"
+        },
+        "iPhone X": {
+            size: {
+                width: 375,
+                height: 812
+            },
+            useragent: "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"
+        },
+        iPad: {
+            size: {
+                width: 768,
+                height: 1024
+            },
+            useragent: "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1"
+        },
+        "iPhone 6/7/8 Plus": {
+            size: {
+                width: 414,
+                height: 736
+            },
+            useragent: "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"
+        },
+        "iPhone 6/7/8": {
+            size: {
+                width: 375,
+                height: 667
+            },
+            useragent: "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"
+        },
+        "iPhone 5/SE": {
+            size: {
+                width: 320,
+                height: 568
+            },
+            useragent: "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1"
+        },
+        "HUAWEI Mate10": {
+            size: {
+                width: 360,
+                height: 640
+            },
+            useragent: "Mozilla/5.0 (Linux; U; Android 8.1.0; ALP-AL00 Build/HUAWEIALP-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.86 Mobile Safari/537.36"
+        },
+        "HUAWEI Mate20": {
+            size: {
+                width: 360,
+                height: 748
+            },
+            useragent: "Mozilla/5.0 (Linux; U; Android 9; HMA-AL00 Build/HUAWEIHMA-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.86 Mobile Safari/537.36"
+        },
+        "HUAWEI Mate30": {
+            size: {
+                width: 360,
+                height: 780
+            },
+            useragent: "Mozilla/5.0 (Linux; U; Android 10; TAS-AL00 Build/HUAWEITAS-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.86 Mobile Safari/537.36"
+        },
+        "HUAWEI Mate30 Pro": {
+            size: {
+                width: 392,
+                height: 800
+            },
+            useragent: "Mozilla/5.0 (Linux; U; Android 10; LIO-AL00 Build/HUAWEILIO-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.86 Mobile Safari/537.36"
+        }
+    };
+    class Le {
+        async useragent(e) {
+            this._browserWindow.webContents.userAgent = e
+        }
+        async viewport(e, t) {
+            this._browserWindow.setContentSize(e, t)
+        }
+        async goto(...e) {
+            if (!e[0] || "string" != typeof e[0] || !/^(?:https?|file):\/\//.test(e[0]))
+                throw new Error("url error");
+            let t;
+            this._isShow && !this._isFirstGoto && (this._isFirstGoto = !0,
+            this._browserWindow.setTitle(e[0]),
+            this._browserWindow.show());
+            let i = 6e4;
+            if (e[1])
+                if ("object" == typeof e[1]) {
+                    const i = e[1];
+                    t = {
+                        extraHeaders: ""
+                    };
+                    for (const e in i)
+                        "referer" !== e.toLowerCase() ? "useragent" !== e.toLowerCase() ? t.extraHeaders += e + ": " + i[e] + "\n" : t.userAgent = i[e] : t.httpReferrer = i[e]
+                } else
+                    "number" == typeof e[1] && e[1] > 0 && (i = e[1]);
+            e[2] && "number" == typeof e[2] && e[2] > 0 && (i = e[2]),
+            await new Promise(((n,o)=>{
+                const s = setTimeout((()=>{
+                    o(new Error("page load timeout"))
+                }
+                ), i);
+                this._browserWindow.webContents.once("dom-ready", (()=>{
+                    clearTimeout(s),
+                    this._pageIsDomReadyed = !0,
+                    n()
+                }
+                )),
+                this._browserWindow.loadURL(e[0], t).catch((e=>{
+                    clearTimeout(s),
+                    o(e)
+                }
+                ))
+            }
+            ))
+        }
+        async hide() {
+            this._isShow = !1,
+            this._browserWindow.hide()
+        }
+        async show() {
+            this._isShow = !0,
+            this._browserWindow.show()
+        }
+        async devTools(e="detach") {
+            if (!this._isShow)
+                throw new Error("ubrowser is hided");
+            this._browserWindow.webContents.openDevTools({
+                mode: e,
+                activate: !1
+            })
+        }
+        async javascript(e) {
+            if (!this._pageIsDomReadyed)
+                throw new Error('"goto" method dit not executed');
+            const t = await this._browserWindow.webContents.executeJavaScript(e, !0);
+            if (t.error)
+                throw new Error(t.message);
+            return t.data
+        }
+        async css(e) {
+            if (!this._pageIsDomReadyed)
+                throw new Error('"goto" method dit not executed');
+            await this._browserWindow.webContents.insertCSS(e)
+        }
+        async press(e, ...t) {
+            if (!this._pageIsDomReadyed)
+                throw new Error('"goto" method dit not executed');
+            if (this._allKeyCodes || (this._allKeyCodes = Object.values(pe)),
+            !this._allKeyCodes.includes(e))
+                throw new Error("keyCode wrong");
+            if (t.length > 0) {
+                if (t.find((e=>!["shift", "alt", "ctrl", "contorl", "meta", "command", "cmd"].includes(e.toLowerCase()))))
+                    throw new Error("modifier key error");
+                t = Array.from(new Set(t)).map((e=>e.toLowerCase()))
+            }
+            this._browserWindow.webContents.sendInputEvent({
+                type: "keyDown",
+                keyCode: e,
+                modifiers: t
+            }),
+            this._browserWindow.webContents.sendInputEvent({
+                type: "char",
+                keyCode: e,
+                modifiers: t
+            }),
+            this._browserWindow.webContents.sendInputEvent({
+                type: "keyUp",
+                keyCode: e,
+                modifiers: t
+            })
+        }
+        async paste(e) {
+            e && (/^data:image\/[a-z]+?;base64,/.test(e) ? t.clipboard.writeImage(t.nativeImage.createFromDataURL(e)) : t.clipboard.writeText(e)),
+            await this._browserWindow.webContents.executeJavaScript("document.execCommand('paste')")
+        }
+        async file(e, t) {
+            if (!this._pageIsDomReadyed)
+                throw new Error('"goto" method dit not executed');
+            const i = this._browserWindow.webContents.debugger;
+            i.attach("1.1");
+            try {
+                const n = await i.sendCommand("DOM.getDocument")
+                  , o = await i.sendCommand("DOM.querySelector", {
+                    nodeId: n.root.nodeId,
+                    selector: e
+                });
+                await i.sendCommand("DOM.setFileInputFiles", {
+                    nodeId: o.nodeId,
+                    files: t
+                })
+            } finally {
+                i.detach()
+            }
+        }
+        async capture(e, i) {
+            let n, o;
+            if (i) {
+                if (/\.png$/i.test(i) ? (n = c().dirname(i),
+                o = c().basename(i)) : n = i,
+                !d().existsSync(n))
+                    throw new Error("save directory not exist")
+            } else
+                n = c().join(t.app.getPath("temp"), "utools-ubrowser"),
+                d().existsSync(n) || d().mkdirSync(n);
+            const s = await this._browserWindow.webContents.capturePage(e);
+            if (s.isEmpty())
+                throw new Error("capture image destroyed");
+            const r = c().join(n, o || Date.now() + ".png");
+            return d().writeFileSync(r, s.toPNG()),
+            r
+        }
+        async screenshot(e, t) {
+            if (!this._pageIsDomReadyed)
+                throw new Error('"goto" method dit not executed');
+            if ("string" == typeof e) {
+                const i = `(()=>{\n        const selector = ${JSON.stringify(e)}\n        const element = document.querySelector(selector)\n        if (!element) return\n        let rect = element.getBoundingClientRect()\n        window.scrollTo(rect.left, rect.top)\n        rect = element.getBoundingClientRect()\n        return { x: Math.round(rect.x), y: Math.round(rect.y), width: Math.round(rect.width), height: Math.round(rect.height) }\n      })()`
+                  , n = await this._browserWindow.webContents.executeJavaScript(i);
+                if (n)
+                    return await this.capture(n, t);
+                throw new Error('unable to find element by selector "' + e + '"')
+            }
+            if ("object" == typeof e)
+                return await this.capture(e, t);
+            if (void 0 === e)
+                return await this.capture(null, t);
+            throw new Error("parameter error")
+        }
+        async pdf(...e) {
+            if (!this._pageIsDomReadyed)
+                throw new Error('"goto" method dit not executed');
+            let i, n, o = {}, s = null;
+            if (1 === e.length ? "object" == typeof e[0] ? o = e[0] || {} : "string" == typeof e[0] && (s = e[0]) : e.length > 1 && ("object" == typeof e[0] && (o = e[0] || {}),
+            "string" == typeof e[1] && (s = e[1])),
+            s) {
+                if (/\.pdf$/i.test(s) ? (i = c().dirname(s),
+                n = c().basename(s)) : i = s,
+                !d().existsSync(i))
+                    throw new Error("save directory not exist")
+            } else
+                i = c().join(t.app.getPath("temp"), "utools-ubrowser"),
+                d().existsSync(i) || d().mkdirSync(i);
+            const r = await this._browserWindow.webContents.printToPDF(o)
+              , a = c().join(i, n || Date.now() + ".pdf");
+            return d().writeFileSync(a, r),
+            a
+        }
+        async device(e) {
+            if ("string" == typeof e) {
+                if (!(e in Oe))
+                    throw new Error("type not found");
+                e = Oe[e]
+            } else {
+                if ("object" != typeof e)
+                    throw new Error("parameter error");
+                if ("object" != typeof e.size || "number" != typeof e.size.width || "number" != typeof e.size.height)
+                    throw new Error('property "size" wrong');
+                if ("string" != typeof e.useragent)
+                    throw new Error('property "useragent" wrong')
+            }
+            this._browserWindow.setContentSize(e.size.width, e.size.height),
+            this._browserWindow.resizable = !1,
+            this._browserWindow.maximizable = !1,
+            this._browserWindow.fullScreenable = !1,
+            this._browserWindow.webContents.userAgent = e.useragent,
+            0 === this._browserWindow.webContents.listenerCount("dom-ready") && this._browserWindow.webContents.on("dom-ready", (()=>{
+                const e = this._browserWindow.getContentSize();
+                this._browserWindow.webContents.enableDeviceEmulation({
+                    screenPosition: "mobile",
+                    screenSize: {
+                        width: e[0],
+                        height: e[1]
+                    }
+                })
+            }
+            ))
+        }
+        async cookies(e) {
+            if (!this._pageIsDomReadyed)
+                throw new Error('"goto" method dit not executed');
+            const t = {
+                url: this._browserWindow.webContents.getURL()
+            };
+            "string" == typeof e && e && (t.name = e);
+            const i = await this._browserWindow.webContents.session.cookies.get(t);
+            return i && i.length > 0 ? e ? i[0] : i : null
+        }
+        async removeCookies(e) {
+            if (!e)
+                throw new Error("parameter error");
+            if (!this._pageIsDomReadyed)
+                throw new Error('"goto" method dit not executed');
+            const t = this._browserWindow.webContents.getURL();
+            await this._browserWindow.webContents.session.cookies.remove(t, e)
+        }
+        async setCookies(...e) {
+            let t;
+            if (2 === e.length ? "string" == typeof e[0] && "string" == typeof e[1] && (t = [{
+                name: e[0],
+                value: e[1]
+            }]) : 1 === e.length && Array.isArray(e[0]) && (t = e[0]),
+            !t)
+                throw new Error("parameter error");
+            if (this._pageIsDomReadyed) {
+                const e = this._browserWindow.webContents.getURL();
+                for (const i of t)
+                    i.url = e
+            } else if (t.find((e=>!/^https?:\/\/.+/i.test(e.url))))
+                throw new Error("url error");
+            for (let e = 0; e < t.length; e++)
+                await this._browserWindow.webContents.session.cookies.set(t[e])
+        }
+        async clearCookies(e) {
+            if (this._pageIsDomReadyed)
+                e = this._browserWindow.webContents.getURL();
+            else if (!/^https?:\/\/.+/i.test(e))
+                throw new Error('parameter "url" empty');
+            const t = await this._browserWindow.webContents.session.cookies.get({
+                url: e
+            });
+            if (t && t.length > 0)
+                for (let i = 0; i < t.length; i++)
+                    await this._browserWindow.webContents.session.cookies.remove(e, t[i].name)
+        }
+        run({pluginId: e, pluginLogo: i, options: n, queue: o, windowCmp: r, idleUBrowserWindowIds: a}) {
+            return new Promise(((l,d)=>{
+                if ("number" == typeof n) {
+                    const i = t.BrowserWindow.fromId(n);
+                    if (!i || i.isDestroyed() || !i.isVisible() || i.webContents.session !== r.pluginUBrowserSessionPool[e])
+                        return d(new Error('no ubrowser with id "' + n + '" exists'));
+                    const o = a.indexOf(n);
+                    o >= 0 && a.splice(o, 1),
+                    this._browserWindow = i
+                } else if (!o.find((e=>"goto" === e.method)))
+                    return d(new Error('not implemented "goto"'));
+                if (this._browserWindow)
+                    this._isShow = !0,
+                    this._pageIsDomReadyed = !0;
+                else {
+                    if (n && "object" == typeof n) {
+                        const e = {
+                            show: "boolean",
+                            width: "number",
+                            height: "number",
+                            x: "number",
+                            y: "number",
+                            center: "boolean",
+                            minWidth: "number",
+                            minHeight: "number",
+                            maxWidth: "number",
+                            maxHeight: "number",
+                            resizable: "boolean",
+                            movable: "boolean",
+                            minimizable: "boolean",
+                            maximizable: "boolean",
+                            alwaysOnTop: "boolean",
+                            fullscreen: "boolean",
+                            fullscreenable: "boolean",
+                            enableLargerThanScreen: "boolean",
+                            opacity: "number"
+                        };
+                        for (const t in n)
+                            t in e ? typeof n[t] !== e[t] && delete n[t] : delete n[t]
+                    } else
+                        n = {};
+                    this._isShow = !(!1 === n.show),
+                    this._pageIsDomReadyed = !1,
+                    n.show = !1,
+                    n.frame = !0,
+                    n.parent = null,
+                    n.modal = !1,
+                    n.icon = i,
+                    n.autoHideMenuBar = !0,
+                    e in r.pluginUBrowserSessionPool || (r.pluginUBrowserSessionPool[e] = t.session.fromPartition("<" + e + ".ubrowser>")),
+                    n.webPreferences = {
+                        session: r.pluginUBrowserSessionPool[e],
+                        nodeIntegration: !1,
+                        contextIsolation: !1,
+                        backgroundThrottling: !1
+                    },
+                    this._browserWindow = new t.BrowserWindow(n),
+                    this._browserWindow.removeMenu(),
+                    this._browserWindow.once("closed", (()=>{
+                        this._browserWindow = null
+                    }
+                    )),
+                    this._browserWindow.once("close", (()=>{
+                        this._browserWindow.destroy()
+                    }
+                    ));
+                    const o = this._browserWindow.id;
+                    this._browserWindow.webContents.once("destroyed", (()=>{
+                        this._isEnd || (this._childProcess.kill("SIGKILL"),
+                        d(new Error("ubrowser destroyed")));
+                        const e = a.indexOf(o);
+                        e >= 0 && a.splice(e, 1)
+                    }
+                    )),
+                    this._browserWindow.webContents.once("render-process-gone", (()=>{
+                        this._browserWindow.destroy()
+                    }
+                    )),
+                    this._browserWindow.webContents.setWindowOpenHandler((({url: e})=>(/^https?:\/\//i.test(e) && this._browserWindow.webContents.executeJavaScript(`location.href=${JSON.stringify(e)}`),
+                    {
+                        action: "deny"
+                    }))),
+                    s().macOS() ? this._browserWindow.webContents.on("before-input-event", ((e,t)=>{
+                        !t.meta || "keyDown" !== t.type || "KeyW" !== t.code && "KeyQ" !== t.code || (e.preventDefault(),
+                        this._browserWindow.destroy())
+                    }
+                    )) : (this._browserWindow.webContents.on("before-input-event", ((e,t)=>{
+                        "keyDown" === t.type && (t.control && "KeyW" === t.code || t.alt && "F4" === t.code) && (e.preventDefault(),
+                        this._browserWindow.destroy())
+                    }
+                    )),
+                    s().windows() && "FFFFFFFF" !== e && r.setPluginWindowAppDetails(this._browserWindow, e))
+                }
+                this._childProcess = Ve().fork(c().join(__dirname, "ubrowser", "runner.js")),
+                this._childProcess.on("message", (({method: e, methodEndKey: t, args: i})=>{
+                    if ("run" !== e)
+                        if ("runEnd" === e) {
+                            this._isEnd = !0,
+                            this._childProcess.kill("SIGKILL"),
+                            this._isShow ? a.push(this._browserWindow.id) : this._browserWindow.destroy();
+                            const e = i[0];
+                            if (e.error)
+                                return d(new Error(e.message));
+                            l(e.data)
+                        } else {
+                            const n = this[e];
+                            "function" == typeof n ? n.apply(this, i).then((e=>{
+                                this._childProcess.send({
+                                    action: t,
+                                    payload: {
+                                        data: e
+                                    }
+                                })
+                            }
+                            )).catch((i=>{
+                                this._childProcess.send({
+                                    action: t,
+                                    payload: {
+                                        error: !0,
+                                        message: e + ": " + i.message
+                                    }
+                                })
+                            }
+                            )) : this._childProcess.send({
+                                action: t,
+                                payload: {
+                                    error: !0,
+                                    message: 'method "' + e + '" not exist'
+                                }
+                            })
+                        }
+                }
+                )),
+                this._childProcess.send({
+                    action: "run",
+                    payload: o
+                })
+            }
+            ))
+        }
+    }
+    function Re(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    class Ne {
+        constructor(e, i, o, r, a, l, h, p) {
+            Re(this, "adapteOldVersionFFFFFFFFF", (async()=>{
+                const e = (await this.dbCmp.allDocs("FFFFFFFF", "installed/")).map((e=>e._id.replace("installed/", "")))
+                  , t = Object.values(this.pluginsCmp.pluginContainer).filter((t=>t.name && "FFFFFFFF" !== t.name && !t.unsafe && !e.includes(t.name)));
+                if (t.length > 0) {
+                    const e = t.map((e=>({
+                        _id: "installed/" + e.name,
+                        name: e.name,
+                        pluginName: e.pluginName,
+                        description: e.description || "",
+                        author: e.author,
+                        createTime: Math.floor(e.updateTime),
+                        updateTime: Math.floor(e.updateTime)
+                    })));
+                    await this.dbCmp.bulkDocs("FFFFFFFF", e)
+                }
+                const i = await this.dbCmp.allDocs("FFFFFFFF", "devPlugins_");
+                i.length > 0 && (i.forEach((e=>{
+                    e._deleted = !0
+                }
+                )),
+                await this.dbCmp.bulkDocs("FFFFFFFF", i))
+            }
+            )),
+            Re(this, "mainServices", {
+                getNativeIconUrl: (e,t)=>{
+                    e.returnValue = this.getNativeIconUrl(t)
+                }
+                ,
+                getOriginImageBase64: (e,i)=>{
+                    if (!t.net.online)
+                        return void (e.returnValue = null);
+                    const n = t.net.request(i);
+                    n.on("response", (t=>{
+                        if (!t.headers["content-type"])
+                            return void (e.returnValue = null);
+                        const i = t.headers["content-type"].toString();
+                        if (-1 === i.toLowerCase().indexOf("image/"))
+                            return void (e.returnValue = null);
+                        const n = "data:" + i + ";base64,"
+                          , o = [];
+                        t.on("data", (e=>{
+                            o.push(e)
+                        }
+                        )),
+                        t.on("end", (()=>{
+                            e.returnValue = n + Buffer.concat(o).toString("base64")
+                        }
+                        ))
+                    }
+                    )),
+                    n.end()
+                }
+                ,
+                log: (e,t)=>{
+                    s().dev() ? (console.log(t),
+                    e.returnValue = !0) : e.returnValue = !1
+                }
+            }),
+            Re(this, "ffffffffServices", {
+                isDev: e=>{
+                    e.returnValue = s().dev()
+                }
+                ,
+                getAppVersion: e=>{
+                    e.returnValue = t.app.getVersion()
+                }
+                ,
+                getResIconAbsolutePath: (e,t)=>{
+                    e.returnValue = c().join(__dirname, t)
+                }
+                ,
+                addLocalOpen: async(e,t)=>{
+                    e.returnValue = await this.addLocalOpen(t)
+                }
+                ,
+                removeLocalOpen: async(e,t)=>{
+                    e.returnValue = await this.removeLocalOpen(t)
+                }
+                ,
+                getLocalOpenFeatures: async e=>{
+                    const t = await this.getLocalOpenDoc();
+                    if (0 === t.files.length)
+                        return void (e.returnValue = []);
+                    const i = t.files.map((e=>V().existsSync(e) ? this.convertLocalOpenFeature(e) : {
+                        code: e,
+                        explain: e,
+                        cmds: [c().parse(c().basename(e)).name]
+                    }));
+                    e.returnValue = i.sort(((e,t)=>e.cmds[0].localeCompare(t.cmds[0])))
+                }
+                ,
+                getDisableCmds: async(e,t)=>{
+                    void 0 !== t && (t += "/"),
+                    e.returnValue = await this.getDisableCmds(t)
+                }
+                ,
+                addDisableCmd: async(e,t,i,n,o)=>{
+                    e.returnValue = await this.addDisableCmd(t, i, n, o)
+                }
+                ,
+                removeDisableCmd: async(e,t)=>{
+                    e.returnValue = await this.removeDisableCmd(t)
+                }
+                ,
+                getPluginMenuSetting: async(e,t)=>{
+                    const i = this.pluginIsOutKill(t);
+                    let n;
+                    n = !i && await this.getIsPluginRunAtAppOpen(t);
+                    const o = this.pluginIsEnterDetach(t);
+                    e.returnValue = {
+                        enterDetach: o,
+                        outKill: i,
+                        runAtAppOpen: n
+                    }
+                }
+                ,
+                addOutKillPlugin: async(e,t)=>{
+                    e.returnValue = await this.addOutKillPlugin(t)
+                }
+                ,
+                removeOutKillPlugin: async(e,t)=>{
+                    e.returnValue = await this.removeOutKillPlugin(t)
+                }
+                ,
+                addEnterDetachPlugin: async(e,t)=>{
+                    e.returnValue = await this.addEnterDetachPlugin(t)
+                }
+                ,
+                removeEnterDetachPlugin: async(e,t)=>{
+                    e.returnValue = await this.removeEnterDetachPlugin(t)
+                }
+                ,
+                addPluginRunAtAppOpen: async(e,t)=>{
+                    e.returnValue = await this.addPluginRunAtAppOpen(t)
+                }
+                ,
+                removePluginRunAtAppOpen: async(e,t)=>{
+                    e.returnValue = await this.removePluginRunAtAppOpen(t)
+                }
+                ,
+                disableDbSyncRemind: e=>{
+                    n().set("disableDbSyncRemind", 1),
+                    e.returnValue = !0
+                }
+                ,
+                isDisabledDbSyncRemind: e=>{
+                    e.returnValue = n().has("disableDbSyncRemind")
+                }
+            }),
+            Re(this, "pluginApiServices", {
+                setFeature: async(e,t,i)=>{
+                    try {
+                        await this.saveFeature(t, i)
+                    } catch (t) {
+                        return void (e.returnValue = t)
+                    }
+                    this.setPluginFeature(t, i) && this.windowCmp.refreshCmdSource(),
+                    e.returnValue = !0
+                }
+                ,
+                removeFeature: async(e,t,i)=>{
+                    if (i && "string" == typeof i)
+                        return await this.removeFeature(t, i) ? (this.pluginsCmp.removeFeature(t, i) && this.windowCmp.refreshCmdSource(),
+                        void (e.returnValue = !0)) : void (e.returnValue = !1);
+                    e.returnValue = !1
+                }
+                ,
+                getFeatures: async(e,i)=>{
+                    const n = await this.getFeatures(i + "/");
+                    for (const e of n) {
+                        if (delete e.pluginId,
+                        delete e._rev,
+                        e._attachments) {
+                            const i = await this.dbCmp.getAttachment("/", e._id, "icon");
+                            if (i) {
+                                const n = t.nativeImage.createFromBuffer(i);
+                                n.isEmpty() ? delete e.icon : e.icon = n.toDataURL()
+                            } else
+                                delete e.icon
+                        }
+                        delete e._attachments,
+                        delete e._id
+                    }
+                    e.returnValue = n
+                }
+                ,
+                showNotification: (e,t,i)=>{
+                    this.showNotification(t, i)
+                }
+                ,
+                getLocalId: (e,t)=>{
+                    e.returnValue = u().createHash("md5").update(this.accountCmp.machineId + t).digest("hex")
+                }
+                ,
+                getNativeId: (e,t)=>{
+                    e.returnValue = u().createHash("md5").update(this.accountCmp.nativeId + t).digest("hex")
+                }
+                ,
+                screenColorPick: e=>{
+                    let i = !1;
+                    const n = this.windowCmp.mainWindow.getBrowserView();
+                    n && n.webContents === e.sender && (i = !0,
+                    this.windowCmp.hideMainWindow()),
+                    this.screencolorpickerCmp.action((n=>{
+                        if (e.sender.isDestroyed())
+                            new t.Notification({
+                                body: "取色完成，当前调用插件应用已完全退出，无法响应"
+                            }).show();
+                        else {
+                            if (i) {
+                                const i = this.windowCmp.mainWindow.getBrowserView();
+                                if (!i || i.webContents !== e.sender) {
+                                    const i = this.windowCmp.getPluginIdByWebContents(e.sender);
+                                    if (!i)
+                                        return;
+                                    const n = this.pluginsCmp.pluginContainer[i];
+                                    if (!n)
+                                        return;
+                                    return void new t.Notification({
+                                        body: '取色完成，插件应用 "' + n.pluginName + '" 已退出到后台，无法响应'
+                                    }).show()
+                                }
+                                this.windowCmp.display.trigger(!0)
+                            }
+                            e.sender.executeJavaScript(`if (window.utools && window.utools.__event__ && typeof window.utools.__event__.screenColorPickCallback === 'function') {\n          try { window.utools.__event__.screenColorPickCallback(${JSON.stringify(n)}) } catch(e) {} \n          delete window.utools.__event__.screenColorPickCallback}`)
+                        }
+                    }
+                    ))
+                }
+                ,
+                screenCapture: e=>{
+                    let i = !1;
+                    const n = ()=>{
+                        if (e.sender.isDestroyed())
+                            return new t.Notification({
+                                body: "截图完成，当前调用的插件应用已完全退出，无法响应"
+                            }).show(),
+                            !1;
+                        if (i) {
+                            const i = this.windowCmp.mainWindow.getBrowserView();
+                            if (!i || i.webContents !== e.sender) {
+                                const i = this.windowCmp.getPluginIdByWebContents(e.sender);
+                                if (!i)
+                                    return !1;
+                                const n = this.pluginsCmp.pluginContainer[i];
+                                return !!n && (new t.Notification({
+                                    body: '截图完成，插件应用 "' + n.pluginName + '" 已退出到后台，无法响应'
+                                }).show(),
+                                !1)
+                            }
+                            this.windowCmp.display.trigger(!0)
+                        }
+                        return !0
+                    }
+                      , o = t=>{
+                        e.sender.executeJavaScript(`if (window.utools && window.utools.__event__ && typeof window.utools.__event__.screenCaptureCallback === 'function') {\n          try { window.utools.__event__.screenCaptureCallback(${JSON.stringify(t)}) } catch(e) {} \n          delete window.utools.__event__.screenCaptureCallback}`)
+                    }
+                      , s = this.windowCmp.mainWindow.getBrowserView();
+                    if (s && s.webContents === e.sender && (i = !0,
+                    this.windowCmp.hideMainWindow()),
+                    this.windowCmp.isWindow)
+                        k().regionScreenshot((e=>{
+                            n() && o(e ? t.nativeImage.createFromBuffer(e).toDataURL() : "")
+                        }
+                        ));
+                    else if (this.windowCmp.isMacOs)
+                        t.clipboard.writeText(""),
+                        Ve().spawn("/usr/sbin/screencapture", ["-c", "-i", "-r"], {
+                            detached: !0
+                        }).once("close", (()=>{
+                            if (!n())
+                                return;
+                            const e = t.clipboard.readImage();
+                            o(e.isEmpty() ? "" : e.toDataURL())
+                        }
+                        ));
+                    else if (this.windowCmp.isLinux) {
+                        const e = e=>{
+                            n() && o(e.isEmpty() ? "" : e.toDataURL())
+                        }
+                        ;
+                        if (i)
+                            return void setTimeout((()=>{
+                                this.screencaptureCmp.action(e)
+                            }
+                            ), 250);
+                        this.screencaptureCmp.action(e)
+                    }
+                }
+                ,
+                getIdleUBrowsers: (e,i)=>{
+                    i in this.windowCmp.pluginUBrowserSessionPool ? e.returnValue = t.webContents.getAllWebContents().filter((e=>e.session === this.windowCmp.pluginUBrowserSessionPool[i])).map((e=>t.BrowserWindow.fromWebContents(e))).filter((e=>!e.isDestroyed() && this.idleUBrowserWindowIds.includes(e.id))).map((e=>({
+                        id: e.id,
+                        title: e.getTitle(),
+                        url: e.webContents.getURL()
+                    }))) : e.returnValue = []
+                }
+                ,
+                setUBrowserProxy: (e,i,n)=>{
+                    t.session.fromPartition("<" + i + ".ubrowser>").setProxy(n).then((()=>{
+                        e.returnValue = !0
+                    }
+                    )).catch((()=>{
+                        e.returnValue = !1
+                    }
+                    ))
+                }
+                ,
+                clearUBrowserCache: (e,i)=>{
+                    t.session.fromPartition("<" + i + ".ubrowser>").clearCache().then((()=>{
+                        e.returnValue = !0
+                    }
+                    )).catch((()=>{
+                        e.returnValue = !1
+                    }
+                    ))
+                }
+                ,
+                runUBrowser: async(e,{options: t, queue: i})=>{
+                    const n = this.pluginsCmp.pluginContainer[e]?.logo.replace("file://", "");
+                    return await (new Le).run({
+                        pluginId: e,
+                        pluginLogo: n,
+                        options: t,
+                        queue: i,
+                        windowCmp: this.windowCmp,
+                        idleUBrowserWindowIds: this.idleUBrowserWindowIds
+                    })
+                }
+            }),
+            Re(this, "pluginUtilApiServices", {
+                isDev: e=>{
+                    const t = this.windowCmp.getPluginIdByWebContents(e.sender);
+                    e.returnValue = !!t && !!this.pluginsCmp.pluginContainer[t]?.isDev
+                }
+                ,
+                isDarkColors: e=>{
+                    e.returnValue = t.nativeTheme.shouldUseDarkColors
+                }
+                ,
+                getUser: e=>{
+                    const t = this.accountCmp.getAccountInfo();
+                    e.returnValue = t ? {
+                        avatar: t.avatar,
+                        nickname: t.nickname,
+                        type: 1 === t.type ? "member" : "user"
+                    } : null
+                }
+                ,
+                getAppVersion: e=>{
+                    e.returnValue = t.app.getVersion()
+                }
+                ,
+                getPath: (e,i)=>{
+                    if ("downloads" === i && this.windowCmp.isWindow)
+                        e.returnValue = k().getDownloadsFolderPath();
+                    else
+                        try {
+                            e.returnValue = t.app.getPath(i)
+                        } catch (t) {
+                            e.returnValue = null
+                        }
+                }
+                ,
+                getFileIcon: (e,t)=>{
+                    const i = this.getNativeIconUrl(t);
+                    i.startsWith("file://") ? e.returnValue = i : this.windowCmp.nativeIconHandler(i.substr(13), (t=>{
+                        e.returnValue = "data:" + t.mimeType + ";base64," + t.data.toString("base64")
+                    }
+                    ))
+                }
+                ,
+                redirect: (e,t)=>{
+                    try {
+                        this.redirect(t),
+                        e.returnValue = !0
+                    } catch (t) {
+                        e.returnValue = t
+                    }
+                }
+                ,
+                copyFile: (e,{file: t, isRecord: i})=>{
+                    t ? (Array.isArray(t) || (t = [t]),
+                    0 !== (t = t.filter((e=>d().existsSync(e)))).length ? (i || this.clipboardCmp.temporaryCancelWatch(),
+                    k().copyFile.apply(null, t),
+                    e.returnValue = !0) : e.returnValue = !1) : e.returnValue = !1
+                }
+                ,
+                copyImage: (e,{img: i, isRecord: n})=>{
+                    if (!i)
+                        return void (e.returnValue = !1);
+                    let o;
+                    "string" == typeof i ? /^data:image\/([a-z]+);base64,/.test(i) ? o = t.nativeImage.createFromDataURL(i) : c().basename(i) !== i && d().existsSync(i) && (o = t.nativeImage.createFromPath(i)) : "object" == typeof i && i instanceof Uint8Array && (o = t.nativeImage.createFromBuffer(Buffer.from(i))),
+                    o && !o.isEmpty() ? (n || this.clipboardCmp.temporaryCancelWatch(),
+                    t.clipboard.writeImage(o),
+                    e.returnValue = !0) : e.returnValue = !1
+                }
+                ,
+                copyText: (e,{text: i, isRecord: n})=>{
+                    n || this.clipboardCmp.temporaryCancelWatch(),
+                    t.clipboard.writeText(String(i)),
+                    e.returnValue = !0
+                }
+                ,
+                getCopyedFiles: e=>{
+                    e.returnValue = this.clipboardCmp.getCopyFiles()
+                }
+                ,
+                readCurrentFolderPath: ()=>this.readCurrentFolderPath(),
+                readCurrentBrowserUrl: ()=>this.readCurrentBrowserUrl(),
+                getCurrentFolderPath: e=>{
+                    this.readCurrentFolderPath().then((t=>{
+                        e.returnValue = t
+                    }
+                    )).catch((()=>{
+                        e.returnValue = ""
+                    }
+                    ))
+                }
+                ,
+                getCurrentBrowserUrl: e=>{
+                    this.readCurrentBrowserUrl().then((t=>{
+                        e.returnValue = t
+                    }
+                    )).catch((()=>{
+                        e.returnValue = ""
+                    }
+                    ))
+                }
+                ,
+                showOpenDialog: (e,i)=>{
+                    const n = t.BrowserWindow.fromWebContents(e.sender)
+                      , o = n === this.windowCmp.mainWindow;
+                    o && (this.windowCmp.ignoreMainWindowBlurExpiryTime = Date.now() + 500),
+                    t.dialog.showOpenDialog(n, i).then((t=>{
+                        t.canceled || 0 === t.filePaths.length ? e.returnValue = null : e.returnValue = t.filePaths
+                    }
+                    )).catch((()=>{
+                        e.returnValue = null
+                    }
+                    )).finally((()=>{
+                        o && (this.windowCmp.ignoreMainWindowBlurExpiryTime = null,
+                        n.getBrowserView() && (n.isVisible() || n.show(),
+                        e.sender.focus()))
+                    }
+                    ))
+                }
+                ,
+                showSaveDialog: (e,i)=>{
+                    const n = t.BrowserWindow.fromWebContents(e.sender)
+                      , o = n === this.windowCmp.mainWindow;
+                    o && (this.windowCmp.ignoreMainWindowBlurExpiryTime = Date.now() + 500),
+                    t.dialog.showSaveDialog(n, i).then((t=>{
+                        e.returnValue = t.filePath
+                    }
+                    )).catch((()=>{
+                        e.returnValue = null
+                    }
+                    )).finally((()=>{
+                        o && (this.windowCmp.ignoreMainWindowBlurExpiryTime = null,
+                        n.getBrowserView() && (n.isVisible() || n.show(),
+                        e.sender.focus()))
+                    }
+                    ))
+                }
+                ,
+                findInPage: (e,t)=>{
+                    const {text: i, options: n} = t;
+                    e.sender.findInPage(i, n),
+                    e.returnValue = !0
+                }
+                ,
+                stopFindInPage: (e,t)=>{
+                    e.sender.stopFindInPage(t || "clearSelection"),
+                    e.returnValue = !0
+                }
+                ,
+                startDrag: (e,t)=>{
+                    if (!t)
+                        return;
+                    const i = {
+                        icon: c().join(__dirname, "res", "dragfile.png")
+                    };
+                    if ("string" == typeof t)
+                        i.file = t;
+                    else {
+                        if (!Array.isArray(t))
+                            return;
+                        i.files = t
+                    }
+                    e.sender.startDrag(i)
+                }
+                ,
+                shellOpenExternal: (e,i)=>{
+                    this.windowCmp.hideMainWindow(!1),
+                    t.shell.openExternal(i),
+                    e.returnValue = !0
+                }
+                ,
+                shellShowItemInFolder: (e,i)=>{
+                    this.windowCmp.hideMainWindow(!1),
+                    t.shell.showItemInFolder(i),
+                    e.returnValue = !0
+                }
+                ,
+                shellOpenItem: (e,i)=>{
+                    this.windowCmp.hideMainWindow(!1),
+                    t.shell.openPath(i),
+                    e.returnValue = !0
+                }
+                ,
+                shellOpenPath: (e,i)=>{
+                    this.windowCmp.hideMainWindow(!1),
+                    t.shell.openPath(i),
+                    e.returnValue = !0
+                }
+                ,
+                shellBeep: e=>{
+                    t.shell.beep(),
+                    e.returnValue = !0
+                }
+                ,
+                simulateKeyboardTap: (e,{key: t, modifier: i})=>{
+                    const n = [t.toLowerCase()];
+                    i && Array.isArray(i) && i.length > 0 && i.forEach((e=>{
+                        n.push(e.toLowerCase())
+                    }
+                    )),
+                    k().simulateKeyboardTap.apply(null, n),
+                    e.returnValue = !0
+                }
+                ,
+                simulateMouseClick: (e,t)=>{
+                    t ? k().simulateMouseClick(t.x, t.y) : k().simulateMouseClick(),
+                    e.returnValue = !0
+                }
+                ,
+                simulateMouseRightClick: (e,t)=>{
+                    t ? k().SimulateMouseRightClick(t.x, t.y) : k().SimulateMouseRightClick(),
+                    e.returnValue = !0
+                }
+                ,
+                simulateMouseDoubleClick: (e,t)=>{
+                    t ? k().simulateMouseDoubleClick(t.x, t.y) : k().simulateMouseDoubleClick(),
+                    e.returnValue = !0
+                }
+                ,
+                simulateMouseMove: (e,t)=>{
+                    t ? (k().simulateMouseMove(t.x, t.y),
+                    e.returnValue = !0) : e.returnValue = !1
+                }
+                ,
+                getCursorScreenPoint: e=>{
+                    e.returnValue = t.screen.getCursorScreenPoint()
+                }
+                ,
+                getPrimaryDisplay: e=>{
+                    e.returnValue = t.screen.getPrimaryDisplay()
+                }
+                ,
+                getAllDisplays: e=>{
+                    e.returnValue = t.screen.getAllDisplays()
+                }
+                ,
+                getDisplayNearestPoint: (e,i)=>{
+                    e.returnValue = t.screen.getDisplayNearestPoint(i)
+                }
+                ,
+                getDisplayMatching: (e,i)=>{
+                    e.returnValue = t.screen.getDisplayMatching(i)
+                }
+                ,
+                desktopCaptureSources: e=>t.desktopCapturer.getSources(e || {
+                    types: ["screen", "window"]
+                })
+            }),
+            this.config = e,
+            this.idleUBrowserWindowIds = [],
+            this.pluginsCmp = i,
+            this.windowCmp = o,
+            this.clipboardCmp = o.clipboardCmp,
+            this.voiceCmp = r,
+            this.accountCmp = a.accountCmp,
+            this.dbCmp = a,
+            this.screencaptureCmp = l,
+            this.screencolorpickerCmp = h,
+            this.helpbootCmp = p,
+            this.windowCmp.pluginIsOutKill = this.pluginIsOutKill.bind(this),
+            this.windowCmp.pluginIsEnterDetach = this.pluginIsEnterDetach.bind(this)
+        }
+        init(e) {
+            this.initGlobalEvent(),
+            this.appFirstRun(e),
+            this.initFeatures(),
+            this.initOutKillPluginDoc(),
+            this.initEnterDetachPluginDoc(),
+            this.pluginsCmp.on("mount", (async e=>{
+                this.initFeatures(e + "/")
+            }
+            )),
+            this.dbCmp.on("switch", (()=>{
+                for (const e in this.pluginsCmp.pluginContainer) {
+                    if (!e)
+                        continue;
+                    const t = this.pluginsCmp.pluginContainer[e].featureDic;
+                    for (const e in t)
+                        t[e].dynamic && delete t[e]
+                }
+                this.initFeatures().then((e=>{
+                    e || this.windowCmp.refreshCmdSource()
+                }
+                )),
+                this.initOutKillPluginDoc(),
+                this.initEnterDetachPluginDoc(),
+                this.windowCmp.killAllPlugins(!0)
+            }
+            )),
+            this.dbCmp.on("pull", (e=>{
+                const t = e.filter((e=>e._id.startsWith("feature/")));
+                t.length > 0 && t.forEach((e=>{
+                    if (!0 === e._deleted) {
+                        const t = e._id.replace("feature/", "")
+                          , i = t.indexOf("/");
+                        this.pluginsCmp.removeFeature(t.substr(0, i), t.substr(i + 1))
+                    } else
+                        this.setPluginFeature(e.pluginId, e)
+                }
+                ));
+                const i = e.filter((e=>e._id.startsWith("disablecmd/")));
+                i.length > 0 && i.forEach((e=>{
+                    !0 === e._deleted ? this.pluginsCmp.restoreDisabledCmd(e._id.substr(-32)) : this.pluginsCmp.disableCmd(e.pluginId, e.featureCode, e.cmdType, e.cmdLabel)
+                }
+                )),
+                (t.length > 0 || i.length > 0) && this.windowCmp.refreshCmdSource(),
+                e.find((e=>"outkillplugin" === e._id)) && this.initOutKillPluginDoc(),
+                e.find((e=>"enterdetachplugin" === e._id)) && this.initEnterDetachPluginDoc()
+            }
+            )),
+            this.initPluginRunAtAppOpen()
+        }
+        goHelp() {
+            t.shell.openExternal(this.config.redirectURL + "help")
+        }
+        appFirstRun(e) {
+            if (e)
+                return setImmediate((()=>{
+                    this.helpbootCmp.open()
+                }
+                ));
+            setImmediate((async()=>{
+                let e = await this.dbCmp.get("/", "appupdate");
+                const i = t.app.getVersion();
+                !e || L().gt(i, e.version) ? (e || (e = {
+                    _id: "appupdate"
+                }),
+                e.version = i,
+                await this.dbCmp.put("/", e),
+                this.adapteOldVersionFFFFFFFFF(),
+                t.shell.openExternal(this.config.redirectURL + "version&ver=" + i)) : this.windowCmp.isWindow && "--updated" === process.argv[1] && this.adapteOldVersionFFFFFFFFF()
+            }
+            ))
+        }
+        initGlobalEvent() {
+            t.app.on("exit", (()=>{
+                this._exitApp || (this._exitApp = !0,
+                t.app.removeAllListeners("before-quit"),
+                this.windowCmp.isLinux || k().stopClipboardWatch(),
+                k().stopVoicePanelTriggerEvent(),
+                k().stopFKeyTapEvent(),
+                t.globalShortcut.unregisterAll(),
+                this.windowCmp.isMacOs && (k().panelRestoreToWindow(this.windowCmp.mainWindow.getNativeWindowHandle()),
+                this.voiceCmp.voiceWindow && k().panelRestoreToWindow(this.voiceCmp.voiceWindow.getNativeWindowHandle()),
+                t.app.dock.hide(),
+                t.app.hide()),
+                setTimeout((()=>{
+                    t.webContents.getAllWebContents().forEach((e=>{
+                        e.removeAllListeners("destroyed"),
+                        e.removeAllListeners("render-process-gone")
+                    }
+                    )),
+                    t.BrowserWindow.getAllWindows().forEach((e=>{
+                        e.removeAllListeners("close"),
+                        e.removeAllListeners("closed"),
+                        e.setClosable(!0),
+                        e.destroy()
+                    }
+                    )),
+                    this.windowCmp.isWindow ? k().exit() : t.app.exit()
+                }
+                ), 300))
+            }
+            )),
+            t.app.on("web-contents-created", ((e,t)=>{
+                t.on("will-attach-webview", ((e,i,n)=>{
+                    const o = this.windowCmp.getPluginIdByWebContents(t);
+                    if (!o)
+                        return e.preventDefault();
+                    delete i.preload,
+                    delete i.preloadURL,
+                    delete i.session,
+                    delete i.affinity,
+                    i.partition = "<" + o + ".webview>",
+                    i.enableRemoteModule = !1,
+                    i.webSecurity = !0,
+                    i.nodeIntegration = !1
+                }
+                )),
+                t.setWindowOpenHandler((()=>({
+                    action: "deny"
+                })))
+            }
+            )),
+            t.nativeTheme.on("updated", (()=>{
+                const e = this.windowCmp.getWindowBackgroundColor()
+                  , t = this.windowCmp.mainWindow.getBackgroundColor();
+                e !== t && (this.windowCmp.mainWindow.setBackgroundColor(e),
+                this.voiceCmp.voiceWindow && this.voiceCmp.voiceWindow.setBackgroundColor(e),
+                Object.values(this.windowCmp.runningPluginPool).forEach((t=>{
+                    t.detachWindows && t.detachWindows.length > 0 && t.detachWindows.forEach((t=>{
+                        t.isDestroyed() || t.setBackgroundColor(e)
+                    }
+                    ))
+                }
+                )))
+            }
+            ))
+        }
+        setPluginFeature(e, {code: t, cmds: i, explain: n, icon: o, platform: s}) {
+            const r = this.pluginsCmp.setFeature(e, {
+                code: t,
+                cmds: i,
+                explain: n,
+                icon: o,
+                platform: s
+            }, !0);
+            return r && o && o.startsWith("dbicon://") && this.windowCmp.removeDbIconCache("feature/" + e + "/" + t),
+            r
+        }
+        async initFeatures(e) {
+            const t = await this.getFeatures(e);
+            t.length > 0 && t.forEach((e=>{
+                this.setPluginFeature(e.pluginId, e)
+            }
+            ));
+            const i = await this.initDisableCmds(e);
+            return !!(t.length > 0 || i) && (this.windowCmp.refreshCmdSource(),
+            !0)
+        }
+        async saveFeature(e, i) {
+            if ("object" != typeof i)
+                throw new Error('params "feature" not object type');
+            if (!i.code || "string" != typeof i.code)
+                throw new Error("feature code error");
+            if (!Array.isArray(i.cmds) || 0 === i.cmds.length)
+                throw new Error("feature cmds error");
+            if (!i.explain || "string" != typeof i.explain)
+                throw new Error("feature explain empty");
+            if (!(e in this.pluginsCmp.pluginContainer))
+                throw new Error("plugin id error");
+            const n = {
+                _id: "feature/" + e + "/" + i.code,
+                pluginId: e
+            };
+            if (n.code = i.code,
+            n.cmds = i.cmds,
+            n.explain = i.explain,
+            i.platform) {
+                if ("string" == typeof i.platform) {
+                    if (!["win32", "darwin", "linux"].includes(i.platform))
+                        throw new Error("feature platform error")
+                } else {
+                    if (!Array.isArray(i.platform))
+                        throw new Error("feature platform error");
+                    for (const e of i.platform)
+                        if (!["win32", "darwin", "linux"].includes(e))
+                            throw new Error("feature platform error")
+                }
+                n.platform = i.platform
+            }
+            if (i.icon && "string" == typeof i.icon)
+                if (i.icon.startsWith("data:image/")) {
+                    let e = t.nativeImage.createFromDataURL(i.icon);
+                    if (e.isEmpty())
+                        delete i.icon;
+                    else {
+                        const t = e.getSize();
+                        (t.width > 72 || t.height > 72) && (e = t.height > t.width ? e.resize({
+                            height: 72
+                        }) : e.resize({
+                            width: 72
+                        })),
+                        n._attachments = {
+                            icon: {
+                                content_type: "image/png",
+                                data: e.toPNG()
+                            }
+                        },
+                        n.icon = i.icon = "dbicon://" + n._id
+                    }
+                } else
+                    d().existsSync(c().join(this.pluginsCmp.pluginContainer[e].location, i.icon)) ? n.icon = i.icon : delete i.icon;
+            else
+                delete i.icon;
+            const o = await this.dbCmp.get("/", n._id);
+            o && (n._rev = o._rev);
+            const s = await this.dbCmp.put("/", n, !1);
+            if (s.error)
+                throw new Error("doc save fail - " + s.message)
+        }
+        async removeFeature(e, t) {
+            const i = "feature/" + e + "/" + t;
+            return !(await this.dbCmp.remove("/", i)).error
+        }
+        async getFeatures(e="") {
+            return await this.dbCmp.allDocs("/", "feature/" + e)
+        }
+        async getDisableCmds(e="") {
+            return await this.dbCmp.allDocs("/", "disablecmd/" + e)
+        }
+        async initDisableCmds(e) {
+            const t = await this.getDisableCmds(e);
+            return 0 !== t.length && (t.forEach((e=>{
+                this.pluginsCmp.disableCmd(e.pluginId, e.featureCode, e.cmdType, e.cmdLabel)
+            }
+            )),
+            !0)
+        }
+        async addDisableCmd(e, t, i, n) {
+            const o = this.pluginsCmp.disableCmd(e, t, i, n);
+            if (!o)
+                return null;
+            this.windowCmp.refreshCmdSource();
+            const s = {
+                _id: "disablecmd/" + e + "/" + o,
+                pluginId: e,
+                featureCode: t,
+                cmdType: i,
+                cmdLabel: n
+            }
+              , r = await this.dbCmp.put("/", s);
+            return r.error ? null : r.id
+        }
+        async removeDisableCmd(e) {
+            if (!e.startsWith("disablecmd/"))
+                return !1;
+            const t = await this.dbCmp.get("/", e);
+            return !!t && (!this.dbCmp.remove("/", t).error && (this.pluginsCmp.restoreDisabledCmd(t._id.substr(-32)) && this.windowCmp.refreshCmdSource(),
+            !0))
+        }
+        async initOutKillPluginDoc() {
+            const e = await this.dbCmp.get("/", "outkillplugin");
+            this.outKillPluginDoc = e || {
+                _id: "outkillplugin",
+                data: []
+            }
+        }
+        async addOutKillPlugin(e) {
+            if (this.outKillPluginDoc.data.includes(e))
+                return;
+            this.outKillPluginDoc.data.push(e);
+            const t = await this.dbCmp.put("/", this.outKillPluginDoc);
+            t.ok ? (this.outKillPluginDoc._id = t.id,
+            this.outKillPluginDoc._rev = t.rev) : this.initOutKillPluginDoc()
+        }
+        async removeOutKillPlugin(e) {
+            if (!this.outKillPluginDoc.data.includes(e))
+                return;
+            this.outKillPluginDoc.data.splice(this.outKillPluginDoc.data.indexOf(e), 1);
+            const t = await this.dbCmp.put("/", this.outKillPluginDoc);
+            t.ok ? (this.outKillPluginDoc._id = t.id,
+            this.outKillPluginDoc._rev = t.rev) : this.initOutKillPluginDoc()
+        }
+        pluginIsOutKill(e) {
+            return this.outKillPluginDoc && this.outKillPluginDoc.data.includes(e)
+        }
+        async initEnterDetachPluginDoc() {
+            const e = await this.dbCmp.get("/", "enterdetachplugin");
+            this.enterDetachPluginDoc = e || {
+                _id: "enterdetachplugin",
+                data: []
+            }
+        }
+        async addEnterDetachPlugin(e) {
+            if (this.enterDetachPluginDoc.data.includes(e))
+                return;
+            this.enterDetachPluginDoc.data.push(e);
+            const t = await this.dbCmp.put("/", this.enterDetachPluginDoc);
+            t.ok ? (this.enterDetachPluginDoc._id = t.id,
+            this.enterDetachPluginDoc._rev = t.rev) : this.initEnterDetachPluginDoc()
+        }
+        async removeEnterDetachPlugin(e) {
+            if (!this.enterDetachPluginDoc.data.includes(e))
+                return;
+            this.enterDetachPluginDoc.data.splice(this.enterDetachPluginDoc.data.indexOf(e), 1);
+            const t = await this.dbCmp.put("/", this.enterDetachPluginDoc);
+            t.ok ? (this.enterDetachPluginDoc._id = t.id,
+            this.enterDetachPluginDoc._rev = t.rev) : this.initEnterDetachPluginDoc()
+        }
+        pluginIsEnterDetach(e) {
+            return this.enterDetachPluginDoc && this.enterDetachPluginDoc.data.includes(e)
+        }
+        async initPluginRunAtAppOpen() {
+            const e = await this.dbCmp.get("/", "pluginrunatappopen");
+            e && Array.isArray(e.data) && e.data.forEach((e=>{
+                const t = this.pluginsCmp.pluginContainer[e];
+                t && (this.pluginIsOutKill(e) || this.windowCmp.assemblyPlugin(t))
+            }
+            ))
+        }
+        async addPluginRunAtAppOpen(e) {
+            let t = await this.dbCmp.get("/", "pluginrunatappopen");
+            return t || (t = {
+                _id: "pluginrunatappopen",
+                data: []
+            }),
+            !!t.data.includes(e) || (t.data.push(e),
+            !!(await this.dbCmp.put("/", t)).ok)
+        }
+        async removePluginRunAtAppOpen(e) {
+            const t = await this.dbCmp.get("/", "pluginrunatappopen");
+            if (!t)
+                return !1;
+            const i = t.data.indexOf(e);
+            return -1 !== i && (t.data.splice(i, 1),
+            0 === t.data.length ? !!(await this.dbCmp.remove("/", t)).ok : !!(await this.dbCmp.put("/", t)).ok)
+        }
+        async getIsPluginRunAtAppOpen(e) {
+            const t = await this.dbCmp.get("/", "pluginrunatappopen");
+            return t && t.data.includes(e)
+        }
+        async initLocalOpenFeatures() {
+            if (!n().get("enableNativeApp"))
+                return;
+            if (this.windowCmp.isWindow) {
+                const e = await this.dbCmp.get("/", "localopen/" + k().getVolumeNo());
+                if (e) {
+                    const t = {
+                        _id: "localopen/" + this.accountCmp.nativeId,
+                        files: e.files || []
+                    };
+                    await this.dbCmp.put("/", t),
+                    await this.dbCmp.remove("/", e)
+                }
+            }
+            const e = await this.getLocalOpenDoc();
+            0 !== e.files.length && this.setLocalOpenFeatures(e.files)
+        }
+        async getLocalOpenDoc() {
+            return await this.dbCmp.get("/", "localopen/" + this.accountCmp.nativeId) || {
+                _id: "localopen/" + this.accountCmp.nativeId,
+                files: []
+            }
+        }
+        getNativeIconUrl(e) {
+            if (!e || "string" != typeof e)
+                return "nativeicon://unknow";
+            if ("folder" === e.toLowerCase())
+                return this.windowCmp.isLinux ? this.folderIconPath ? "file://" + this.folderIconPath : "nativeicon://unknow" : "nativeicon://folder";
+            if (e.startsWith("."))
+                return "nativeicon://" + e.toLowerCase();
+            if (!d().existsSync(e))
+                return "nativeicon://unknow";
+            let t = !1;
+            try {
+                t = V().lstatSync(e).isDirectory()
+            } catch (e) {}
+            if (t)
+                return this.windowCmp.isLinux ? this.folderIconPath ? "file://" + this.folderIconPath : "nativeicon://unknow" : this.windowCmp.isMacOs && /\.app$/i.test(e) ? "nativeicon://" + e : "nativeicon://folder";
+            const i = c().parse(c().basename(e)).ext.toLowerCase();
+            return this.windowCmp.isWindow && [".exe", ".lnk", ".appref-ms", ".url"].includes(i) ? "nativeicon://" + e : "nativeicon://" + (i || "unknow")
+        }
+        convertLocalOpenFeature(e) {
+            let t = !1;
+            try {
+                t = V().lstatSync(e).isDirectory()
+            } catch (e) {}
+            return {
+                code: e,
+                explain: e,
+                icon: this.getNativeIconUrl(e),
+                cmds: [t ? c().basename(e) : c().parse(c().basename(e)).name]
+            }
+        }
+        setLocalOpenFeatures(e) {
+            const t = this.pluginsCmp.pluginContainer[""];
+            0 !== (e = e.filter((e=>!(e in t.featureDic)))).length && e.forEach((e=>{
+                if (!V().existsSync(e))
+                    return;
+                const t = this.convertLocalOpenFeature(e);
+                this.pluginsCmp.setFeature("", t)
+            }
+            ))
+        }
+        async addLocalOpen(e) {
+            if (!Array.isArray(e) || 0 === e.length)
+                return;
+            const t = await this.getLocalOpenDoc();
+            return 0 !== (e = e.filter((e=>!t.files.includes(e)))).length ? (t.files.push(...e),
+            (await this.dbCmp.put("/", t)).error ? void 0 : (n().get("enableNativeApp") && (this.setLocalOpenFeatures(e),
+            this.windowCmp.refreshCmdSource()),
+            !0)) : void 0
+        }
+        async removeLocalOpen(e) {
+            if (!Array.isArray(e) || 0 === e.length)
+                return;
+            const t = await this.getLocalOpenDoc();
+            if (0 === t.files.length)
+                return;
+            let i;
+            if (t.files = t.files.filter((t=>!e.includes(t))),
+            i = 0 === t.files.length ? await this.dbCmp.remove("/", t) : await this.dbCmp.put("/", t),
+            i.error)
+                return;
+            const n = this.pluginsCmp.pluginContainer[""].featureDic
+              , o = e.filter((e=>e in n));
+            return o.length > 0 && (o.forEach((e=>{
+                delete n[e]
+            }
+            )),
+            this.windowCmp.refreshCmdSource()),
+            !0
+        }
+        showNotification(e, {body: i, clickFeatureCode: n}) {
+            if (!t.Notification.isSupported())
+                return;
+            "string" != typeof i && (i = String(i));
+            const o = this.pluginsCmp.pluginContainer[e];
+            if (!o)
+                return;
+            const s = new t.Notification({
+                title: o.pluginName,
+                body: i,
+                icon: o.logo.replace("file://", "")
+            });
+            if (n && n in o.featureDic) {
+                const e = o.featureDic[n].cmds.find((e=>"base" === e.type));
+                if (e) {
+                    const t = o.name
+                      , i = e.label;
+                    s.on("click", (()=>{
+                        setImmediate((()=>{
+                            this.windowCmp.autoLoadPlugin(t, n, i)
+                        }
+                        ))
+                    }
+                    ))
+                }
+            }
+            s.show()
+        }
+        showNativeWorkWindowInfo(e) {
+            if (this.windowCmp.hideMainWindow(!1),
+            !(e = e || this.windowCmp.display.nativeWorkWindowInfo))
+                return void new t.Notification({
+                    body: "未捕获到当前窗口信息"
+                }).show();
+            const i = new t.BrowserWindow({
+                frame: !1,
+                alwaysOnTop: !0,
+                fullscreenable: !1,
+                minimizable: !1,
+                maximizable: !1,
+                width: 600,
+                height: 500,
+                title: "当前活动窗口信息",
+                skipTaskbar: !0,
+                autoHideMenuBar: !0,
+                backgroundColor: this.windowCmp.getWindowBackgroundColor(),
+                opacity: .86,
+                webPreferences: {
+                    nodeIntegration: !1,
+                    enableRemoteModule: !1,
+                    backgroundThrottling: !1,
+                    navigateOnDragDrop: !1,
+                    spellcheck: !1
+                }
+            });
+            i.removeMenu(),
+            i.on("blur", (()=>{
+                i.destroy()
+            }
+            )),
+            i.webContents.on("before-input-event", ((e,t)=>{
+                "keyDown" === t.type && "Escape" === t.code && i.destroy()
+            }
+            )),
+            i.loadURL("file://" + c().join(__dirname, "windowinfo.html") + "?data=" + encodeURIComponent(JSON.stringify(e)))
+        }
+        readCurrentFolderPath() {
+            return new Promise(((e,i)=>{
+                const n = this.windowCmp.display.nativeWorkWindowInfo;
+                if (!n)
+                    return i(new Error("未识别到当前活动窗口"));
+                if (this.windowCmp.isWindow) {
+                    if (!["explorer.exe", "SearchApp.exe", "SearchHost.exe"].includes(n.app))
+                        return i(new Error('当前活动窗口非 "文件资源管理器" 窗口'));
+                    if ("CabinetWClass" === n.class || "ExploreWClass" === n.class) {
+                        const t = k().getExplorerCurrentPath(n.id);
+                        return t ? e(t) : i(new Error("未读取到路径"))
+                    }
+                    return "Progman" === n.class || "WorkerW" === n.class ? e(t.app.getPath("desktop")) : i(new Error('当前活动窗口类 "' + n.class + '" 未识别'))
+                }
+                return this.windowCmp.isMacOs ? "com.apple.finder" !== n.bundleId ? i(new Error('当前活动窗口非 "访达" 窗口')) : void Ve().exec("osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'", {
+                    encoding: "utf8"
+                }, ((t,n,o)=>{
+                    if (t) {
+                        const e = o.replace(/^\d+:\d+: execution error:/, "").replace(/\(-?\d+\)\s*$/, "").trim();
+                        return i(new Error(e))
+                    }
+                    return e(n.trim().replace(/\/$/, ""))
+                }
+                )) : i(new Error("该平台不支持"))
+            }
+            ))
+        }
+        readCurrentBrowserUrl() {
+            return new Promise(((e,t)=>{
+                const i = this.windowCmp.display.nativeWorkWindowInfo;
+                if (!i)
+                    return t(new Error("未识别到当前活动窗口"));
+                if (this.windowCmp.isWindow) {
+                    if (!/^(chrome|firefox|MicrosoftEdge|iexplore|opera|brave|msedge)\.exe$/.test(i.app))
+                        return t(new Error("当前活动窗口非可识别浏览器"));
+                    const n = RegExp.$1.toLowerCase();
+                    k().readBrowserWindowUrl(n, i.id, (o=>{
+                        if (!o)
+                            return "chrome" === n ? void setTimeout((()=>{
+                                k().readBrowserWindowUrl(n, i.id, (i=>{
+                                    if (i)
+                                        return e(i);
+                                    t(new Error("未读取到 URL"))
+                                }
+                                ))
+                            }
+                            ), 50) : t(new Error("未读取到 URL"));
+                        e(o)
+                    }
+                    ))
+                } else {
+                    if (!this.windowCmp.isMacOs)
+                        return t(new Error("该平台不支持"));
+                    {
+                        if (!["com.apple.Safari", "com.google.Chrome", "com.microsoft.edgemac", "com.operasoftware.Opera", "com.vivaldi.Vivaldi", "com.brave.Browser"].includes(i.bundleId))
+                            return t(new Error("当前活动窗口非可识别浏览器"));
+                        let n;
+                        n = "com.apple.Safari" === i.bundleId ? 'tell application "Safari" to return URL of front document' : `tell application "${i.app}" to return URL of active tab of front window`,
+                        Ve().exec(`osascript -e '${n}'`, {
+                            encoding: "utf8"
+                        }, ((i,n,o)=>{
+                            if (i) {
+                                const e = o.replace(/^\d+:\d+: execution error:/, "").replace(/\(-?\d+\)\s*$/, "").trim();
+                                return t(new Error(e))
+                            }
+                            return e(n.trim())
+                        }
+                        ))
+                    }
+                }
+            }
+            ))
+        }
+        redirect({label: e, payload: i}) {
+            if (!e)
+                throw new Error("搜索关键字为空");
+            do {
+                if (!i) {
+                    i = null;
+                    break
+                }
+                if ("string" == typeof i) {
+                    i = {
+                        type: "text",
+                        data: i
+                    };
+                    break
+                }
+                if ("object" != typeof i)
+                    throw new Error("参数错误");
+                if (i = {
+                    type: i.type,
+                    data: i.data
+                },
+                !["text", "files", "img"].includes(i.type) || !i.data)
+                    throw new Error("参数错误");
+                if ("text" === i.type && ("string" != typeof i.data || !i.data))
+                    throw new Error("参数错误");
+                if ("files" === i.type) {
+                    if ("string" == typeof i.data) {
+                        if (!V().existsSync(i.data))
+                            throw new Error("文件不存在");
+                        try {
+                            const e = V().lstatSync(i.data);
+                            i.data = [{
+                                isFile: e.isFile(),
+                                isDirectory: e.isDirectory(),
+                                name: c().basename(i.data),
+                                path: i.data
+                            }]
+                        } catch (e) {
+                            throw new Error("文件不存在")
+                        }
+                        break
+                    }
+                    if (Array.isArray(i.data)) {
+                        const e = [];
+                        if (i.data.forEach((t=>{
+                            if (V().existsSync(t))
+                                try {
+                                    const i = V().lstatSync(t);
+                                    e.push({
+                                        isFile: i.isFile(),
+                                        isDirectory: i.isDirectory(),
+                                        name: c().basename(t),
+                                        path: t
+                                    })
+                                } catch (e) {}
+                        }
+                        )),
+                        0 === e.length)
+                            throw new Error("集合文件都不存在");
+                        i.data = e;
+                        break
+                    }
+                    throw new Error("参数错误")
+                }
+                if ("img" === i.type) {
+                    if ("string" == typeof i.data) {
+                        if (i.data.startsWith("data:image/"))
+                            break;
+                        if (/\.(jpg|jpeg|png|bmp)$/i.test(i.data) && V().existsSync(i.data)) {
+                            const e = t.nativeImage.createFromPath(i.data);
+                            if (e.isEmpty())
+                                throw new Error("图片为空");
+                            i.data = e.toDataURL();
+                            break
+                        }
+                        throw new Error("图片格式错误")
+                    }
+                    if ("object" == typeof i.data && i.data instanceof Uint8Array) {
+                        const e = t.nativeImage.createFromBuffer(Buffer.from(i.data));
+                        if (e.isEmpty())
+                            throw new Error("图片为空");
+                        i.data = e.toDataURL();
+                        break
+                    }
+                    throw new Error("参数错误")
+                }
+            } while (0);
+            this.windowCmp.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.redirectFeature(${JSON.stringify({
+                label: e,
+                payload: i
+            })})`).then((i=>{
+                i || (this.windowCmp.ffffffff.goPluginStore(e),
+                new t.Notification({
+                    title: "uTools",
+                    body: '未匹配到 "' + e + '" 作为功能关键字的插件应用，已自动跳转到插件应用市场搜索'
+                }).show())
+            }
+            ))
+        }
+    }
+    class He {
+        constructor(e, t) {
+            var i, n;
+            n = {
+                getAllFeatureHotKey: e=>{
+                    e.returnValue = Object.values(this.featureHotKeyDic)
+                }
+                ,
+                createFeatureHotKey: e=>{
+                    this.createItem(),
+                    e.returnValue = !0
+                }
+                ,
+                deleteFeatureHotKey: async(e,t)=>{
+                    e.returnValue = await this.deleteItem(t)
+                }
+                ,
+                updateFeatureHotKeyHotKey: async(e,t,i)=>{
+                    e.returnValue = await this.updateItemHotKey(t, i)
+                }
+                ,
+                updateFeatureHotKeyCmd: async(e,t,i)=>{
+                    e.returnValue = await this.updateItemCmd(t, i)
+                }
+                ,
+                updateFeatureHotKeyAutocopy: async(e,t,i)=>{
+                    e.returnValue = await this.updateItemAutocopy(t, i)
+                }
+            },
+            (i = "ffffffffServices")in this ? Object.defineProperty(this, i, {
+                value: n,
+                enumerable: !0,
+                configurable: !0,
+                writable: !0
+            }) : this[i] = n,
+            this.windowCmp = e,
+            this.clipboardCmp = e.clipboardCmp,
+            this.dbCmp = t,
+            this.featureHotKeyDic = {}
+        }
+        init() {
+            this.initFeatureHotKey(),
+            this.dbCmp.on("switch", (()=>{
+                Object.values(this.featureHotKeyDic).forEach((e=>{
+                    e.hotkey && this.unregisterHotKey(e.hotkey)
+                }
+                )),
+                this.featureHotKeyDic = {},
+                this.initFeatureHotKey()
+            }
+            )),
+            this.dbCmp.on("pull", (e=>{
+                const t = e.filter((e=>e._id.startsWith("featurehotkey/")));
+                0 !== t.length && t.forEach((e=>{
+                    const t = e._id;
+                    if (!0 === e._deleted) {
+                        if (!this.featureHotKeyDic[t])
+                            return;
+                        this.removeFeatureHotKey(t),
+                        delete this.featureHotKeyDic[t]
+                    } else {
+                        if (t in this.featureHotKeyDic)
+                            return void (this.featureHotKeyDic[t].hotkey === e.hotkey ? this.featureHotKeyDic[t] = {
+                                ...e,
+                                _id: t
+                            } : (this.removeFeatureHotKey(t),
+                            this.featureHotKeyDic[t] = {
+                                ...e,
+                                _id: t
+                            },
+                            this.setFeatureHotKey(t, e.hotkey)));
+                        this.featureHotKeyDic[t] = {
+                            ...e,
+                            _id: t
+                        },
+                        this.setFeatureHotKey(t, e.hotkey)
+                    }
+                }
+                ))
+            }
+            ))
+        }
+        async initFeatureHotKey() {
+            const e = await this.dbCmp.allDocs("/", "featurehotkey/");
+            0 !== e.length && e.forEach((e=>{
+                !0 === e.hotkey && (e.hotkey = ""),
+                this.featureHotKeyDic[e._id] = e,
+                this.setFeatureHotKey(e._id, e.hotkey)
+            }
+            ))
+        }
+        registerHotKey(e, i) {
+            const o = _(e);
+            if (o !== n().get("showHotKey"))
+                if (_e.isFKey(o))
+                    _e.register(o, i);
+                else
+                    try {
+                        t.globalShortcut.isRegistered(o) && t.globalShortcut.unregister(o),
+                        t.globalShortcut.register(o, i)
+                    } catch (e) {}
+        }
+        unregisterHotKey(e) {
+            const i = _(e);
+            _e.isFKey(i) ? _e.unregister(i) : t.globalShortcut.isRegistered(i) && t.globalShortcut.unregister(i)
+        }
+        rendererAutoTextCmd(e, t) {
+            this.windowCmp.mainWindow.isVisible() || this.windowCmp.display.setNativeWorkWindowInfo();
+            const i = this.windowCmp.display.nativeWorkWindowInfo;
+            this.windowCmp.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.autoTextCmd(${JSON.stringify({
+                cmd: e,
+                wininfo: i,
+                isPreCopy: t
+            })})`).then((e=>{
+                e && this.windowCmp.display.trigger(!0)
+            }
+            ))
+        }
+        setFeatureHotKey(e, t) {
+            t && this.registerHotKey(t, (()=>{
+                const t = this.featureHotKeyDic[e];
+                t && (this.callHotkeyRuningTimeout || (t.autocopy ? this.callHotkeyRuningTimeout = setTimeout((()=>{
+                    if (this.clipboardCmp.isPreCopy())
+                        return this.rendererAutoTextCmd(t.cmd, !0),
+                        void setTimeout((()=>{
+                            this.callHotkeyRuningTimeout = null
+                        }
+                        ), 250);
+                    const e = ()=>{
+                        const e = k().getClipboardChangeCount();
+                        this.windowCmp.isWindow ? k().simulateKeyboardTap("c", "ctrl") : this.windowCmp.isMacOs ? k().simulateKeyboardTap("c", "command") : this.windowCmp.isLinux && k().simulateKeyboardTap("c", "ctrl"),
+                        setTimeout((()=>{
+                            const i = k().getClipboardChangeCount() > e;
+                            this.rendererAutoTextCmd(t.cmd, i),
+                            setTimeout((()=>{
+                                this.callHotkeyRuningTimeout = null
+                            }
+                            ), 250)
+                        }
+                        ), 50)
+                    }
+                    ;
+                    /^F\d{1,2}$/.test(t.hotkey) ? e() : setTimeout(e, 250)
+                }
+                ), 50) : this.callHotkeyRuningTimeout = setTimeout((()=>{
+                    this.rendererAutoTextCmd(t.cmd, this.clipboardCmp.isPreCopy()),
+                    setTimeout((()=>{
+                        this.callHotkeyRuningTimeout = null
+                    }
+                    ), 250)
+                }
+                ), 50)))
+            }
+            ))
+        }
+        removeFeatureHotKey(e) {
+            const t = this.featureHotKeyDic[e];
+            if (!t)
+                return;
+            const i = Object.values(this.featureHotKeyDic).find((e=>e !== t && e.hotkey === t.hotkey));
+            i ? this.setFeatureHotKey(i._id, i.hotkey) : this.unregisterHotKey(t.hotkey)
+        }
+        createItem() {
+            const e = "featurehotkey/" + Date.now();
+            this.featureHotKeyDic[e] = {
+                _id: e,
+                hotkey: "",
+                cmd: ""
+            }
+        }
+        async deleteItem(e) {
+            const t = this.featureHotKeyDic[e];
+            return !!t && (t.hotkey ? (this.removeFeatureHotKey(e),
+            !(await this.dbCmp.remove("/", e)).error && (delete this.featureHotKeyDic[e],
+            !0)) : (delete this.featureHotKeyDic[e],
+            !0))
+        }
+        async updateItemHotKey(e, t) {
+            if ("string" != typeof t)
+                return !1;
+            const i = this.featureHotKeyDic[e];
+            if (!i)
+                return !1;
+            if (Object.values(this.featureHotKeyDic).find((e=>e.hotkey === t)))
+                return !1;
+            i.hotkey && this.removeFeatureHotKey(e),
+            i.hotkey = t;
+            const n = await this.dbCmp.put("/", i);
+            return i._id = n.id,
+            !n.error && (i._rev = n.rev,
+            this.setFeatureHotKey(e, i.hotkey),
+            !0)
+        }
+        async updateItemCmd(e, t) {
+            if ("string" != typeof t)
+                return !1;
+            const i = this.featureHotKeyDic[e];
+            if (!i)
+                return !1;
+            if (!i.hotkey)
+                return !1;
+            i.cmd = t;
+            const n = await this.dbCmp.put("/", i);
+            return i._id = n.id,
+            !n.error && (i._rev = n.rev,
+            !0)
+        }
+        async updateItemAutocopy(e, t) {
+            const i = this.featureHotKeyDic[e];
+            if (!i)
+                return !1;
+            if (!i.hotkey)
+                return !1;
+            i.autocopy = !0 === t;
+            const n = await this.dbCmp.put("/", i);
+            return i._id = n.id,
+            !n.error && (i._rev = n.rev,
+            !0)
+        }
+    }
+    function Ue(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    class je {
+        constructor(e, i, o) {
+            Ue(this, "voiceServices", {
+                getXFAuthStr: (e,t)=>{
+                    const i = `api_key="8b3ee022a0035a9d2edc93a67c606eca", algorithm="hmac-sha256", headers="host date request-line", signature="${k().xfSignature(`host: iat-api.xfyun.cn\ndate: ${t}\nGET /v2/iat HTTP/1.1`).toString("base64")}"`;
+                    e.returnValue = Buffer.from(i).toString("base64")
+                }
+                ,
+                setWindowBounds: (e,t,i)=>{
+                    this.setWindowBounds(t, i),
+                    e.returnValue = !0
+                }
+                ,
+                triggerHide: (e,t)=>{
+                    this.triggerHide(t),
+                    e.returnValue = !0
+                }
+                ,
+                isSimulateCopyForClipboardUpdate: e=>{
+                    e.returnValue = k().getClipboardChangeCount() > this._simulateCopyClipboardChangeCount
+                }
+                ,
+                enterPlugin: (e,t,i)=>{
+                    this.windowCmp.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.setEnterFeatureCmd(${JSON.stringify(t)})`).then((()=>{
+                        this.windowCmp.enterPlugin(t.pluginId, t.featureCode, i)
+                    }
+                    ))
+                }
+                ,
+                voiceTextInput: (e,i)=>{
+                    this.reportCmp.info("voice.input"),
+                    this.clipboardCmp.temporaryCancelWatch(),
+                    t.clipboard.writeText(i),
+                    this.windowCmp.isMacOs ? k().simulateKeyboardTap("v", "command") : k().simulateKeyboardTap("v", "ctrl")
+                }
+                ,
+                getCNPinyin: (e,t)=>{
+                    e.returnValue = X(t)
+                }
+                ,
+                mainAutoCmdSearch: (e,t)=>{
+                    this.windowCmp.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.autoCmdSearch(${JSON.stringify(t)})`).then((()=>{
+                        this.windowCmp.display.trigger(!0, !0)
+                    }
+                    ))
+                }
+                ,
+                translate: async e=>{
+                    const t = this.accountCmp.getAccountToken();
+                    try {
+                        const i = await m(this.config.translateURL + (t || ""), {
+                            body: e,
+                            mid: this.accountCmp.machineId,
+                            nid: this.accountCmp.nativeId
+                        });
+                        return i.translated.toLowerCase() !== e.toLowerCase() && {
+                            status: "ok",
+                            translated: i.translated.replace(/^\s*[\r\n]/gm, this.windowCmp.isWindow ? "\n" : "")
+                        }
+                    } catch (e) {
+                        return 403 === e.code && {
+                            status: "member",
+                            message: e.message
+                        }
+                    }
+                }
+            }),
+            Ue(this, "ffffffffServices", {
+                setEnableVoicePanel: (e,t)=>{
+                    if (t) {
+                        n().set("enableVoicePanel", !0),
+                        this.enableVoicePanel();
+                        const e = this.accountCmp.getAccountInfo();
+                        e && this.windowCmp.voiceChangeAccount(e)
+                    } else
+                        n().set("enableVoicePanel", !1),
+                        this.voiceWindow && !this.voiceWindow.isDestroyed() && (this.windowCmp.isMacOs && k().panelRestoreToWindow(this.voiceWindow.getNativeWindowHandle()),
+                        this.voiceWindow.destroy());
+                    e.returnValue = !0
+                }
+                ,
+                getVoicePanelSetting: e=>{
+                    e.returnValue = {
+                        isEnable: this.isEnableVoicePanel(),
+                        useVoice: this._useVoice,
+                        useTranslate: this._useTranslate,
+                        triggerWay: this._triggerWay,
+                        longDownTriggerMS: this._longDownTriggerMS,
+                        processBlacklist: n().get("voicePanelProcessBlacklist") || ""
+                    }
+                }
+                ,
+                getVoicePanelCustomCmds: async e=>{
+                    e.returnValue = await this.getCustomCmds()
+                }
+                ,
+                putVoicePanelCustomCmdsDoc: async(e,t)=>{
+                    t._id.startsWith("panelcmd/") ? e.returnValue = await this.dbCmp.put("/", t) : e.returnValue = {
+                        error: !0,
+                        message: "_id error"
+                    }
+                }
+                ,
+                setVoicePanelCustomCmdSort: async(e,t)=>{
+                    let i = await this.dbCmp.get("/", "panelcmdsort");
+                    i || (i = {
+                        _id: "panelcmdsort"
+                    }),
+                    i.value = t;
+                    const n = await this.dbCmp.put("/", i);
+                    e.returnValue = !0 === n.ok
+                }
+                ,
+                setVoicePanelEnableVoice: (e,t)=>{
+                    t ? (n().set("voicePanelUseVoice", !0),
+                    this._useVoice = !0) : (n().delete("voicePanelUseVoice"),
+                    this._useVoice = !1),
+                    e.returnValue = !0
+                }
+                ,
+                setVoicePanelEnableTranslate: (e,t)=>{
+                    t ? (n().delete("voicePanelUseTranslate"),
+                    this._useTranslate = !0) : (n().set("voicePanelUseTranslate", !1),
+                    this._useTranslate = !1),
+                    e.returnValue = !0
+                }
+                ,
+                setVoicePanelTriggerWay: (e,t)=>{
+                    if (!this.isTriggerWayNumberValue(t))
+                        return void (e.returnValue = !1);
+                    this._triggerWay = t,
+                    n().set("voicePanelTriggerWay", this._triggerWay),
+                    k().stopVoicePanelTriggerEvent();
+                    let i = n().get("voicePanelProcessBlacklist") || "";
+                    i && (i = ";" + i + ";"),
+                    k().voicePanelTriggerEvent(this.nativeVoicePanelTrigger, this._triggerWay, i),
+                    e.returnValue = !0
+                }
+                ,
+                setVoicePanelLongDownTriggerMS: (e,t)=>{
+                    !t || "number" != typeof t || t < 200 || t > 400 ? e.returnValue = !1 : (n().set("voicePanelLongDownTriggerMS", t),
+                    this._longDownTriggerMS = t,
+                    e.returnValue = !0)
+                }
+                ,
+                setVoicePanelProcessBlacklist: (e,t)=>{
+                    "string" == typeof t ? (this._setProcessBlacklistTimeout && clearTimeout(this._setProcessBlacklistTimeout),
+                    this._setProcessBlacklistTimeout = setTimeout((()=>{
+                        this._setProcessBlacklistTimeout = null,
+                        t = t.trim(),
+                        n().set("voicePanelProcessBlacklist", t),
+                        k().setVoicePanelProcessBlacklist(t ? ";" + t + ";" : "")
+                    }
+                    ), 500),
+                    e.returnValue = !0) : e.returnValue = !1
+                }
+            }),
+            this.config = e,
+            this.config.borderWidth = i.isMacOs ? 0 : 1,
+            this.windowBounds = {
+                x: 0,
+                y: 0,
+                width: this.config.contentWidth + 2 * this.config.borderWidth,
+                height: this.config.initContentHeight + 2 * this.config.borderWidth
+            },
+            this.cursorPoint = {
+                x: 0,
+                y: 0
+            },
+            this.windowCmp = i,
+            this.clipboardCmp = i.clipboardCmp,
+            this.accountCmp = i.accountCmp,
+            this.reportCmp = i.reportCmp,
+            this.dbCmp = o,
+            this.nativeVoicePanelTrigger = this.nativeVoicePanelTrigger.bind(this)
+        }
+        isEnableVoicePanel() {
+            return !0 === n().get("enableVoicePanel")
+        }
+        isTriggerWayNumberValue(e) {
+            return [0, 1, 2, 4, 5, 6, 7].includes(e)
+        }
+        init(e) {
+            n().has("enableVoicePanel") || (e ? n().set("enableVoicePanel", !0) : n().set("enableVoicePanel", !1)),
+            this.isEnableVoicePanel() && this.enableVoicePanel()
+        }
+        enableVoicePanel() {
+            this._useVoice = !0 === n().get("voicePanelUseVoice"),
+            this._useTranslate = !(!1 === n().get("voicePanelUseTranslate")),
+            this.windowCmp.isLinux ? this._triggerWay = 0 : (this._triggerWay = n().get("voicePanelTriggerWay"),
+            this.isTriggerWayNumberValue(this._triggerWay) || (this.windowCmp.isWindow ? this._triggerWay = 0 : this.windowCmp.isMacOs && (this._triggerWay = 2)),
+            this._longDownTriggerMS = n().get("voicePanelLongDownTriggerMS"),
+            (!this._longDownTriggerMS || this._longDownTriggerMS < 200 || this._longDownTriggerMS > 400) && (this._longDownTriggerMS = 200)),
+            this.initVoiceWindow(),
+            this.windowCmp.voiceRefreshCmdSource = ()=>{
+                this.voiceWindow && !this.voiceWindow.webContents.isDestroyed() && this.voiceWindow.webContents.executeJavaScript("window.bridge.refreshCmdSource()")
+            }
+            ,
+            this.windowCmp.voiceChangeAccount = (e=null)=>{
+                this.voiceWindow && !this.voiceWindow.webContents.isDestroyed() && this.voiceWindow.webContents.executeJavaScript(`window.bridge.changeAccount(${JSON.stringify(e)})`)
+            }
+            ,
+            this.windowCmp.isLinux && Ve().spawn("xmodmap", ["-e", '"pointer = 1 25 3 4 5 6 7 8 9 10"'], {
+                shell: !0,
+                detached: !0
+            })
+        }
+        async getCustomCmds() {
+            let e = await this.dbCmp.allDocs("/", "panelcmd/");
+            if (e.length < 2)
+                return e;
+            const t = await this.dbCmp.get("/", "panelcmdsort");
+            return t && Array.isArray(t.value) && (e = e.sort(((e,i)=>{
+                let n = t.value.indexOf(e._id);
+                -1 === n && (n = 999999);
+                let o = t.value.indexOf(i._id);
+                return -1 === o && (o = 999999),
+                n - o
+            }
+            ))),
+            e
+        }
+        triggerShow(e, i) {
+            if (this.reportCmp.info("panel.show"),
+            this.windowCmp.isWindow) {
+                const n = t.screen.screenToDipPoint({
+                    x: e,
+                    y: i
+                });
+                e = Math.round(n.x),
+                i = Math.round(n.y)
+            } else
+                this.windowCmp.isMacOs ? this._useVoice && !this._isMicrophoneGranted && (void 0 === this._isMicrophoneGranted && (this._isMicrophoneGranted = "granted" === t.systemPreferences.getMediaAccessStatus("microphone")),
+                this._isMicrophoneGranted || t.systemPreferences.askForMediaAccess("microphone")) : this.windowCmp.isLinux && (this._displayScaleFactor = t.screen.getPrimaryDisplay().scaleFactor,
+                this._displayScaleFactor > 1 && (e = Math.round(e / this._displayScaleFactor),
+                i = Math.round(i / this._displayScaleFactor)));
+            this.cursorPoint.x = e,
+            this.cursorPoint.y = i;
+            let n = null;
+            this.windowCmp.display.setNativeWorkWindowInfo();
+            const o = this.windowCmp.display.nativeWorkWindowInfo;
+            do {
+                if (this.clipboardCmp.isPreCopy()) {
+                    n = {
+                        type: "clipboard",
+                        wininfo: o || null
+                    };
+                    break
+                }
+                if (!o)
+                    break;
+                if (this.windowCmp.isMacOs) {
+                    if (e > o.x && e < o.x + o.width && i > o.y && i < o.y + 23) {
+                        n = {
+                            type: "window",
+                            data: o,
+                            wininfo: o
+                        };
+                        break
+                    }
+                    this.clipboardCmp.temporaryCancelWatch(),
+                    this._simulateCopyClipboardChangeCount = k().getClipboardChangeCount(),
+                    k().simulateKeyboardTap("c", "command"),
+                    n = {
+                        type: "simulatecopy",
+                        wininfo: o
+                    };
+                    break
+                }
+                if (this.windowCmp.isWindow) {
+                    if ("uTools.exe" === o.app || this.windowCmp.isDev && "electron.exe" === o.app) {
+                        if (o.id === this.voiceWindow.getNativeWindowHandle().readInt32LE())
+                            break;
+                        const e = t.BrowserWindow.getAllWindows().find((e=>e.getNativeWindowHandle().readInt32LE() === o.id));
+                        if (!e)
+                            break;
+                        if (e.webContents.isFocused()) {
+                            this.clipboardCmp.temporaryCancelWatch(),
+                            this._simulateCopyClipboardChangeCount = k().getClipboardChangeCount(),
+                            e.webContents.copy(),
+                            n = {
+                                type: "simulatecopy",
+                                wininfo: null
+                            };
+                            break
+                        }
+                        const i = e.getBrowserView();
+                        i && i.webContents.isFocused() && (this.clipboardCmp.temporaryCancelWatch(),
+                        this._simulateCopyClipboardChangeCount = k().getClipboardChangeCount(),
+                        i.webContents.copy(),
+                        n = {
+                            type: "simulatecopy",
+                            wininfo: null
+                        });
+                        break
+                    }
+                    const s = t.screen.screenToDipRect(null, {
+                        x: o.x,
+                        y: o.y,
+                        width: o.width,
+                        height: o.height
+                    });
+                    if (e > s.x && e < s.x + s.width && i > s.y && i < s.y + 33) {
+                        n = {
+                            type: "window",
+                            data: o,
+                            wininfo: o
+                        };
+                        break
+                    }
+                    if (["explorer.exe", "SearchApp.exe", "SearchHost.exe"].includes(o.app)) {
+                        let e;
+                        if ("CabinetWClass" === o.class || "ExploreWClass" === o.class ? e = k().getExplorerSelectedFilePath(o.id) : "Progman" !== o.class && "WorkerW" !== o.class || (e = k().getDesktopSelectedFilePath()),
+                        e) {
+                            const t = [];
+                            if (e.forEach((e=>{
+                                let i;
+                                try {
+                                    i = d().lstatSync(e)
+                                } catch (e) {
+                                    return
+                                }
+                                t.push({
+                                    isFile: i.isFile(),
+                                    isDirectory: i.isDirectory(),
+                                    name: c().basename(e),
+                                    path: e
+                                })
+                            }
+                            )),
+                            t.length > 0) {
+                                n = {
+                                    type: "files",
+                                    data: t,
+                                    wininfo: o
+                                };
+                                break
+                            }
+                        }
+                        n = {
+                            type: "window",
+                            data: o,
+                            wininfo: o
+                        };
+                        break
+                    }
+                    this.clipboardCmp.temporaryCancelWatch(),
+                    this._simulateCopyClipboardChangeCount = k().getClipboardChangeCount(),
+                    k().simulateKeyboardTap("c", "ctrl"),
+                    n = {
+                        type: "simulatecopy",
+                        wininfo: o
+                    };
+                    break
+                }
+                if (this.windowCmp.isLinux) {
+                    if (("utools" === o.app || this.windowCmp.isDev && "electron" === o.app) && o.id === this.voiceWindow.getNativeWindowHandle().readInt32LE()) {
+                        this._voiceWindowShowTimeStamp = Date.now();
+                        break
+                    }
+                    if (/\/(?:dde-file-manager|nautilus)$/.test(o.appPath)) {
+                        this.clipboardCmp.temporaryCancelWatch(),
+                        this._simulateCopyClipboardChangeCount = k().getClipboardChangeCount(),
+                        k().simulateKeyboardTap("c", "ctrl"),
+                        n = {
+                            type: "simulatecopy",
+                            wininfo: o
+                        };
+                        break
+                    }
+                    if (k().wheelMouseDownIsSelection()) {
+                        const e = t.clipboard.readText("selection").trim();
+                        e && (n = {
+                            type: "text",
+                            data: e,
+                            wininfo: o
+                        })
+                    }
+                }
+            } while (0);
+            this.windowBounds.height = this.config.initContentHeight + 2 * this.config.borderWidth,
+            this.windowBounds.x = e - (this.windowBounds.width / 2 | 0),
+            this.windowBounds.y = i - (this.windowBounds.height / 2 | 0),
+            this.workedDisplay = t.screen.getDisplayNearestPoint({
+                x: e,
+                y: i
+            }),
+            this.windowBounds.x < this.workedDisplay.bounds.x ? this.windowBounds.x = this.workedDisplay.bounds.x : this.windowBounds.x + this.windowBounds.width > this.workedDisplay.bounds.x + this.workedDisplay.bounds.width && (this.windowBounds.x = this.workedDisplay.bounds.x + this.workedDisplay.bounds.width - this.windowBounds.width),
+            this.voiceWindow.setBounds(this.windowBounds),
+            this.pointerInWindow = !0,
+            this.windowCmp.isWindow && (this.voiceWindow.setFocusable(!1),
+            k().setAlwaysOnTop(this.voiceWindow.getNativeWindowHandle())),
+            this.voiceWindow.showInactive(),
+            this.windowCmp.isMacOs && !this.voiceWindow.isVisible() && this.voiceWindow.show(),
+            this.voiceWindow.webContents.send("mousemove", e - this.windowBounds.x, i - this.windowBounds.y),
+            this.getCustomCmds().then((e=>{
+                if (!this.voiceWindow.isVisible())
+                    return;
+                const t = Array.from(new Set(e.map((e=>e.cmd.toLowerCase()))));
+                this.voiceWindow.webContents.executeJavaScript(`window.bridge.showInit(${JSON.stringify({
+                    payload: n,
+                    panelTextCmds: t,
+                    useVoice: this._useVoice,
+                    useTranslate: this._useTranslate
+                })})`)
+            }
+            ))
+        }
+        triggerMove(e, i) {
+            if (this.windowCmp.isWindow) {
+                const n = t.screen.screenToDipPoint({
+                    x: e,
+                    y: i
+                });
+                e = Math.round(n.x),
+                i = Math.round(n.y)
+            } else
+                this.windowCmp.isLinux && this._displayScaleFactor > 1 && (e = Math.round(e / this._displayScaleFactor),
+                i = Math.round(i / this._displayScaleFactor));
+            this.cursorPoint.x = e,
+            this.cursorPoint.y = i,
+            e >= this.windowBounds.x + this.config.borderWidth && e <= this.windowBounds.x + this.windowBounds.width - this.config.borderWidth && i >= this.windowBounds.y + this.config.borderWidth && i <= this.windowBounds.y + this.windowBounds.height - this.config.borderWidth ? (this.pointerInWindow || (this.pointerInWindow = !0),
+            this.voiceWindow.webContents.send("mousemove", e - this.windowBounds.x, i - this.windowBounds.y)) : this.pointerInWindow && (this.pointerInWindow = !1,
+            this.voiceWindow.webContents.send("mouseout"))
+        }
+        handleNativeMouseUp() {
+            this.voiceWindow ? this.voiceWindow.isVisible() && (this.pointerInWindow ? (this.pointerInWindow = !1,
+            this.voiceWindow.webContents.executeJavaScript("window.bridge.holdUp()").then((e=>{
+                e && (this._voiceWindowShowTimeStamp = Date.now(),
+                this.windowCmp.isWindow ? (this.voiceWindow.setFocusable(!0),
+                k().focusShowWindow(this.voiceWindow.getNativeWindowHandle(), (()=>{
+                    this.voiceWindow.show()
+                }
+                ))) : this.windowCmp.isMacOs ? k().focusShowWindow(this.voiceWindow.getNativeWindowHandle()) : this.voiceWindow.show())
+            }
+            ))) : this.triggerEmpty()) : k().stopVoicePanelTriggerEvent()
+        }
+        triggerHide(e) {
+            this.windowCmp.isWindow ? (this.voiceWindow.hide(),
+            !e && this.windowCmp.display.nativeWorkWindowInfo && k().restorePrevWindowFocus(this.windowCmp.display.nativeWorkWindowInfo.id)) : this.voiceWindow.hide(),
+            e && !this.windowCmp.mainWindow.isVisible() && this.windowCmp.display.trigger(!0, !0)
+        }
+        triggerEmpty() {
+            this.pointerInWindow = !1,
+            this.voiceWindow.isVisible() && this.voiceWindow.hide()
+        }
+        nativeVoicePanelTrigger(e, t, i) {
+            switch (e) {
+            case 1:
+                this.triggerShow(t, i);
+                break;
+            case 2:
+            case 8:
+                this.triggerMove(t, i);
+                break;
+            case 3:
+                setImmediate((()=>{
+                    this.handleNativeMouseUp()
+                }
+                ));
+                break;
+            case 7:
+                this._mouseLongDownTimeout && clearTimeout(this._mouseLongDownTimeout),
+                this.voiceWindow.isVisible() && this.triggerEmpty(),
+                this._mouseLongDownTimeout = setTimeout((()=>{
+                    k().triggerMouseLongDown() && this.triggerShow(t, i),
+                    this._mouseLongDownTimeout = null
+                }
+                ), this._longDownTriggerMS);
+                break;
+            case 9:
+                if (this._mouseLongDownTimeout)
+                    return clearTimeout(this._mouseLongDownTimeout),
+                    void (this._mouseLongDownTimeout = null);
+                setImmediate((()=>{
+                    this.handleNativeMouseUp()
+                }
+                ));
+                break;
+            case 0:
+                this._mouseLongDownTimeout && (clearTimeout(this._mouseLongDownTimeout),
+                this._mouseLongDownTimeout = null),
+                setImmediate((()=>{
+                    this.triggerEmpty()
+                }
+                ))
+            }
+        }
+        setWindowBounds(e, i) {
+            if (!this.voiceWindow.isVisible())
+                return;
+            const n = this.config.initContentHeight + 2 * this.config.borderWidth + e
+              , o = "number" == typeof i;
+            if (o) {
+                const e = this.cursorPoint.x - (this.windowBounds.width / 2 | 0)
+                  , o = this.cursorPoint.y - i;
+                if (n === this.windowBounds.height && e === this.windowBounds.x && o === this.windowBounds.y)
+                    return;
+                this.windowBounds.height = n,
+                this.windowBounds.x = e,
+                this.windowBounds.y = o,
+                this.workedDisplay = t.screen.getDisplayNearestPoint({
+                    x: this.cursorPoint.x,
+                    y: this.cursorPoint.y
+                }),
+                e < this.workedDisplay.bounds.x ? this.windowBounds.x = this.workedDisplay.bounds.x : e + this.windowBounds.width > this.workedDisplay.bounds.x + this.workedDisplay.bounds.width && (this.windowBounds.x = this.workedDisplay.bounds.x + this.workedDisplay.bounds.width - this.windowBounds.width)
+            } else {
+                if (this.windowBounds.height === n)
+                    return;
+                !1 === i && (this.windowBounds.y = this.windowBounds.y + this.windowBounds.height - n),
+                this.windowBounds.height = n
+            }
+            if (!1 !== i)
+                if (this.windowBounds.y + this.windowBounds.height > this.workedDisplay.bounds.y + this.workedDisplay.bounds.height) {
+                    let e;
+                    e = o ? this.windowBounds.y - this.windowBounds.height + 2 * i : this.windowBounds.y - this.windowBounds.height + this.config.initContentHeight + 2 * this.config.borderWidth,
+                    e < this.windowBounds.y ? (this.windowBounds.y = e,
+                    this.voiceWindow.webContents.executeJavaScript("window.bridge.changeDirection(false)")) : this.voiceWindow.webContents.executeJavaScript("window.bridge.changeDirection(true)")
+                } else
+                    this.voiceWindow.webContents.executeJavaScript("window.bridge.changeDirection(true)");
+            this.voiceWindow.setBounds(this.windowBounds),
+            o && this.voiceWindow.webContents.send("mousemove", this.cursorPoint.x - this.windowBounds.x, this.cursorPoint.y - this.windowBounds.y)
+        }
+        initVoiceWindow() {
+            this.voiceWindow = new t.BrowserWindow({
+                resizable: this.windowCmp.isWindow,
+                focusable: !this.windowCmp.isWindow,
+                fullscreenable: !1,
+                minimizable: !1,
+                maximizable: !1,
+                alwaysOnTop: !0,
+                closable: !1,
+                show: !1,
+                width: this.windowBounds.width,
+                height: this.windowBounds.height,
+                backgroundColor: this.windowCmp.getWindowBackgroundColor(),
+                frame: !this.windowCmp.isLinux,
+                titleBarStyle: "hidden",
+                enableLargerThanScreen: !0,
+                skipTaskbar: !0,
+                autoHideMenuBar: !0,
+                type: "toolbar",
+                webPreferences: {
+                    devTools: this.windowCmp.isDev,
+                    nodeIntegration: !1,
+                    contextIsolation: !1,
+                    enableRemoteModule: !1,
+                    backgroundThrottling: !1,
+                    partition: "persist:<utools>",
+                    navigateOnDragDrop: !1,
+                    spellcheck: !1,
+                    webgl: !1,
+                    enableWebSQL: !1,
+                    preload: c().join(__dirname, "preload.js")
+                }
+            }),
+            this.voiceWindow.removeMenu(),
+            this.voiceWindow.setAlwaysOnTop(!0, "pop-up-menu"),
+            this.windowCmp.isMacOs && (this.voiceWindow.setWindowButtonVisibility(!1),
+            k().windowConvertToPanel(this.voiceWindow.getNativeWindowHandle())),
+            this.voiceWindow.on("will-resize", (e=>{
+                e.preventDefault()
+            }
+            )),
+            this.voiceWindow.loadURL("file://" + c().join(__dirname, "voice.html")),
+            this.voiceWindow.webContents.setBackgroundThrottling(!1),
+            this.voiceWindow.webContents.once("dom-ready", (()=>{
+                this.config.borderWidth > 0 && this.voiceWindow.webContents.insertCSS(`.voice-panel, .voice-panel-reverse { border-style: solid; border-width: ${this.config.borderWidth}px; }`);
+                let e = n().get("voicePanelProcessBlacklist") || "";
+                e && (e = ";" + e + ";"),
+                k().voicePanelTriggerEvent(this.nativeVoicePanelTrigger, this._triggerWay, e)
+            }
+            )),
+            this.voiceWindow.webContents.once("destroyed", (()=>{
+                k().stopVoicePanelTriggerEvent(),
+                delete this.windowCmp.voiceRefreshCmdSource,
+                delete this.windowCmp.voiceChangeAccount,
+                this.voiceWindow = null
+            }
+            )),
+            this.voiceWindow.webContents.once("render-process-gone", (()=>{
+                this.windowCmp.isMacOs && k().panelRestoreToWindow(this.voiceWindow.getNativeWindowHandle()),
+                this.voiceWindow.destroy()
+            }
+            )),
+            this.voiceWindow.on("blur", (()=>{
+                this.voiceWindow.isVisible() && Date.now() - this._voiceWindowShowTimeStamp < 300 ? this.windowCmp.isWindow ? (this.voiceWindow.show(),
+                k().focusShowWindow(this.voiceWindow.getNativeWindowHandle(), (()=>{
+                    this.voiceWindow.show()
+                }
+                ))) : this.windowCmp.isMacOs ? k().focusShowWindow(this.voiceWindow.getNativeWindowHandle()) : this.voiceWindow.show() : this.triggerEmpty()
+            }
+            )),
+            this.voiceWindow.on("hide", (()=>{
+                this.windowCmp.isWindow && this.voiceWindow.setFocusable(!1),
+                this.voiceWindow.webContents.executeJavaScript("window.bridge.empty()")
+            }
+            ))
+        }
+    }
+    const Ke = require("chokidar");
+    var Je = e.n(Ke);
+    const $e = {
+        addlocalopen: {
+            func: (e,t,i)=>{
+                e.appCmp.addLocalOpen(i.map((e=>e.path)))
+            }
+        },
+        pluginstoresearch: {
+            feature: {
+                code: "pluginstoresearch",
+                explain: "前往 uTools 插件应用市场",
+                icon: "res/native/plugin-search.png",
+                cmds: [{
+                    type: "over",
+                    maxLength: 20,
+                    label: "搜索插件应用"
+                }]
+            },
+            func: (e,t,i)=>{
+                e.windowCmp.ffffffff.goPluginStore(i)
+            }
+        },
+        saveimage: {
+            feature: {
+                code: "saveimage",
+                explain: "保存为图片文件",
+                icon: "res/native/imgfile.png",
+                cmds: [{
+                    type: "img",
+                    label: "保存为文件"
+                }]
+            },
+            func: (e,i,n)=>{
+                if (e.windowCmp.hideMainWindow(),
+                !/^data:image\/([a-z]+);base64,/.test(n))
+                    return;
+                const o = RegExp.$1
+                  , s = c().join(t.app.getPath("downloads"), "uTools_" + Date.now() + "." + o);
+                V().writeFile(s, n.replace(/^data:image\/([a-z]+);base64,/, ""), "base64", (e=>{
+                    e || t.shell.showItemInFolder(s)
+                }
+                ))
+            }
+        },
+        showfolder: {
+            feature: {
+                code: "showfolder",
+                explain: "前往文件夹",
+                icon: "res/native/folderopen.svg",
+                cmds: [{
+                    type: "regex",
+                    match: "/^(?:~?\\/[^/\\n\\r\\f\\v]+)+\\/?$/",
+                    label: "前往文件夹"
+                }]
+            },
+            func: (e,i,n)=>{
+                (n = n.trim()).startsWith("~") && (n = n.replace("~", t.app.getPath("home"))),
+                V().existsSync(n) || (n = c().dirname(n),
+                V().existsSync(n)) ? (e.windowCmp.hideMainWindow(!1),
+                V().lstat(n, ((e,i)=>{
+                    e || i.isFile() ? t.shell.showItemInFolder(n) : t.shell.openPath(n)
+                }
+                ))) : new t.Notification({
+                    body: "文件、文件夹都不存在"
+                }).show()
+            }
+        },
+        copyfile: {
+            feature: {
+                code: "copyfile",
+                explain: "复制文件或文件夹到剪贴板",
+                icon: "res/native/clip.svg",
+                cmds: [{
+                    type: "regex",
+                    match: "/^(?:\\/[^/\\n\\r\\f\\v]+)+\\/?$/m",
+                    maxLength: 5e3,
+                    label: "复制文件"
+                }]
+            },
+            func: (e,i,n)=>{
+                const o = n.match(/^(?:\/[^/\n\r\f\v]+)+\/?$/gm).map((e=>e.trim())).filter((e=>V().existsSync(e)));
+                0 !== o.length ? (e.windowCmp.hideMainWindow(),
+                e.copyFile(o)) : new t.Notification({
+                    body: "文件不存在"
+                }).show()
+            }
+        },
+        openitem: {
+            feature: {
+                code: "openitem",
+                explain: "系统默认方式打开文件",
+                icon: "res/native/openitem.png",
+                cmds: [{
+                    type: "regex",
+                    match: "/^(?:~?\\/[^/\\n\\r\\f\\v]+)+\\.\\w{2,10}$/",
+                    label: "打开文件"
+                }]
+            },
+            func: (e,i,n)=>{
+                (n = n.trim()).startsWith("~") && (n = n.replace("~", t.app.getPath("home"))),
+                V().existsSync(n) ? (e.windowCmp.hideMainWindow(!1),
+                t.shell.openPath(n)) : new t.Notification({
+                    body: "文件不存在"
+                }).show()
+            }
+        },
+        openweburl: {
+            feature: {
+                code: "openweburl",
+                explain: "默认浏览器打开网址",
+                icon: "res/native/link.svg",
+                cmds: [{
+                    type: "regex",
+                    match: '/^(?:https?:\\/\\/)?(?:localhost|(?:(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d|\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d|\\d)){3})|(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))\\.?)(?::\\d{2,5})?(?:[/?#][^\\s"]*)?$/i',
+                    label: "打开网址"
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow(!1),
+                /^https?:\/\//.test(n) ? t.shell.openExternal(n) : t.shell.openExternal("https://" + n)
+            }
+        },
+        copyfilepath: {
+            feature: {
+                code: "copyfilepath",
+                explain: "复制路径",
+                icon: "res/native/link.svg",
+                cmds: [{
+                    type: "files",
+                    label: "复制路径"
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow(),
+                t.clipboard.writeText(n.map((e=>e.path)).join("\n"))
+            }
+        },
+        copyfilename: {
+            feature: {
+                code: "copyfilename",
+                explain: "提取文件名称",
+                icon: "res/native/link.svg",
+                cmds: [{
+                    type: "files",
+                    label: "提取文件名称"
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow(),
+                t.clipboard.writeText(n.map((e=>e.isFile ? c().parse(e.path).name : e.name)).join("\n"))
+            }
+        },
+        finder_copy_current_path: {
+            feature: {
+                code: "finder_copy_current_path",
+                explain: "复制当前目录路径",
+                icon: "res/native/link.svg",
+                cmds: [{
+                    type: "window",
+                    match: {
+                        app: "Finder.app"
+                    },
+                    label: "复制当前路径"
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow(),
+                e.appCmp.readCurrentFolderPath().then((e=>{
+                    t.clipboard.writeText(e)
+                }
+                ))
+            }
+        },
+        finder_new_file: {
+            feature: {
+                code: "finder_new_file",
+                explain: "在当前目录新建文件",
+                icon: "res/native/newfile.png",
+                cmds: [{
+                    type: "window",
+                    match: {
+                        app: "Finder.app"
+                    },
+                    label: "新建文件"
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow(),
+                e.runOSAScript(`tell application "Finder"\n        set dir_path to ${n.id ? "the folder of the front window as alias" : "(path to desktop)"}\n        display dialog "新建文件" default answer "未命名"\n        set file_name to the text returned of result\n        set full_file_name to make new file at dir_path with properties {name: file_name}\n        set extension hidden of full_file_name to false\n        end tell`, !1).catch((e=>{
+                    128 !== e.code && new t.Notification({
+                        body: e.message
+                    }).show()
+                }
+                ))
+            }
+        }
+    }
+      , qe = [{
+        code: "call:systemAction lock",
+        icon: "res/native/lock.png",
+        explain: "电脑锁屏",
+        cmds: ["锁屏", "Lock"]
+    }, {
+        code: "call:systemAction logout",
+        icon: "res/native/logout.png",
+        explain: "当前操作系统账号注销",
+        cmds: ["注销", "Logout"]
+    }, {
+        code: "call:systemAction restart",
+        icon: "res/native/reboot.png",
+        explain: "电脑重启",
+        cmds: ["重启", "Restart"]
+    }, {
+        code: "call:systemAction sleep",
+        icon: "res/native/sleep.png",
+        explain: "电脑睡眠",
+        cmds: ["睡眠", "Sleep"]
+    }, {
+        code: "call:systemAction shutdown",
+        icon: "res/native/shutdown.png",
+        explain: "电脑关机",
+        cmds: ["关机", "Shutdown"]
+    }, {
+        code: "call:showDesktop",
+        icon: "res/native/desktop.png",
+        explain: "显示桌面",
+        cmds: ["显示桌面", "Show Desktop"]
+    }, {
+        code: "call:windowScreenshot",
+        icon: "res/native/camera.png",
+        explain: "截图完呼出 uTools",
+        cmds: ["窗口截图"]
+    }, {
+        code: "call:screenColorPicker",
+        icon: "res/native/picker.png",
+        explain: "屏幕颜色拾取",
+        cmds: ["取色", "Pick Color"]
+    }, {
+        code: "call:regionScreenshot",
+        icon: "res/native/screenshot.png",
+        explain: "截图完呼出 uTools",
+        cmds: ["截图", "截图完呼出 uTools"]
+    }, {
+        code: "call:showNativeWorkWindowInfo",
+        icon: "res/native/window.png",
+        explain: "当前活动窗口的信息",
+        cmds: ["窗口信息"]
+    }, {
+        code: "call:getLanIp",
+        icon: "res/native/ip.png",
+        explain: "获取我的电脑局域网IP地址",
+        cmds: ["内部网络IP地址"]
+    }];
+    function Qe(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    class Ge {
+        constructor(e, i, o, s, r) {
+            Qe(this, "mainServices", {
+                nativeOpen: (e,i,n)=>{
+                    if (this.reportCmp.info("native.open", {
+                        way: n
+                    }),
+                    i.startsWith("call:")) {
+                        const e = i.replace("call:", "").split(/ +/g)
+                          , t = e.shift();
+                        "function" == typeof this[t] && this[t].apply(this, e)
+                    } else if (V().existsSync(i)) {
+                        if (this.windowCmp.hideMainWindow(!1),
+                        /\.sh$/i.test(i))
+                            try {
+                                return V().accessSync(i, V().constants.X_OK),
+                                void Ve().spawn(i, {
+                                    detached: !0
+                                })
+                            } catch (e) {}
+                        else if (/.scpt$/i.test(i))
+                            try {
+                                if (V().lstatSync(i).isFile())
+                                    return void Ve().spawn("osascript", [i], {
+                                        detached: !0
+                                    })
+                            } catch (e) {}
+                        t.shell.openPath(i)
+                    } else
+                        new t.Notification({
+                            body: "文件不存在，打开失败"
+                        }).show(),
+                        delete this.pluginsCmp.pluginContainer[""].featureDic[i],
+                        this.windowCmp.refreshCmdSource()
+                }
+                ,
+                nativeMatchCall: (e,t,i,n,o)=>{
+                    if (t.startsWith("socket/"))
+                        return this.reportCmp.info("native.open", {
+                            way: o,
+                            featureCode: "socket"
+                        }),
+                        void this.connectionCmp.sendData(t, i, n);
+                    if (this.reportCmp.info("native.open", {
+                        way: o
+                    }),
+                    t in $e)
+                        try {
+                            $e[t].func(this, i, n)
+                        } catch (e) {}
+                }
+            }),
+            Qe(this, "ffffffffServices", {
+                setEnableNativeApp: (e,t)=>{
+                    n().set("enableNativeApp", !0 === t),
+                    setImmediate((()=>{
+                        this.initFeatures()
+                    }
+                    )),
+                    e.returnValue = !0
+                }
+            }),
+            this.pluginsCmp = e,
+            this.windowCmp = i,
+            this.clipboardCmp = i.clipboardCmp,
+            this.reportCmp = o,
+            this.appCmp = s,
+            this.connectionCmp = r,
+            this.screencaptureCmp = s.screencaptureCmp,
+            this.screencolorpickerCmp = s.screencolorpickerCmp
+        }
+        init() {
+            n().has("enableNativeApp") || n().set("enableNativeApp", !0),
+            setImmediate((()=>{
+                this.initFeatures()
+            }
+            ))
+        }
+        convertAppFeature(e) {
+            const t = {}
+              , i = k().getAppLocalName(e)
+              , n = c().parse(e).name;
+            if (i)
+                if (i.includes("\n")) {
+                    const e = i.split("\n");
+                    e[1].includes(e[0]) ? t.cmds = [e[1]] : t.cmds = e.reverse()
+                } else
+                    n === i || i.startsWith("${") ? t.cmds = [n] : i.includes(n) ? t.cmds = [i] : t.cmds = [i, n];
+            else
+                t.cmds = [n];
+            return t.code = e,
+            t.explain = e,
+            t.icon = "nativeicon://" + e,
+            t
+        }
+        dirAppRead(e, t, i, n, o) {
+            let s = null;
+            try {
+                if (!V().existsSync(t))
+                    return;
+                s = V().readdirSync(t)
+            } catch (e) {
+                return
+            }
+            if (0 !== s.length)
+                for (const r of s) {
+                    const s = c().join(t, r);
+                    let a;
+                    try {
+                        a = V().lstatSync(s)
+                    } catch (e) {
+                        continue
+                    }
+                    a.isDirectory() ? c().extname(s) === e ? o.push(s) : n < i && this.dirAppRead(e, s, i, n + 1, o) : a.isSymbolicLink() && ".app" === c().extname(s) && o.push(s)
+                }
+        }
+        dirAppWatch(e, t) {
+            return Je().watch(e, {
+                persistent: !0,
+                ignoreInitial: !0,
+                ignorePermissionErrors: !0,
+                followSymlinks: !1,
+                disableGlobbing: !0,
+                depth: t,
+                ignored: /\.app\/.*|\/\../
+            }).on("addDir", (e=>{
+                /\.app$/.test(e) && setTimeout((()=>{
+                    V().existsSync(e) && (this.pluginsCmp.setFeature("", this.convertAppFeature(e)),
+                    this.windowCmp.refreshCmdSource())
+                }
+                ), 1e4)
+            }
+            )).on("unlinkDir", (e=>{
+                /\.app$/.test(e) && setImmediate((()=>{
+                    V().existsSync(e) || e in this.pluginsCmp.pluginContainer[""].featureDic && (delete this.pluginsCmp.pluginContainer[""].featureDic[e],
+                    this.windowCmp.refreshCmdSource())
+                }
+                ))
+            }
+            ))
+        }
+        setBaseAppFeatures() {
+            const e = [];
+            this.dirAppRead(".app", "/Applications", 1, 0, e);
+            const t = e.find((e=>e.endsWith("uTools.app")));
+            t && e.splice(e.indexOf(t), 1),
+            this.dirAppRead(".app", "/System/Applications", 1, 0, e),
+            ["Terminal", "Visual Studio Code"].forEach((t=>{
+                const i = e.find((e=>e.endsWith(t + ".app")));
+                i && ($e["path_open_to_" + t] = {
+                    func: (e,i,n)=>{
+                        e.windowCmp.hideMainWindow(!1),
+                        "files" !== i ? this.appCmp.readCurrentFolderPath().then((e=>{
+                            Ve().spawn("open", ["-a", `"${t}"`, `"${e}"`], {
+                                detached: !0,
+                                shell: !0
+                            })
+                        }
+                        )) : Ve().spawn("open", ["-a", `"${t}"`, `"${n[0].path}"`], {
+                            detached: !0,
+                            shell: !0
+                        })
+                    }
+                },
+                this.pluginsCmp.setFeature("", {
+                    code: "path_open_to_" + t,
+                    explain: ("Terminal" === t ? "终端" : t) + " 中打开",
+                    icon: "nativeicon://" + i,
+                    cmds: [{
+                        type: "files",
+                        fileType: "directory",
+                        minLength: 1,
+                        maxLength: 1,
+                        label: ("Terminal" === t ? "终端" : t) + " 中打开"
+                    }, {
+                        type: "window",
+                        match: {
+                            app: "Finder.app"
+                        },
+                        label: ("Terminal" === t ? "终端" : t) + " 中打开"
+                    }]
+                }))
+            }
+            )),
+            this.dirAppRead(".prefPane", "/System/Library/PreferencePanes", 0, 0, e),
+            this.dirAppRead(".app", process.env.HOME + "/Applications", 1, 0, e),
+            this.dirAppRead(".app", "/System/Library/CoreServices/Applications", 0, 0, e),
+            ["Finder.app", "Paired Devices.app", "Ticket Viewer.app"].forEach((t=>{
+                const i = c().join("/System/Library/CoreServices", t);
+                V().existsSync(i) && e.push(i)
+            }
+            )),
+            e.map((e=>this.convertAppFeature(e))).forEach((e=>{
+                this.pluginsCmp.setFeature("", e)
+            }
+            )),
+            this.baseAppDirWatch = this.dirAppWatch(["/Applications", process.env.HOME + "/Applications"], 1)
+        }
+        setMatchAppFeatures() {
+            Object.values($e).forEach((e=>{
+                e.feature && this.pluginsCmp.setFeature("", e.feature)
+            }
+            ))
+        }
+        setActionAppFeatures() {
+            qe.forEach((e=>{
+                e.icon || (e.icon = "res/native/symbolic.svg"),
+                this.pluginsCmp.setFeature("", e)
+            }
+            ))
+        }
+        initFeatures() {
+            this.baseAppDirWatch && (this.baseAppDirWatch.close(),
+            delete this.baseAppDirWatch),
+            this.pluginsCmp.pluginContainer[""] = {
+                name: "",
+                pluginName: "",
+                logo: "res/logo.png",
+                featureDic: {}
+            },
+            this.pluginsCmp.setFeature("", {
+                code: "call:goHelp",
+                icon: "res/native/help.png",
+                explain: "uTools 帮助文档",
+                cmds: ["Help", "帮助"]
+            }),
+            this.pluginsCmp.setFeature("", {
+                code: "call:killAllPlugin",
+                icon: "res/native/clear.svg",
+                explain: "uTools 后台插件应用全部退出",
+                cmds: ["Clear"]
+            }),
+            this.setMatchAppFeatures(),
+            this.setActionAppFeatures(),
+            n().get("enableNativeApp") && (this.pluginsCmp.setFeature("", {
+                code: "addlocalopen",
+                explain: "加入到 uTools 搜索启动",
+                icon: "res/native/add.svg",
+                cmds: [{
+                    type: "files",
+                    maxLength: 1,
+                    label: "加入到 uTools 搜索启动"
+                }]
+            }),
+            this.setBaseAppFeatures()),
+            this.appCmp.initLocalOpenFeatures().then((()=>{
+                this.windowCmp.refreshCmdSource()
+            }
+            ))
+        }
+        runOSAScript(e, i=!0) {
+            return new Promise(((n,o)=>{
+                let s = ""
+                  , r = "";
+                const a = Ve().spawn("osascript", ["-ss"], {
+                    detached: !0
+                });
+                a.on("close", (e=>{
+                    if (0 === e)
+                        return n(r.trim().replace(/^"|"$/g, ""));
+                    s = s.trim().replace(/^\d+:\d+: execution error:/, "").replace(/\(-?(\d+)\)\s*$/, ""),
+                    i && new t.Notification({
+                        body: s
+                    }).show();
+                    const a = new Error(s);
+                    a.code = parseInt(RegExp.$1 || e),
+                    o(a)
+                }
+                )),
+                a.stderr.on("data", (e=>{
+                    s += e
+                }
+                )),
+                a.stdout.on("data", (e=>{
+                    r += e
+                }
+                )),
+                a.stdin.write(e),
+                a.stdin.end()
+            }
+            ))
+        }
+        systemAction(e) {
+            if (["shutdown", "restart", "logout"].includes(e)) {
+                this.windowCmp.mainWindow.show(),
+                this.windowCmp.hideMainWindow();
+                const i = {
+                    shutdown: "关机",
+                    restart: "重启",
+                    logout: "注销"
+                }[e];
+                t.dialog.showMessageBox({
+                    buttons: ["取消", i],
+                    message: "确定要执行「" + i + "」吗？",
+                    defaultId: 1
+                }).then((({response: t})=>{
+                    1 === t && k().macAction(e)
+                }
+                ))
+            } else
+                this.windowCmp.hideMainWindow(),
+                k().macAction(e)
+        }
+        copyFile(e) {
+            Array.isArray(e) || (e = [e]),
+            0 !== (e = e.filter((e=>V().existsSync(e)))).length && k().copyFile.apply(null, e)
+        }
+        goHelp() {
+            this.windowCmp.hideMainWindow(!1),
+            this.appCmp.goHelp()
+        }
+        killAllPlugin() {
+            this.windowCmp.killAllPlugins()
+        }
+        windowScreenshot() {
+            const e = this.windowCmp.display.nativeWorkWindowInfo;
+            e && (this.windowCmp.hideMainWindow(),
+            setTimeout((()=>{
+                if (!k().isHadScreenCaptureAccess())
+                    return new t.Notification({
+                        body: "无屏幕录制权限，在「安全性与隐私」->「隐私」中允许屏幕录制权限"
+                    }).show(),
+                    void k().requestScreenCaptureAccess();
+                const i = k().windowScreenshot(e.id);
+                i ? (this.clipboardCmp.once("change", (()=>{
+                    this.windowCmp.restoreShowMainWindow()
+                }
+                )),
+                t.clipboard.writeImage(t.nativeImage.createFromBuffer(i))) : new t.Notification({
+                    body: "窗口截图失败，「安全性与隐私」中允许屏幕录制权限再尝试"
+                }).show()
+            }
+            ), 100))
+        }
+        screenColorPicker() {
+            this.windowCmp.hideMainWindow(),
+            this.screencolorpickerCmp.action((({hex: e})=>{
+                t.clipboard.writeText(e),
+                new t.Notification({
+                    body: "颜色 " + e + " 已复制到剪贴板"
+                }).show()
+            }
+            ))
+        }
+        showDesktop() {
+            this.windowCmp.hideMainWindow(!1);
+            const e = "/System/Applications/Mission Control.app/Contents/MacOS/Mission Control";
+            V().existsSync(e) ? Ve().spawn(e, ["1"], {
+                detached: !0
+            }) : Ve().spawn(e.replace("/System", ""), ["1"], {
+                detached: !0
+            })
+        }
+        getLanIp() {
+            this.windowCmp.hideMainWindow(),
+            setTimeout((async()=>{
+                const e = await E();
+                e ? (t.clipboard.writeText(e),
+                new t.Notification({
+                    body: '内部网络IP地址 "' + e + '" 已复制到剪贴板'
+                }).show()) : new t.Notification({
+                    body: "未获取到内部网络 IP 地址"
+                }).show()
+            }
+            ), 50)
+        }
+        screenCapture() {
+            this.windowCmp.hideMainWindow(),
+            Ve().spawn("/usr/sbin/screencapture", ["-c", "-i", "-r"], {
+                detached: !0
+            })
+        }
+        regionScreenshot() {
+            this.windowCmp.hideMainWindow(),
+            Ve().spawn("/usr/sbin/screencapture", ["-c", "-i", "-r"], {
+                detached: !0
+            }).once("close", (()=>{
+                setTimeout((()=>{
+                    this.windowCmp.restoreShowMainWindow()
+                }
+                ), 250)
+            }
+            ))
+        }
+        showNativeWorkWindowInfo() {
+            this.appCmp.showNativeWorkWindowInfo()
+        }
+    }
+    const Ze = [{
+        code: "ms-settings:about",
+        cmds: ["电脑信息"]
+    }, {
+        code: "ms-settings:display",
+        cmds: ["显示器设置"]
+    }, {
+        code: "ms-settings:storagesense",
+        cmds: ["存储设置"]
+    }, {
+        code: "ms-settings:quietmomentshome",
+        cmds: ["专注助手设置"]
+    }, {
+        code: "ms-settings:multitasking",
+        cmds: ["多任务设置"]
+    }, {
+        code: "ms-settings:project",
+        cmds: ["投影到此电脑设置"]
+    }, {
+        code: "ms-settings:crossdevice",
+        cmds: ["共享体验设置"]
+    }, {
+        code: "ms-settings:tabletmode",
+        cmds: ["平板模式设置"]
+    }, {
+        code: "ms-settings:taskbar",
+        cmds: ["任务栏设置"]
+    }, {
+        code: "ms-settings:notifications",
+        cmds: ["通知和操作设置"]
+    }, {
+        code: "ms-settings:remotedesktop",
+        cmds: ["远程桌面设置"]
+    }, {
+        code: "ms-settings:powersleep",
+        cmds: ["电源和睡眠设置"]
+    }, {
+        code: "ms-settings:sound",
+        cmds: ["声音播放设置"]
+    }, {
+        code: "ms-settings:workplace",
+        cmds: ["访问工作单位或学校"]
+    }, {
+        code: "ms-settings:emailandaccounts",
+        cmds: ["你的电子邮件和应用账户设置"]
+    }, {
+        code: "ms-settings:otherusers",
+        cmds: ["家庭成员使用此电脑设置"]
+    }, {
+        code: "ms-settings:signinoptions",
+        cmds: ["登录选项设置"]
+    }, {
+        code: "ms-settings:sync",
+        cmds: ["同步个性化设置"]
+    }, {
+        code: "ms-settings:yourinfo",
+        cmds: ["账户设置"]
+    }, {
+        code: "ms-settings:appsfeatures",
+        cmds: ["应用和功能", "程序和功能"]
+    }, {
+        code: "ms-settings:appsforwebsites",
+        cmds: ["网站选择默认应用设置"]
+    }, {
+        code: "ms-settings:defaultapps",
+        cmds: ["默认应用设置"]
+    }, {
+        code: "ms-settings:maps",
+        cmds: ["离线地图设置"]
+    }, {
+        code: "ms-settings:startupapps",
+        cmds: ["开机启动设置"]
+    }, {
+        code: "ms-settings:videoplayback",
+        cmds: ["视频播放设置"]
+    }, {
+        code: "ms-settings:autoplay",
+        cmds: ["自动播放设置"]
+    }, {
+        code: "ms-settings:bluetooth",
+        cmds: ["蓝牙或其他设备设置"]
+    }, {
+        code: "ms-settings:mousetouchpad",
+        cmds: ["鼠标设置"]
+    }, {
+        code: "ms-settings:devices-touchpad",
+        cmds: ["触摸板设置"]
+    }, {
+        code: "ms-settings:pen",
+        cmds: ["笔设置"]
+    }, {
+        code: "ms-settings:printers",
+        cmds: ["打印机或扫描仪设置"]
+    }, {
+        code: "ms-settings:typing",
+        cmds: ["输入设置"]
+    }, {
+        code: "ms-settings:usb",
+        cmds: ["USB设置"]
+    }, {
+        code: "ms-settings:easeofaccess-audio",
+        cmds: ["音频设置"]
+    }, {
+        code: "ms-settings:easeofaccess-closedcaptioning",
+        cmds: ["隐藏式字幕设置"]
+    }, {
+        code: "ms-settings:easeofaccess-colorfilter",
+        cmds: ["颜色滤镜设置"]
+    }, {
+        code: "ms-settings:easeofaccess-display",
+        cmds: ["显示设置"]
+    }, {
+        code: "ms-settings:easeofaccess-highcontrast",
+        cmds: ["高对比度设置"]
+    }, {
+        code: "ms-settings:easeofaccess-keyboard",
+        cmds: ["键盘设置"]
+    }, {
+        code: "ms-settings:easeofaccess-magnifier",
+        cmds: ["放大镜设置"]
+    }, {
+        code: "ms-settings:easeofaccess-mouse",
+        cmds: ["键盘控制鼠标设置"]
+    }, {
+        code: "ms-settings:easeofaccess-narrator",
+        cmds: ["讲述人设置"]
+    }, {
+        code: "ms-settings:easeofaccess-speechrecognition",
+        cmds: ["语音交互设置"]
+    }, {
+        code: "ms-settings:fonts",
+        cmds: ["字体设置"]
+    }, {
+        code: "ms-settings:datausage",
+        cmds: ["网络流量使用情况"]
+    }, {
+        code: "ms-settings:network-dialup",
+        cmds: ["网络拨号设置"]
+    }, {
+        code: "ms-settings:network-ethernet",
+        cmds: ["以太网设置"]
+    }, {
+        code: "ms-settings:network-proxy",
+        cmds: ["网络代理设置"]
+    }, {
+        code: "ms-settings:network-status",
+        cmds: ["网络设置"]
+    }, {
+        code: "ms-settings:network-vpn",
+        cmds: ["VPN设置"]
+    }, {
+        code: "ms-settings:personalization-background",
+        cmds: ["桌面背景设置"]
+    }, {
+        code: "ms-settings:personalization-colors",
+        cmds: ["系统颜色设置"]
+    }, {
+        code: "ms-settings:lockscreen",
+        cmds: ["锁屏界面设置"]
+    }, {
+        code: "ms-settings:personalization-start",
+        cmds: ["开始菜单设置"]
+    }, {
+        code: "ms-settings:themes",
+        cmds: ["主题设置"]
+    }, {
+        code: "ms-settings:privacy",
+        cmds: ["权限和隐私设置"]
+    }, {
+        code: "ms-settings:dateandtime",
+        cmds: ["日期和时间设置"]
+    }, {
+        code: "ms-settings:regionlanguage",
+        cmds: ["区域和语言设置"]
+    }, {
+        code: "ms-settings:speech",
+        cmds: ["语音设置"]
+    }, {
+        code: "ms-settings:activation",
+        cmds: ["系统激活设置"]
+    }, {
+        code: "ms-settings:backup",
+        cmds: ["备份设置"]
+    }, {
+        code: "ms-settings:findmydevice",
+        cmds: ["查找我的设备"]
+    }, {
+        code: "ms-settings:developers",
+        cmds: ["开发者选项设置"]
+    }, {
+        code: "ms-settings:recovery",
+        cmds: ["系统恢复设置"]
+    }, {
+        code: "ms-settings:troubleshoot",
+        cmds: ["疑难解答"]
+    }, {
+        code: "ms-settings:windowsdefender",
+        cmds: ["安全设置"]
+    }, {
+        code: "ms-settings:windowsupdate-action",
+        cmds: ["检测系统更新"]
+    }]
+      , Xe = {
+        addlocalopen: {
+            func: (e,t,i)=>{
+                e.appCmp.addLocalOpen(i.map((e=>e.path)))
+            }
+        },
+        pluginstoresearch: {
+            feature: {
+                code: "pluginstoresearch",
+                explain: "前往 uTools 插件应用市场",
+                icon: "res/native/plugin-search.png",
+                cmds: [{
+                    type: "over",
+                    maxLength: 20,
+                    label: "搜索插件应用"
+                }]
+            },
+            func: (e,t,i)=>{
+                e.windowCmp.ffffffff.goPluginStore(i)
+            }
+        },
+        saveimage: {
+            feature: {
+                code: "saveimage",
+                explain: "保存为图片文件",
+                icon: "res/native/imgfile.png",
+                cmds: [{
+                    type: "img",
+                    label: "保存为文件"
+                }]
+            },
+            func: (e,i,n)=>{
+                if (e.windowCmp.hideMainWindow(),
+                !/^data:image\/([a-z]+);base64,/.test(n))
+                    return;
+                const o = RegExp.$1
+                  , s = c().join(k().getDownloadsFolderPath() || t.app.getPath("desktop"), "uTools_" + Date.now() + "." + o);
+                V().writeFile(s, n.replace(/^data:image\/([a-z]+);base64,/, ""), "base64", (e=>{
+                    e || t.shell.showItemInFolder(s)
+                }
+                ))
+            }
+        },
+        showfolder: {
+            feature: {
+                code: "showfolder",
+                explain: "前往文件夹",
+                icon: "res/native/folderopen.svg",
+                cmds: [{
+                    type: "regex",
+                    match: '/^[A-Za-z]:(?:\\\\|\\/\\/?|\\\\{2})(?![\\/\\\\])[^:*?"<>|\\f\\n\\r\\t\\v]*$/',
+                    label: "前往文件夹"
+                }]
+            },
+            func: (e,i,n)=>{
+                n = c().normalize(n.trim()),
+                V().existsSync(n) || (n = c().dirname(n),
+                V().existsSync(n)) ? (e.windowCmp.hideMainWindow(!1),
+                V().lstat(n, ((e,i)=>{
+                    e || i.isFile() ? t.shell.showItemInFolder(n) : t.shell.openPath(n)
+                }
+                ))) : new t.Notification({
+                    body: "文件、文件夹都不存在"
+                }).show()
+            }
+        },
+        copyfile: {
+            feature: {
+                code: "copyfile",
+                explain: "复制文件或文件夹到剪贴板",
+                icon: "res/native/clip.svg",
+                cmds: [{
+                    type: "regex",
+                    match: '/^\\s*[A-Za-z]:(?:\\\\|\\/\\/?|\\\\{2})(?![\\/\\\\])[^:*?"<>|\\f\\n\\r\\t\\v]*$/m',
+                    maxLength: 5e3,
+                    label: "复制文件"
+                }]
+            },
+            func: (e,i,n)=>{
+                const o = n.match(/^[A-Za-z]:(?:\\|\/\/?|\\{2})(?![/\\])[^:*?"<>|\f\n\r\t\v]*$/gm).map((e=>c().normalize(e.trim()))).filter((e=>V().existsSync(e)));
+                0 !== o.length ? (e.windowCmp.hideMainWindow(),
+                e.copyFile(o)) : new t.Notification({
+                    body: "文件不存在"
+                }).show()
+            }
+        },
+        openitem: {
+            feature: {
+                code: "openitem",
+                explain: "系统默认方式打开文件",
+                icon: "res/native/openitem.png",
+                cmds: [{
+                    type: "regex",
+                    match: '/^[A-Za-z]:(?:\\\\|\\/\\/?|\\\\{2})(?![\\/\\\\])[^:*?"<>|\\f\\n\\r\\t\\v]+\\.\\w{2,10}$/',
+                    label: "打开文件"
+                }]
+            },
+            func: (e,i,n)=>{
+                n = c().normalize(n.trim()),
+                V().existsSync(n) ? (e.windowCmp.hideMainWindow(!1),
+                t.shell.openPath(n)) : new t.Notification({
+                    body: "文件不存在"
+                }).show()
+            }
+        },
+        openweburl: {
+            feature: {
+                code: "openweburl",
+                explain: "默认浏览器打开网址",
+                icon: "res/native/link.svg",
+                cmds: [{
+                    type: "regex",
+                    match: '/^(?:https?:\\/\\/)?(?:localhost|(?:(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d|\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d|\\d)){3})|(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))\\.?)(?::\\d{2,5})?(?:[/?#][^\\s"]*)?$/i',
+                    label: "打开网址"
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow(!1),
+                /^https?:\/\//.test(n) ? t.shell.openExternal(n) : t.shell.openExternal("https://" + n)
+            }
+        },
+        copyfilepath: {
+            feature: {
+                code: "copyfilepath",
+                explain: "复制路径",
+                icon: "res/native/link.svg",
+                cmds: [{
+                    type: "files",
+                    label: "复制路径"
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow(),
+                t.clipboard.writeText(n.map((e=>e.path)).join("\n"))
+            }
+        },
+        copyfilename: {
+            feature: {
+                code: "copyfilename",
+                explain: "提取文件名称",
+                icon: "res/native/link.svg",
+                cmds: [{
+                    type: "files",
+                    label: "提取文件名称"
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow(),
+                t.clipboard.writeText(n.map((e=>e.isFile ? c().parse(e.path).name : e.name)).join("\n"))
+            }
+        },
+        filedialog_select_path: {
+            feature: {
+                code: "filedialog_select_path",
+                explain: '选择"文件资源管理器"已打开路径',
+                icon: "res/native/fileexplorer.png",
+                cmds: [{
+                    type: "window",
+                    match: {
+                        class: "#32770"
+                    },
+                    label: '切换到"文件资源管理器"路径'
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow();
+                const o = k().getAllOpenedExplorerCurrentPath();
+                if (0 === o.length)
+                    return void new t.Notification({
+                        body: '未检测到 "文件资源管理器" 窗口'
+                    }).show();
+                let s = [...new Set(o)];
+                s = s.filter((e=>V().existsSync(e))),
+                1 !== s.length ? (s.push("取消"),
+                t.dialog.showMessageBox({
+                    buttons: s,
+                    title: ' 检测到多个 "文件资源管理器" 窗口',
+                    message: " 选择目录",
+                    defaultId: 0,
+                    cancelId: s.length - 1
+                }).then((({response: e})=>{
+                    e !== s.length - 1 && k().setDialogBoxValue(n.id, s[e]) && k().simulateKeyboardTap("enter")
+                }
+                ))) : k().setDialogBoxValue(n.id, s[0]) && k().simulateKeyboardTap("enter")
+            }
+        }
+    }
+      , Ye = [{
+        code: "call:actionProcessSpawn rundll32.exe user32.dll,LockWorkStation",
+        icon: "res/native/lock.png",
+        explain: "电脑锁屏",
+        cmds: ["锁屏", "Lock"]
+    }, {
+        code: "call:actionProcessSpawn rundll32.exe powrprof.dll,SetSuspendState 0,1,0",
+        icon: "res/native/sleep.png",
+        explain: "电脑睡眠",
+        cmds: ["睡眠", "Sleep"]
+    }, {
+        code: "call:shutdown -l",
+        icon: "res/native/logout.png",
+        explain: "当前操作系统账号注销",
+        cmds: ["注销", "Logout"]
+    }, {
+        code: "call:shutdown -r -t 00",
+        icon: "res/native/reboot.png",
+        explain: "电脑重启",
+        cmds: ["重启", "Reboot"]
+    }, {
+        code: "call:shutdown -s -t 00",
+        icon: "res/native/shutdown.png",
+        explain: "电脑关机",
+        cmds: ["关机", "Shutdown"]
+    }, {
+        code: "call:actionProcessSpawn explorer.exe shell:::{3080F90D-D7AD-11D9-BD98-0000947B0257}",
+        icon: "res/native/rundll32.png",
+        explain: "桌面显示切换",
+        cmds: ["显示桌面", "Show Desktop"]
+    }, {
+        code: "call:screenColorPicker",
+        icon: "res/native/picker.png",
+        explain: "屏幕颜色拾取",
+        cmds: ["取色", "Pick Color"]
+    }, {
+        code: "call:emptyRecycleBin",
+        icon: "res/native/recyclebin.png",
+        explain: "清空回收站",
+        cmds: ["清空回收站"]
+    }, {
+        code: "call:setNativeWindowAlwaysOnTop",
+        icon: "res/native/ontop.png",
+        explain: "置顶当前应用窗口或取消置顶",
+        cmds: ["置顶窗口"]
+    }, {
+        code: "call:regionScreenshot",
+        icon: "res/native/screenshot.png",
+        explain: "截图完呼出 uTools",
+        cmds: ["截图", "截图完呼出 uTools"]
+    }, {
+        code: "call:windowScreenshot",
+        icon: "res/native/camera.png",
+        explain: "截图完呼出 uTools",
+        cmds: ["窗口截图"]
+    }, {
+        code: "call:showNativeWorkWindowInfo",
+        icon: "res/native/window.png",
+        explain: "查看当前活动窗口的信息",
+        cmds: ["窗口信息 (当前活动窗口)"]
+    }, {
+        code: "call:mousePosWindowInfo",
+        icon: "res/native/window.png",
+        explain: "查看鼠标所在位置的窗口信息",
+        cmds: ["窗口信息 (鼠标所在位置的窗口)"]
+    }, {
+        code: "call:getLanIp",
+        icon: "res/native/ip.png",
+        explain: "获取我的电脑局域网IP地址",
+        cmds: ["内部网络IP地址"]
+    }];
+    function ze(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    class et {
+        constructor(e, i, o, s, r) {
+            ze(this, "mainServices", {
+                nativeOpen: (e,i,n,o)=>{
+                    if (this.reportCmp.info("native.open", {
+                        way: n
+                    }),
+                    /^([A-Za-z]:\\|\\\\)/.test(i))
+                        V().existsSync(i) ? (this.windowCmp.hideMainWindow(!1),
+                        o && k().adminShellExecute(i) || t.shell.openPath(i)) : (new t.Notification({
+                            body: "文件不存在，打开失败"
+                        }).show(),
+                        delete this.pluginsCmp.pluginContainer[""].featureDic[i],
+                        this.windowCmp.refreshCmdSource());
+                    else {
+                        if (i.startsWith("ms-settings:"))
+                            return this.windowCmp.hideMainWindow(!1),
+                            void t.shell.openExternal(i);
+                        if (i.startsWith("call:")) {
+                            const e = i.replace("call:", "").split(/ +/g)
+                              , t = e.shift();
+                            return void ("function" == typeof this[t] && this[t].apply(this, e))
+                        }
+                        this.windowCmp.hideMainWindow(!1),
+                        k().activateApplication(i)
+                    }
+                }
+                ,
+                nativeMatchCall: (e,t,i,n,o)=>{
+                    if (t.startsWith("socket/"))
+                        return this.reportCmp.info("native.open", {
+                            way: o,
+                            featureCode: "socket"
+                        }),
+                        void this.connectionCmp.sendData(t, i, n);
+                    if (this.reportCmp.info("native.open", {
+                        way: o
+                    }),
+                    t in Xe)
+                        try {
+                            Xe[t].func(this, i, n)
+                        } catch (e) {}
+                }
+            }),
+            ze(this, "ffffffffServices", {
+                setEnableNativeApp: (e,t)=>{
+                    n().set("enableNativeApp", !0 === t),
+                    setImmediate((()=>{
+                        this.initFeatures()
+                    }
+                    )),
+                    e.returnValue = !0
+                }
+            }),
+            this.pluginsCmp = e,
+            this.windowCmp = i,
+            this.clipboardCmp = i.clipboardCmp,
+            this.reportCmp = o,
+            this.appCmp = s,
+            this.connectionCmp = r,
+            this.screencaptureCmp = s.screencaptureCmp,
+            this.screencolorpickerCmp = s.screencolorpickerCmp,
+            this.osVersion = parseFloat(v().release()),
+            this.isWindows11 = this.osVersion >= 10 && parseInt(v().release().split(".").pop()) >= 22e3,
+            this.systemAccentColor = "#" + t.systemPreferences.getAccentColor()
+        }
+        init() {
+            n().has("enableNativeApp") || n().set("enableNativeApp", !0),
+            setImmediate((()=>{
+                this.initFeatures()
+            }
+            ))
+        }
+        dirRead(e, t, i, n, o) {
+            if (!V().existsSync(e))
+                return;
+            let s = [];
+            try {
+                s = V().readdirSync(e)
+            } catch (e) {}
+            if (0 !== s.length)
+                for (const r of s) {
+                    const s = c().join(e, r);
+                    let a = !1;
+                    try {
+                        a = V().lstatSync(s).isDirectory()
+                    } catch (e) {}
+                    a ? i < t && this.dirRead(s, t, i + 1, n, o) : /\.lnk$/i.test(r) && (!o && (r.toLowerCase().startsWith("uninstall") || r.startsWith("卸载") || r.toLowerCase().endsWith("卸载.lnk")) || n.push(s))
+                }
+        }
+        setLnkMatchFeature(e, i, n) {
+            Xe["path_open_to" + e] = {
+                func: (i,o,s)=>{
+                    let r;
+                    if (i.windowCmp.hideMainWindow(!1),
+                    r = "files" === o ? s[0].path : k().getExplorerCurrentPath(s.id),
+                    r)
+                        if ("Visual Studio Code" !== e) {
+                            if ("PowerShell" === e)
+                                return r.includes("'") ? void new t.Notification({
+                                    body: "路径包含特殊字符 '"
+                                }).show() : void Ve().spawn("start", ["powershell", "-noexit", "-command", `"Set-Location '${r}'"`], {
+                                    shell: "cmd.exe",
+                                    detached: !0
+                                });
+                            if ("CMD" === e) {
+                                if (/&|'|\^/.test(r))
+                                    return void new t.Notification({
+                                        body: "路径包含特殊字符 &'^"
+                                    }).show();
+                                Ve().spawn("start", ["cmd", "/k", `"cd /d ${r}"`], {
+                                    shell: "cmd.exe",
+                                    detached: !0
+                                })
+                            }
+                        } else
+                            Ve().spawn(n, [r], {
+                                detached: !0
+                            })
+                }
+            },
+            this.pluginsCmp.setFeature("", {
+                code: "path_open_to" + e,
+                explain: e + " 中打开",
+                icon: i,
+                cmds: [{
+                    type: "files",
+                    fileType: "directory",
+                    minLength: 1,
+                    maxLength: 1,
+                    label: e + " 中打开"
+                }, {
+                    type: "window",
+                    match: {
+                        app: ["explorer.exe", "SearchApp.exe", "SearchHost.exe"],
+                        class: ["CabinetWClass", "ExploreWClass"]
+                    },
+                    label: e + " 中打开"
+                }]
+            })
+        }
+        setLnkFeatures() {
+            const e = [];
+            let i;
+            try {
+                i = t.app.getPath("desktop")
+            } catch (e) {}
+            i && this.dirRead(i, 0, 0, e),
+            this.dirRead(process.env.ProgramData + "\\Microsoft\\Windows\\Start Menu", 3, 0, e),
+            this.dirRead(process.env.APPDATA + "\\Microsoft\\Windows\\Start Menu", 3, 0, e);
+            const n = k().getLnksInfo.apply(null, e);
+            this.lnkNameTargetDic = {},
+            n.forEach((e=>{
+                void 0 !== e.target && (e.name = c().parse(e.path).name,
+                ("" === e.target || [".exe", ".msc", ".bat", ".ico"].includes(c().extname(e.target).toLowerCase())) && (this.lnkNameTargetDic[(e.name + e.target).toLowerCase()] = e))
+            }
+            ));
+            const o = [];
+            Object.values(this.lnkNameTargetDic).forEach((e=>{
+                const t = {
+                    code: e.path,
+                    explain: e.description || e.target || e.path,
+                    cmds: [e.name],
+                    icon: "nativeicon://" + e.path
+                };
+                if ("" === e.target || 0 === e.target.indexOf("%")) {
+                    const i = k().getLnkLocalName(e.path);
+                    i && e.name !== i && t.cmds.unshift(i)
+                }
+                if (0 === e.target.indexOf("%")) {
+                    let i = c().basename(e.target);
+                    ["cmd.exe", "WF.msc"].includes(i) && (i = c().parse(i).name,
+                    t.cmds.push(i),
+                    "cmd" === i && this.setLnkMatchFeature("CMD", t.icon, e.target))
+                }
+                o.push(t),
+                ["Visual Studio Code", "Windows PowerShell"].includes(e.name) && ("Windows PowerShell" === e.name ? this.setLnkMatchFeature("PowerShell", t.icon, e.target) : this.setLnkMatchFeature(e.name, t.icon, e.target))
+            }
+            ));
+            const s = process.env.SystemRoot;
+            [{
+                code: s + "\\System32\\gpedit.msc",
+                explain: "本地组策略编辑器",
+                cmds: ["本地组策略编辑器"],
+                icon: "nativeicon://" + s + "\\System32\\gpedit.msc"
+            }, {
+                code: s + "\\System32\\DisplaySwitch.exe",
+                explain: "投影到第二屏幕",
+                cmds: ["投影"],
+                icon: "nativeicon://" + s + "\\System32\\DisplaySwitch.exe",
+                backgroundColor: this.systemAccentColor
+            }, {
+                code: s + "\\System32\\MRT.exe",
+                explain: "恶意软件删除工具",
+                cmds: ["恶意软件删除工具", "MRT"],
+                icon: "nativeicon://" + s + "\\System32\\MRT.exe"
+            }].forEach((e=>{
+                V().existsSync(e.code) && o.push(e)
+            }
+            )),
+            [{
+                code: "call:processSpawn rundll32.exe sysdm.cpl,EditEnvironmentVariables",
+                cmds: ["编辑用户环境变量"]
+            }, {
+                code: "call:processSpawn rundll32.exe shell32.dll,Control_RunDLL sysdm.cpl,,3",
+                cmds: ["系统属性环境变量"]
+            }, {
+                code: "call:processSpawn rundll32.exe keymgr.dll,KRShowKeyMgr",
+                cmds: ["存储的用户名和密码"]
+            }, {
+                code: "call:processSpawn rundll32.exe shell32.dll,Control_RunDLL appwiz.cpl,,0",
+                cmds: ["卸载或更改程序"]
+            }, {
+                code: "call:processSpawn rundll32.exe devmgr.dll DeviceManager_Execute",
+                cmds: ["设备管理器"]
+            }].forEach((e=>{
+                e.explain = e.cmds[0],
+                e.icon = "res/native/rundll32.png",
+                o.push(e)
+            }
+            )),
+            o.push({
+                code: "call:processSpawn explorer.exe shell:RecycleBinFolder",
+                icon: "res/native/recyclebin.png",
+                cmds: ["回收站"],
+                explain: "打开回收站"
+            }),
+            o.forEach((e=>{
+                this.pluginsCmp.setFeature("", e)
+            }
+            )),
+            this.startMenuLnkWatcher = this.lnkDirWatch([process.env.ProgramData + "\\Microsoft\\Windows\\Start Menu", process.env.APPDATA + "\\Microsoft\\Windows\\Start Menu"], 3)
+        }
+        lnkDirWatch(e, t) {
+            return Je().watch(e, {
+                persistent: !0,
+                ignoreInitial: !0,
+                followSymlinks: !1,
+                ignorePermissionErrors: !0,
+                disableGlobbing: !0,
+                depth: t
+            }).on("unlink", (e=>{
+                if (!/\.lnk$/i.test(e))
+                    return;
+                if (!(e in this.pluginsCmp.pluginContainer[""].featureDic))
+                    return;
+                const t = Object.values(this.lnkNameTargetDic).find((t=>t.path === e));
+                t && delete this.lnkNameTargetDic[(t.name + t.target).toLowerCase()],
+                delete this.pluginsCmp.pluginContainer[""].featureDic[e],
+                this.windowCmp.refreshCmdSource()
+            }
+            )).on("add", (e=>{
+                if (!/\.lnk$/i.test(e))
+                    return;
+                const i = c().basename(e);
+                i.toLowerCase().startsWith("uninstall") || i.startsWith("卸载") || i.toLowerCase().endsWith("卸载.lnk") || setTimeout((()=>{
+                    if (!V().existsSync(e))
+                        return;
+                    const t = k().getLnksInfo(e)[0];
+                    if (!t)
+                        return;
+                    if (t.target) {
+                        const e = c().extname(t.target).toLowerCase();
+                        if (![".exe", ".msc", ".bat", ".ico"].includes(e))
+                            return
+                    }
+                    t.name = c().parse(i).name;
+                    const n = (t.name + t.target).toLowerCase();
+                    if (n in this.lnkNameTargetDic)
+                        return;
+                    this.lnkNameTargetDic[n] = t;
+                    const o = {
+                        code: t.path,
+                        explain: t.description || t.target || e,
+                        cmds: [t.name],
+                        icon: "nativeicon://" + t.path
+                    };
+                    this.pluginsCmp.setFeature("", o),
+                    this.windowCmp.refreshCmdSource()
+                }
+                ), 0 === t ? 3e3 : 2e3)
+            }
+            )).on("error", (()=>{}
+            ))
+        }
+        setActionAppFeatures() {
+            Ye.forEach((e=>{
+                e.icon || (e.icon = "res/native/symbolic.svg"),
+                this.pluginsCmp.setFeature("", e)
+            }
+            ))
+        }
+        getUWPLocalString(e, t) {
+            if (!t)
+                return t;
+            if (0 === t.indexOf("ms-resource:")) {
+                const i = e.substr(0, e.indexOf("_"));
+                if (t.includes(i))
+                    return k().getIndirectString(`@{${e}?${t}}`);
+                let n = t.replace("ms-resource:", "");
+                return 0 === n.indexOf("/") ? (n = n.replace(/^\/+/, "/"),
+                k().getIndirectString(`@{${e}?ms-resource://${i}${n}}`)) : n.toLowerCase().indexOf("/resources/") > 0 || 0 === n.toLowerCase().indexOf("resources/") ? k().getIndirectString(`@{${e}?ms-resource://${i}/${n}}`) : k().getIndirectString(`@{${e}?ms-resource://${i}/resources/${n}}`)
+            }
+            return /&#x[a-f0-9]{2,5};/i.test(t) ? t.replace(/&#x([a-f0-9]{2,5});/gi, ((e,t)=>String.fromCharCode(parseInt(t, 16)))) : t
+        }
+        setUWPFeatures() {
+            (k().uwp.getAppxPackage() || []).forEach((e=>{
+                const t = c().join(e.location, "AppxManifest.xml");
+                if (!V().existsSync(t))
+                    return;
+                let i = null;
+                try {
+                    i = V().readFileSync(t, "utf8")
+                } catch (e) {
+                    return
+                }
+                const n = i.match(/<Application[^>]+Id="[^"]+"/g);
+                if (!n)
+                    return;
+                const o = i.match(/:VisualElements[^>]+>/g);
+                if (o)
+                    for (let t = 0; t < n.length; t++) {
+                        if (!o[t])
+                            continue;
+                        if (o[t].includes('AppListEntry="none"'))
+                            continue;
+                        const i = n[t].match(/Id="([^"]+)"/)[1]
+                          , s = {};
+                        o[t].match(/[\w]+="[^"]+"/g).forEach((e=>{
+                            const t = e.split('="');
+                            s[t[0]] = t[1].replace(/"$/, "")
+                        }
+                        ));
+                        const r = this.getUWPLocalString(e.fullname, s.DisplayName);
+                        if (!r)
+                            continue;
+                        let a = s.Square44x44Logo;
+                        if (!a && s.Square150x150Logo && (a = s.Square150x150Logo),
+                        !a)
+                            continue;
+                        a = a.replace(/\\/g, "/");
+                        let l = k().getIndirectString(`@{${e.fullname}?ms-resource://${e.fullname.substr(0, e.fullname.indexOf("_"))}/Files/${a}}`);
+                        if (!l && (l = c().join(e.location, a),
+                        !V().existsSync(l))) {
+                            const e = c().dirname(l)
+                              , t = c().parse(l)
+                              , i = [".targetsize-48_altform-unplated", ".targetsize-48_altform-lightunplated", ".targetsize-48"];
+                            for (let n = 0; n < i.length && (l = c().join(e, t.name + i[n] + t.ext),
+                            !V().existsSync(l)); n++)
+                                ;
+                        }
+                        if (!V().existsSync(l))
+                            continue;
+                        const d = this.getUWPLocalString(e.fullname, s.Description) || r
+                          , h = {
+                            code: e.familyname + "!" + i,
+                            explain: d,
+                            cmds: [r],
+                            icon: "file://" + l
+                        };
+                        "transparent" === s.BackgroundColor ? h.backgroundColor = this.systemAccentColor : h.backgroundColor = s.BackgroundColor,
+                        this.pluginsCmp.setFeature("", h)
+                    }
+            }
+            )),
+            k().uwp.uwpChangeNotify((e=>{
+                0 === e && setTimeout((()=>{
+                    this.goRefreshUwpFeatures()
+                }
+                ), 3e3)
+            }
+            ))
+        }
+        goRefreshUwpFeatures() {
+            const e = this.pluginsCmp.pluginContainer[""].featureDic
+              , t = [];
+            for (const i in e)
+                e[i].icon && 0 === e[i].icon.indexOf("file://") && t.push(i);
+            t.forEach((t=>{
+                delete e[t]
+            }
+            )),
+            this.setUWPFeatures(),
+            this.windowCmp.refreshCmdSource()
+        }
+        setSettingsFeatures() {
+            Ze.forEach((e=>{
+                e.explain = "电脑系统设置",
+                e.icon = "res/native/mssetting.png",
+                e.backgroundColor = this.systemAccentColor,
+                this.pluginsCmp.setFeature("", e)
+            }
+            ))
+        }
+        setMatchAppFeatures() {
+            Object.values(Xe).forEach((e=>{
+                e.feature && this.pluginsCmp.setFeature("", e.feature)
+            }
+            ))
+        }
+        initFeatures() {
+            this.startMenuLnkWatcher && (this.startMenuLnkWatcher.close(),
+            delete this.startMenuLnkWatcher),
+            this.pluginsCmp.pluginContainer[""] = {
+                name: "",
+                pluginName: "",
+                logo: "res/logo.png",
+                featureDic: {}
+            },
+            this.pluginsCmp.setFeature("", {
+                code: "call:goHelp",
+                icon: "res/native/help.png",
+                explain: "uTools 帮助文档",
+                cmds: ["Help", "帮助"]
+            }),
+            this.pluginsCmp.setFeature("", {
+                code: "call:killAllPlugin",
+                icon: "res/native/clear.svg",
+                explain: "uTools 后台插件应用全部退出",
+                cmds: ["Clear"]
+            }),
+            this.setMatchAppFeatures(),
+            this.setActionAppFeatures(),
+            n().get("enableNativeApp") && (this.pluginsCmp.setFeature("", {
+                code: "addlocalopen",
+                explain: "加入到 uTools 搜索启动",
+                icon: "res/native/add.svg",
+                cmds: [{
+                    type: "files",
+                    maxLength: 1,
+                    label: "加入到 uTools 搜索启动"
+                }]
+            }),
+            this.setLnkFeatures(),
+            this.osVersion >= 6.2 && (this.setUWPFeatures(),
+            this.osVersion >= 10 && this.setSettingsFeatures())),
+            this.appCmp.initLocalOpenFeatures().then((()=>{
+                this.windowCmp.refreshCmdSource()
+            }
+            ))
+        }
+        shutdown(...e) {
+            this.windowCmp.hideMainWindow(!1);
+            let i = "";
+            if ("-s" === e[0])
+                i = "关机";
+            else if ("-r" === e[0])
+                i = "重启";
+            else {
+                if ("-l" !== e[0])
+                    return;
+                i = "注销"
+            }
+            t.dialog.showMessageBox({
+                buttons: ["取消", i],
+                title: " uTools",
+                message: " 确定要执行「" + i + "」吗？",
+                defaultId: 1
+            }).then((({response: t})=>{
+                1 === t && Ve().spawn("Shutdown.exe", e, {
+                    detached: !0
+                })
+            }
+            ))
+        }
+        processSpawn(...e) {
+            this.windowCmp.hideMainWindow(!1);
+            const t = e.shift();
+            Ve().spawn(t, e, {
+                detached: !0
+            })
+        }
+        actionProcessSpawn(...e) {
+            this.windowCmp.hideMainWindow(!1);
+            const t = e.shift();
+            Ve().spawn(t, e, {
+                detached: !0
+            })
+        }
+        copyFile(e) {
+            Array.isArray(e) || (e = [e]),
+            0 !== (e = e.filter((e=>V().existsSync(e)))).length && k().copyFile.apply(null, e)
+        }
+        goHelp() {
+            this.windowCmp.hideMainWindow(!1),
+            this.appCmp.goHelp()
+        }
+        killAllPlugin() {
+            this.windowCmp.killAllPlugins()
+        }
+        mousePosWindowInfo() {
+            const e = k().getMousePosWindow();
+            e ? (e.app = c().basename(e.appPath),
+            this.appCmp.showNativeWorkWindowInfo(e)) : new t.Notification({
+                body: "未捕获到窗口信息"
+            }).show()
+        }
+        screenColorPicker() {
+            this.windowCmp.hideMainWindow(),
+            this.screencolorpickerCmp.action((({hex: e})=>{
+                t.clipboard.writeText(e),
+                new t.Notification({
+                    body: "颜色 " + e + " 已复制到剪贴板"
+                }).show()
+            }
+            ))
+        }
+        emptyRecycleBin() {
+            this.windowCmp.hideMainWindow(),
+            t.dialog.showMessageBox({
+                buttons: ["取消", "清空回收站"],
+                title: " uTools",
+                message: " 确定要执行「清空回收站」吗？",
+                detail: " 回收站内全部文件永久删除",
+                defaultId: 1
+            }).then((({response: e})=>{
+                1 === e && k().emptyRecycleBin()
+            }
+            ))
+        }
+        getLanIp() {
+            this.windowCmp.hideMainWindow(),
+            E().then((e=>{
+                e ? (t.clipboard.writeText(e),
+                new t.Notification({
+                    body: '内部网络IP地址 "' + e + '" 已复制到剪贴板'
+                }).show()) : new t.Notification({
+                    body: "未获取到内部网络 IP 地址"
+                }).show()
+            }
+            ))
+        }
+        setNativeWindowAlwaysOnTop() {
+            this.windowCmp.hideMainWindow();
+            const e = this.windowCmp.display.nativeWorkWindowInfo;
+            e && "#32770" !== e.class && ("explorer.exe" !== e.app || "Progman" !== e.class && "WorkerW" !== e.class) && (k().setWindowAlwaysOnTop(e.id) ? new t.Notification({
+                body: e.app + " 窗口置顶"
+            }).show() : new t.Notification({
+                body: e.app + " 窗口取消置顶"
+            }).show())
+        }
+        regionScreenshot() {
+            this.windowCmp.hideMainWindow(),
+            k().regionScreenshot((e=>{
+                e && (this.clipboardCmp.once("change", (()=>{
+                    this.windowCmp.restoreShowMainWindow()
+                }
+                )),
+                t.clipboard.writeImage(t.nativeImage.createFromBuffer(e)))
+            }
+            ))
+        }
+        windowScreenshot() {
+            this.windowCmp.hideMainWindow();
+            const e = this.windowCmp.display.nativeWorkWindowInfo;
+            if (!e || 0 === e.width || 0 === e.height)
+                return void new t.Notification({
+                    body: "未捕获到窗口"
+                }).show();
+            const i = t.screen.screenToDipRect(null, {
+                x: e.x,
+                y: e.y,
+                width: e.width,
+                height: e.height
+            })
+              , n = t.screen.getDisplayMatching(i);
+            let o;
+            if (i.width >= n.workAreaSize.width || i.height >= n.workAreaSize.height)
+                if (k().windowIsZoomed(e.id)) {
+                    const e = t.screen.dipToScreenRect(null, n.workArea);
+                    o = k().screenCapture(e.x, e.y, e.width, e.height)
+                } else
+                    o = k().screenCapture(e.x, e.y, e.width, e.height);
+            else
+                o = k().windowScreenshot(e.id, n.scaleFactor, this.isWindows11);
+            if (o) {
+                this.clipboardCmp.once("change", (()=>{
+                    this.windowCmp.restoreShowMainWindow()
+                }
+                ));
+                const e = t.nativeImage.createFromBuffer(o);
+                t.clipboard.writeImage(e)
+            }
+        }
+        showNativeWorkWindowInfo() {
+            this.appCmp.showNativeWorkWindowInfo()
+        }
+    }
+    const tt = {
+        addlocalopen: {
+            func: (e,t,i)=>{
+                e.appCmp.addLocalOpen(i.map((e=>e.path)))
+            }
+        },
+        pluginstoresearch: {
+            feature: {
+                code: "pluginstoresearch",
+                explain: "前往 uTools 插件应用市场",
+                icon: "res/native/plugin-search.png",
+                cmds: [{
+                    type: "over",
+                    maxLength: 20,
+                    label: "搜索插件应用"
+                }]
+            },
+            func: (e,t,i)=>{
+                e.windowCmp.ffffffff.goPluginStore(i)
+            }
+        },
+        saveimage: {
+            feature: {
+                code: "saveimage",
+                explain: "保存为图片文件",
+                icon: "res/native/imgfile.png",
+                cmds: [{
+                    type: "img",
+                    label: "保存为文件"
+                }]
+            },
+            func: (e,i,n)=>{
+                if (e.windowCmp.hideMainWindow(),
+                !/^data:image\/([a-z]+);base64,/.test(n))
+                    return;
+                const o = RegExp.$1
+                  , s = c().join(t.app.getPath("downloads"), "uTools_" + Date.now() + "." + o);
+                V().writeFile(s, n.replace(/^data:image\/([a-z]+);base64,/, ""), "base64", (e=>{
+                    e || t.shell.showItemInFolder(s)
+                }
+                ))
+            }
+        },
+        showfolder: {
+            feature: {
+                code: "showfolder",
+                explain: "前往文件夹",
+                icon: "res/native/folderopen.svg",
+                cmds: [{
+                    type: "regex",
+                    match: "/^(?:~?\\/[^/\\n\\r\\f\\v]+)+\\/?$/",
+                    label: "前往文件夹"
+                }]
+            },
+            func: (e,i,n)=>{
+                (n = n.trim()).startsWith("~") && (n = n.replace("~", t.app.getPath("home"))),
+                V().existsSync(n) || (n = c().dirname(n),
+                V().existsSync(n)) ? (e.windowCmp.hideMainWindow(),
+                V().lstat(n, ((e,i)=>{
+                    e || i.isFile() ? t.shell.showItemInFolder(n) : t.shell.openPath(n)
+                }
+                ))) : new t.Notification({
+                    title: "uTools",
+                    body: "文件、文件夹都不存在"
+                }).show()
+            }
+        },
+        copyfile: {
+            feature: {
+                code: "copyfile",
+                explain: "复制文件或文件夹到剪贴板",
+                icon: "res/native/clip.svg",
+                cmds: [{
+                    type: "regex",
+                    match: "/^(?:\\/[^/\\n\\r\\f\\v]+)+\\/?$/m",
+                    maxLength: 5e3,
+                    label: "复制文件"
+                }]
+            },
+            func: (e,i,n)=>{
+                const o = n.match(/^(?:\/[^/\n\r\f\v]+)+\/?$/gm).map((e=>e.trim())).filter((e=>V().existsSync(e)));
+                0 !== o.length ? (e.windowCmp.hideMainWindow(),
+                e.copyFile(o)) : new t.Notification({
+                    title: "uTools",
+                    body: "文件不存在",
+                    silent: !1
+                }).show()
+            }
+        },
+        openitem: {
+            feature: {
+                code: "openitem",
+                explain: "系统默认方式打开文件",
+                icon: "res/native/openitem.png",
+                cmds: [{
+                    type: "regex",
+                    match: "/^(?:~?\\/[^/\\n\\r\\f\\v]+)+\\.\\w{2,10}$/",
+                    label: "打开文件"
+                }]
+            },
+            func: (e,i,n)=>{
+                (n = n.trim()).startsWith("~") && (n = n.replace("~", t.app.getPath("home"))),
+                V().existsSync(n) ? (e.windowCmp.hideMainWindow(!1),
+                t.shell.openPath(n)) : new t.Notification({
+                    title: "uTools",
+                    body: "文件不存在"
+                }).show()
+            }
+        },
+        openweburl: {
+            feature: {
+                code: "openweburl",
+                explain: "默认浏览器打开网址",
+                icon: "res/native/link.svg",
+                cmds: [{
+                    type: "regex",
+                    match: '/^(?:https?:\\/\\/)?(?:localhost|(?:(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d|\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d|\\d)){3})|(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))\\.?)(?::\\d{2,5})?(?:[/?#][^\\s"]*)?$/i',
+                    label: "打开网址"
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow(),
+                /^https?:\/\//.test(n) ? t.shell.openExternal(n) : t.shell.openExternal("https://" + n)
+            }
+        },
+        copyfilepath: {
+            feature: {
+                code: "copyfilepath",
+                explain: "复制路径",
+                icon: "res/native/link.svg",
+                cmds: [{
+                    type: "files",
+                    label: "复制路径"
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow(),
+                t.clipboard.writeText(n.map((e=>e.path)).join("\n"))
+            }
+        },
+        copyfilename: {
+            feature: {
+                code: "copyfilename",
+                explain: "提取文件名称",
+                icon: "res/native/link.svg",
+                cmds: [{
+                    type: "files",
+                    label: "提取文件名称"
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow(),
+                t.clipboard.writeText(n.map((e=>e.isFile ? c().parse(e.path).name : e.name)).join("\n"))
+            }
+        },
+        copy_current_folder_path: {
+            feature: {
+                code: "copy_current_folder_path",
+                explain: "复制当前目录路径",
+                icon: "res/native/link.svg",
+                cmds: [{
+                    type: "window",
+                    match: {
+                        app: ["dde-file-manager", "nautilus"]
+                    },
+                    label: "复制当前目录路径"
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow(),
+                t.clipboard.writeText(""),
+                k().simulateKeyboardTap("l", "ctrl"),
+                setTimeout((()=>{
+                    k().simulateKeyboardTap("c", "ctrl"),
+                    k().simulateKeyboardTap("escape")
+                }
+                ), 100)
+            }
+        },
+        file_manager_new_file: {
+            feature: {
+                code: "file_manager_new_file",
+                explain: "新建文件",
+                icon: "res/native/newfile.png",
+                cmds: [{
+                    type: "window",
+                    match: {
+                        app: "nautilus"
+                    },
+                    label: "新建文件"
+                }]
+            },
+            func: (e,i,n)=>{
+                e.windowCmp.hideMainWindow(),
+                t.clipboard.writeText(""),
+                k().simulateKeyboardTap("l", "ctrl"),
+                k().simulateKeyboardTap("c", "ctrl"),
+                k().simulateKeyboardTap("escape"),
+                setTimeout((()=>{
+                    const e = t.clipboard.readText();
+                    e && V().existsSync(e) && Ve().exec('zenity --title "新建文件" --entry --text "文件名称"', ((i,n,o)=>{
+                        if (i) {
+                            if (!o)
+                                return;
+                            if (!(o = o.trim()))
+                                return;
+                            if (o.endsWith("GtkDialog mapped without a transient parent. This is discouraged."))
+                                return;
+                            return void new t.Notification({
+                                title: "uTools",
+                                body: o
+                            }).show()
+                        }
+                        if (!n)
+                            return;
+                        const s = c().join(e, n.trim());
+                        if (V().existsSync(s))
+                            new t.Notification({
+                                title: "uTools",
+                                body: "文件已存在"
+                            }).show();
+                        else
+                            try {
+                                V().closeSync(V().openSync(s, "w"))
+                            } catch (e) {
+                                new t.Notification({
+                                    title: "uTools",
+                                    body: "新建文件出错了"
+                                }).show()
+                            }
+                    }
+                    ))
+                }
+                ), 100)
+            }
+        }
+    }
+      , it = [{
+        code: "call:shutdown reboot",
+        explain: "电脑重启",
+        icon: "res/native/reboot.png",
+        cmds: ["重启", "Reboot"]
+    }, {
+        code: "call:shutdown",
+        explain: "电脑关机",
+        icon: "res/native/shutdown.png",
+        cmds: ["关机", "Shutdown"]
+    }, {
+        code: "call:showDesktop",
+        icon: "res/native/rundll32.png",
+        explain: "显示桌面",
+        cmds: ["显示桌面", "Show Desktop"]
+    }, {
+        code: "call:screenColorPicker",
+        icon: "res/native/picker.png",
+        explain: "屏幕颜色拾取",
+        cmds: ["取色", "Pick Color"]
+    }, {
+        code: "call:regionScreenshot",
+        icon: "res/native/screenshot.png",
+        explain: "截图完呼出 uTools",
+        cmds: ["截图", "截图完呼出 uTools"]
+    }, {
+        code: "call:windowScreenshot",
+        icon: "res/native/camera.png",
+        explain: "截图完呼出 uTools",
+        cmds: ["窗口截图"]
+    }, {
+        code: "call:showNativeWorkWindowInfo",
+        icon: "res/native/window.png",
+        explain: "当前活动窗口的信息",
+        cmds: ["窗口信息"]
+    }, {
+        code: "call:getLanIp",
+        icon: "res/native/ip.png",
+        explain: "获取我的电脑局域网IP地址",
+        cmds: ["内部网络IP地址"]
+    }]
+      , nt = [{
+        code: "dbus-send --type=method_call --dest=org.gnome.ScreenSaver  /org/gnome/ScreenSaver org.gnome.ScreenSaver.Lock",
+        explain: "电脑锁屏",
+        icon: "res/native/lock.png",
+        cmds: ["锁屏", "Lock"]
+    }, {
+        code: "gnome-session-quit",
+        explain: "当前操作系统账号注销",
+        icon: "res/native/logout.png",
+        cmds: ["注销", "Logout"]
+    }, {
+        code: "call:shutdown reboot",
+        explain: "电脑重启",
+        icon: "res/native/reboot.png",
+        cmds: ["重启", "Reboot"]
+    }, {
+        code: "call:shutdown",
+        explain: "电脑关机",
+        icon: "res/native/shutdown.png",
+        cmds: ["关机", "Shutdown"]
+    }, {
+        code: "call:showDesktop",
+        icon: "res/native/rundll32.png",
+        explain: "桌面显示切换",
+        cmds: ["显示桌面", "Show Desktop"]
+    }, {
+        code: "call:screenColorPicker",
+        icon: "res/native/picker.png",
+        explain: "屏幕颜色拾取",
+        cmds: ["取色", "Pick Color"]
+    }, {
+        code: "call:regionScreenshot",
+        icon: "res/native/screenshot.png",
+        explain: "截图完呼出 uTools",
+        cmds: ["截图", "截图完呼出 uTools"]
+    }, {
+        code: "call:windowScreenshot",
+        icon: "res/native/camera.png",
+        explain: "截图完呼出 uTools",
+        cmds: ["窗口截图"]
+    }, {
+        code: "call:showNativeWorkWindowInfo",
+        icon: "res/native/window.png",
+        explain: "当前活动窗口的信息",
+        cmds: ["窗口信息"]
+    }, {
+        code: "call:getLanIp",
+        icon: "res/native/ip.png",
+        explain: "获取我的电脑局域网IP地址",
+        cmds: ["内部网络IP地址"]
+    }];
+    function ot(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    class st {
+        constructor(e, i, o, s, r) {
+            ot(this, "mainServices", {
+                nativeOpen: (e,i,n)=>{
+                    if (this.reportCmp.info("native.open", {
+                        way: n
+                    }),
+                    i.startsWith("call:")) {
+                        const e = i.replace("call:", "").split(/ +/g)
+                          , t = e.shift();
+                        "function" == typeof this[t] && this[t].apply(this, e)
+                    } else {
+                        if (this.windowCmp.hideMainWindow(),
+                        i.startsWith("/"))
+                            if (i in this.entryFileExec)
+                                i = this.entryFileExec[i];
+                            else {
+                                if (!V().existsSync(i))
+                                    return new t.Notification({
+                                        title: "uTools",
+                                        body: "文件不存在，打开失败"
+                                    }).show(),
+                                    delete this.pluginsCmp.pluginContainer[""].featureDic[i],
+                                    void this.windowCmp.refreshCmdSource();
+                                try {
+                                    if (V().accessSync(i, V().constants.X_OK),
+                                    V().lstatSync(i).isDirectory())
+                                        return t.shell.openPath(i)
+                                } catch (e) {
+                                    return t.shell.openPath(i)
+                                }
+                            }
+                        Ve().exec(i)
+                    }
+                }
+                ,
+                nativeMatchCall: (e,t,i,n,o)=>{
+                    if (t.startsWith("socket/"))
+                        return this.reportCmp.info("native.open", {
+                            way: o,
+                            featureCode: "socket"
+                        }),
+                        void this.connectionCmp.sendData(t, i, n);
+                    if (this.reportCmp.info("native.open", {
+                        way: o
+                    }),
+                    t in tt)
+                        try {
+                            tt[t].func(this, i, n)
+                        } catch (e) {}
+                }
+            }),
+            ot(this, "ffffffffServices", {
+                setEnableNativeApp: (e,t)=>{
+                    n().set("enableNativeApp", !0 === t),
+                    setImmediate((()=>{
+                        this.initFeatures()
+                    }
+                    )),
+                    e.returnValue = !0
+                }
+            }),
+            this.pluginsCmp = e,
+            this.windowCmp = i,
+            this.clipboardCmp = i.clipboardCmp,
+            this.reportCmp = o,
+            this.appCmp = s,
+            this.connectionCmp = r,
+            this.screencaptureCmp = s.screencaptureCmp,
+            this.screencolorpickerCmp = s.screencolorpickerCmp,
+            this.entryFileExec = {};
+            const a = Ve().execSync("cat /etc/*release | grep -E ^NAME", {
+                encoding: "utf8"
+            }).toLowerCase();
+            /name="(.+?)"/.test(a) ? (this.osName = RegExp.$1,
+            "uos" === this.osName ? this.osName = "deepin" : ["deepin", "ubuntu"].includes(this.osName) || (this.osName = "ubuntu")) : this.osName = "ubuntu"
+        }
+        init() {
+            n().has("enableNativeApp") || n().set("enableNativeApp", !0);
+            let e = null;
+            "deepin" === this.osName ? (e = k().getGSetting("com.deepin.dde.appearance", "icon-theme"),
+            this.localIconThemes = [e],
+            ["deepin", "hicolor"].forEach((e=>{
+                this.localIconThemes.includes(e) || this.localIconThemes.push(e)
+            }
+            ))) : "ubuntu" === this.osName && (e = k().getGSetting("org.gnome.desktop.interface", "icon-theme"),
+            ["ubuntu-mono-dark", "ubuntu-mono-light"].includes(e) && (e = "Yaru"),
+            this.localIconThemes = [e],
+            ["hicolor", "Adwaita", "Humanity"].forEach((e=>{
+                this.localIconThemes.includes(e) || this.localIconThemes.push(e)
+            }
+            ))),
+            this.emptyIcon = this.getIcon("empty"),
+            this.appCmp.folderIconPath = this.getIcon("folder"),
+            setImmediate((()=>{
+                this.initFeatures()
+            }
+            ))
+        }
+        getIcon(e) {
+            const t = ["48x48", "48", "scalable", "256x256", "512x512", "256", "512"]
+              , i = ["apps", "categories", "devices", "mimetypes", "legacy", "actions", "places", "status", "mimes"]
+              , n = [".png", ".svg"];
+            for (const o of this.localIconThemes)
+                for (const s of t)
+                    for (const t of i)
+                        for (const i of n) {
+                            let n = c().join("/usr/share/icons", o, s, t, e + i);
+                            if (V().existsSync(n))
+                                return n;
+                            if (n = c().join("/usr/share/icons", o, t, s, e + i),
+                            V().existsSync(n))
+                                return n
+                        }
+            return V().existsSync(c().join("/usr/share/pixmaps", e + ".png")) ? c().join("/usr/share/pixmaps", e + ".png") : this.emptyIcon
+        }
+        convertEntryFile2Feature(e) {
+            let t = null;
+            try {
+                t = V().readFileSync(e, "utf8")
+            } catch (e) {
+                return null
+            }
+            if (!t.includes("[Desktop Entry]"))
+                return null;
+            t = t.substr(t.indexOf("[Desktop Entry]")).replace("[Desktop Entry]", "").trim();
+            const i = t.indexOf("\n[");
+            i > 0 && (t = t.substr(0, i).trim());
+            const n = {};
+            if (t.match(/^[\w\-[\]]+ ?=.*$/gm).forEach((e=>{
+                const t = e.indexOf("=");
+                n[e.substr(0, t).trim()] = e.substr(t + 1).trim()
+            }
+            )),
+            "Application" !== n.Type)
+                return null;
+            if (!n.Exec)
+                return null;
+            if ("true" === n.NoDisplay && !n.Exec.startsWith("gnome-control-center"))
+                return null;
+            let o = String(process.env.DESKTOP_SESSION).toLowerCase();
+            if ("ubuntu" === o && (o = "gnome"),
+            n.OnlyShowIn && !n.OnlyShowIn.toLowerCase().includes(o))
+                return null;
+            if (n.NotShowIn && n.NotShowIn.toLowerCase().includes(o))
+                return null;
+            let s = n.Icon;
+            if (!s)
+                return null;
+            if (s.startsWith("/")) {
+                if (!V().existsSync(s))
+                    return null
+            } else if (e.startsWith("/usr/share/applications") || e.startsWith("/var/lib/snapd/desktop/applications"))
+                s = this.getIcon(s);
+            else {
+                if (!e.startsWith(process.env.HOME + "/.local/share/applications"))
+                    return null;
+                s = c().join(process.env.HOME, ".local/share/icons", s + ".png"),
+                V().existsSync(s) || (s = this.emptyIcon)
+            }
+            let r = "";
+            const a = process.env.LANG.split(".")[0];
+            r = "Comment[" + a + "]"in n ? n["Comment[" + a + "]"] : n.Comment ? "X-Ubuntu-Gettext-Domain"in n ? k().getLocaleName(n["X-Ubuntu-Gettext-Domain"], n.Comment) : n.Comment : e;
+            let l = n.Exec.replace(/ %[A-Za-z]/g, "").replace(/"/g, "").trim();
+            "true" === n.Terminal && (l = "gnome-terminal -x " + l),
+            this.entryFileExec[e] = l,
+            "deepin" === this.osName && (n.Name = n.Name.replace(/^(?:深度|deepin)/i, "").trim());
+            const d = {
+                code: e,
+                explain: r,
+                icon: "file://" + s,
+                cmds: [n.Name]
+            };
+            if ("Name[" + a + "]"in n) {
+                let e = n["Name[" + a + "]"];
+                e && e !== n.Name && ("deepin" === this.osName && (e = e.replace(/^(?:深度|deepin)/i, "").trim()),
+                d.cmds.unshift(e))
+            } else if ("X-Ubuntu-Gettext-Domain"in n) {
+                const e = k().getLocaleName(n["X-Ubuntu-Gettext-Domain"], n.Name);
+                e && e !== n.Name && d.cmds.unshift(e)
+            }
+            return d
+        }
+        dirAppRead(e, t, i, n, o) {
+            let s = null;
+            try {
+                if (!V().existsSync(t))
+                    return;
+                s = V().readdirSync(t)
+            } catch (e) {
+                return
+            }
+            if (0 !== s.length)
+                for (const r of s) {
+                    const s = c().join(t, r);
+                    try {
+                        if (!V().lstatSync(s).isFile())
+                            continue
+                    } catch (e) {
+                        continue
+                    }
+                    c().extname(s) === e ? o.push(s) : n < i && this.dirAppRead(e, s, i, n + 1, o)
+                }
+        }
+        appDirWatch(e, t) {
+            return Je().watch(e, {
+                persistent: !0,
+                ignoreInitial: !0,
+                followSymlinks: !1,
+                ignorePermissionErrors: !0,
+                disableGlobbing: !0,
+                depth: t
+            }).on("unlink", (e=>{
+                /\.desktop$/i.test(e) && e in this.pluginsCmp.pluginContainer[""].featureDic && (".desktop" === c().extname(e).toLowerCase() && delete this.entryFileExec[e],
+                delete this.pluginsCmp.pluginContainer[""].featureDic[e],
+                this.windowCmp.refreshCmdSource())
+            }
+            )).on("add", (e=>{
+                /\.desktop$/i.test(e) && setTimeout((()=>{
+                    if (!V().existsSync(e))
+                        return;
+                    const t = this.convertEntryFile2Feature(e);
+                    t && (this.pluginsCmp.setFeature("", t),
+                    this.windowCmp.refreshCmdSource())
+                }
+                ), 3e3)
+            }
+            ))
+        }
+        setBaseAppFeatures() {
+            const e = ["/usr/share/applications", "/var/lib/snapd/desktop/applications", process.env.HOME + "/.local/share/applications"]
+              , i = [];
+            e.forEach((e=>{
+                this.dirAppRead(".desktop", e, 0, 0, i)
+            }
+            )),
+            i.forEach((e=>{
+                const i = this.convertEntryFile2Feature(e);
+                if (i && (this.pluginsCmp.setFeature("", i),
+                ["Visual Studio Code"].includes(i.cmds[0]))) {
+                    const e = i.cmds[0]
+                      , n = this.entryFileExec[i.code];
+                    tt["path_open_to_" + e] = {
+                        func: (e,i,o)=>{
+                            if (e.windowCmp.hideMainWindow(),
+                            "files" === i) {
+                                const e = n.split(/ +/)
+                                  , t = e.shift();
+                                return e.push(o[0].path),
+                                void Ve().spawn(t, e, {
+                                    detached: !0
+                                })
+                            }
+                            t.clipboard.writeText(""),
+                            k().simulateKeyboardTap("l", "ctrl"),
+                            k().simulateKeyboardTap("c", "ctrl"),
+                            k().simulateKeyboardTap("escape"),
+                            setTimeout((()=>{
+                                const e = t.clipboard.readText();
+                                if (!e || !V().existsSync(e))
+                                    return;
+                                const i = n.split(/ +/)
+                                  , o = i.shift();
+                                i.push(e),
+                                Ve().spawn(o, i, {
+                                    detached: !0
+                                })
+                            }
+                            ), 100)
+                        }
+                    },
+                    this.pluginsCmp.setFeature("", {
+                        code: "path_open_to_" + e,
+                        explain: e + " 中打开",
+                        icon: i.icon,
+                        cmds: [{
+                            type: "files",
+                            fileType: "directory",
+                            minLength: 1,
+                            maxLength: 1,
+                            label: e + " 中打开"
+                        }, {
+                            type: "window",
+                            match: {
+                                app: ["dde-file-manager", "nautilus"]
+                            },
+                            label: e + " 中打开"
+                        }]
+                    })
+                }
+            }
+            )),
+            this.baseAppDirWatch = this.appDirWatch(e, 0)
+        }
+        setMatchAppFeatures() {
+            Object.values(tt).forEach((e=>{
+                e.feature && this.pluginsCmp.setFeature("", e.feature)
+            }
+            ))
+        }
+        setActionAppFeatures() {
+            let e = null;
+            if ("ubuntu" === this.osName)
+                e = nt;
+            else {
+                if ("deepin" !== this.osName)
+                    return;
+                e = it
+            }
+            e.forEach((e=>{
+                e.icon || (e.icon = "res/native/symbolic.svg"),
+                this.pluginsCmp.setFeature("", e)
+            }
+            ))
+        }
+        initFeatures() {
+            this.baseAppDirWatch && (this.baseAppDirWatch.close(),
+            delete this.baseAppDirWatch),
+            this.pluginsCmp.pluginContainer[""] = {
+                name: "",
+                pluginName: "",
+                logo: "res/logo.png",
+                featureDic: {}
+            },
+            this.pluginsCmp.setFeature("", {
+                code: "call:goHelp",
+                icon: "res/native/help.png",
+                explain: "uTools 帮助文档",
+                cmds: ["Help", "帮助"]
+            }),
+            this.pluginsCmp.setFeature("", {
+                code: "call:killAllPlugin",
+                icon: "res/native/clear.svg",
+                explain: "uTools 后台插件应用全部退出",
+                cmds: ["Clear"]
+            }),
+            this.setMatchAppFeatures(),
+            this.setActionAppFeatures(),
+            n().get("enableNativeApp") && (this.pluginsCmp.setFeature("", {
+                code: "addlocalopen",
+                explain: "加入到 uTools 搜索启动",
+                icon: "res/native/add.svg",
+                cmds: [{
+                    type: "files",
+                    maxLength: 1,
+                    label: "加入到 uTools 搜索启动"
+                }]
+            }),
+            this.setBaseAppFeatures()),
+            this.appCmp.initLocalOpenFeatures().then((()=>{
+                this.windowCmp.refreshCmdSource()
+            }
+            ))
+        }
+        copyFile(e) {
+            Array.isArray(e) || (e = [e]),
+            0 !== (e = e.filter((e=>V().existsSync(e)))).length && k().copyFile.apply(null, e)
+        }
+        goHelp() {
+            this.windowCmp.hideMainWindow(!1),
+            this.appCmp.goHelp()
+        }
+        killAllPlugin() {
+            this.windowCmp.killAllPlugins()
+        }
+        screenColorPicker() {
+            this.screencolorpickerCmp.action((({hex: e})=>{
+                t.clipboard.writeText(e),
+                new t.Notification({
+                    title: "uTools",
+                    body: "颜色 " + e + " 已复制到剪贴板"
+                }).show()
+            }
+            ))
+        }
+        getLanIp() {
+            this.windowCmp.hideMainWindow(),
+            E().then((e=>{
+                e ? (t.clipboard.writeText(e),
+                new t.Notification({
+                    title: "uTools",
+                    body: '内部网络IP地址 "' + e + '" 已复制到剪贴板'
+                }).show()) : new t.Notification({
+                    title: "uTools",
+                    body: "未获取到内部网络 IP 地址"
+                }).show()
+            }
+            ))
+        }
+        showDesktop() {
+            this.windowCmp.hideMainWindow(),
+            setTimeout((()=>{
+                k().simulateKeyboardTap("d", "ctrl", "alt")
+            }
+            ), 50)
+        }
+        shutdown(...e) {
+            this.windowCmp.hideMainWindow();
+            const i = "reboot" === e[0] ? "重启" : "关机";
+            t.dialog.showMessageBox({
+                type: "question",
+                buttons: ["取消", i],
+                message: "确定要执行「" + i + "」吗？",
+                detail: " ",
+                defaultId: 1
+            }).then((({response: t})=>{
+                1 === t && Ve().spawn("shutdown", ["reboot" === e[0] ? "-r" : "-h", "now"], {
+                    detached: !0
+                })
+            }
+            ))
+        }
+        regionScreenshot() {
+            this.windowCmp.hideMainWindow(),
+            setTimeout((()=>{
+                this.screencaptureCmp.action((e=>{
+                    this.clipboardCmp.once("change", (()=>{
+                        this.windowCmp.restoreShowMainWindow()
+                    }
+                    )),
+                    t.clipboard.writeImage(e)
+                }
+                ))
+            }
+            ), "deepin" === this.osName ? 250 : 100)
+        }
+        windowScreenshot() {
+            this.windowCmp.hideMainWindow();
+            const e = this.windowCmp.display.nativeWorkWindowInfo;
+            e && 0 !== e.width && 0 !== e.height ? setTimeout((()=>{
+                const i = c().join(t.app.getPath("temp"), "utools_screenshot_" + Date.now() + ".png");
+                if (k().screenCaptureToFile(e.x, e.y, e.width, e.height, i)) {
+                    this.clipboardCmp.once("change", (()=>{
+                        this.windowCmp.restoreShowMainWindow()
+                    }
+                    )),
+                    t.clipboard.writeImage(t.nativeImage.createFromPath(i));
+                    try {
+                        V().unlinkSync(i)
+                    } catch (e) {}
+                } else
+                    new t.Notification({
+                        title: "uTools",
+                        body: "截图失败"
+                    }).show()
+            }
+            ), "deepin" === this.osName ? 250 : 100) : new t.Notification({
+                title: "uTools",
+                body: "未捕获到窗口"
+            }).show()
+        }
+        showNativeWorkWindowInfo() {
+            this.appCmp.showNativeWorkWindowInfo()
+        }
+    }
+    class rt {
+        constructor(e) {
+            var i, n;
+            n = {
+                captureComplete: (e,i)=>{
+                    if (this.captureWindow.destroy(),
+                    0 === i.width || 0 === i.height || "function" != typeof this.captureCompleteCallback)
+                        return this.free();
+                    const n = this.windowCmp.isLinux ? t.nativeImage.createFromPath(this.captureImageFile) : t.nativeImage.createFromBuffer(this.captureImageBuffer);
+                    if (this.free(),
+                    n.isEmpty())
+                        return;
+                    const o = n.getSize().width / this.displayBounds.width;
+                    let s = i.x;
+                    s < 0 && (i.width += s,
+                    s = 0);
+                    let r, a = i.y;
+                    a < 0 && (i.height += a,
+                    a = 0),
+                    i.width > this.displayBounds.width && (s = 0,
+                    i.width = this.displayBounds.width),
+                    i.height > this.displayBounds.height && (a = 0,
+                    i.height = this.displayBounds.height);
+                    try {
+                        r = n.crop({
+                            x: Math.round(s * o),
+                            y: Math.round(a * o),
+                            width: Math.round(i.width * o),
+                            height: Math.round(i.height * o)
+                        })
+                    } catch (e) {
+                        return
+                    }
+                    r && !r.isEmpty() && (this.captureCompleteCallback(r),
+                    this.captureCompleteCallback = null)
+                }
+            },
+            (i = "screenCaptureServices")in this ? Object.defineProperty(this, i, {
+                value: n,
+                enumerable: !0,
+                configurable: !0,
+                writable: !0
+            }) : this[i] = n,
+            this.windowCmp = e
+        }
+        free() {
+            this.windowCmp.isWindow ? this.captureImageBuffer = null : this.windowCmp.isLinux && d().unlink(this.captureImageFile, (()=>{}
+            ))
+        }
+        action(e) {
+            this.captureWindow && (this.captureWindow.destroy(),
+            this.free()),
+            this.captureCompleteCallback = e;
+            const i = t.screen.getCursorScreenPoint()
+              , n = t.screen.getDisplayNearestPoint(i);
+            this.displayBounds = n.bounds;
+            const o = {
+                x: Math.round(n.bounds.x * n.scaleFactor),
+                y: Math.round(n.bounds.x * n.scaleFactor),
+                width: Math.round(n.bounds.width * n.scaleFactor),
+                height: Math.round(n.bounds.height * n.scaleFactor)
+            };
+            this.captureImageFile = c().join(t.app.getPath("temp"), "utools_screenshot_" + Date.now() + ".png"),
+            k().screenCaptureToFile(o.x, o.y, o.width, o.height, this.captureImageFile) ? (this.isInitedSession || (t.session.fromPartition("utools.screencapture").protocol.registerFileProtocol("capture", ((e,t)=>{
+                this.captureImageFile && t({
+                    path: this.captureImageFile
+                })
+            }
+            )),
+            this.isInitedSession = !0),
+            this.captureWindow = new t.BrowserWindow({
+                show: !0,
+                x: this.displayBounds.x,
+                y: this.displayBounds.y,
+                width: this.displayBounds.width,
+                height: this.displayBounds.height,
+                thickFrame: !1,
+                resizable: !1,
+                fullscreenable: !0,
+                fullscreen: !0,
+                minimizable: !1,
+                maximizable: !1,
+                movable: !1,
+                autoHideMenuBar: !0,
+                frame: !1,
+                transparent: !0,
+                skipTaskbar: !0,
+                enableLargerThanScreen: !0,
+                alwaysOnTop: !0,
+                webPreferences: {
+                    devTools: !1,
+                    nodeIntegration: !1,
+                    contextIsolation: !1,
+                    enableRemoteModule: !1,
+                    partition: "utools.screencapture",
+                    preload: c().join(__dirname, "screencapture/preload.js")
+                }
+            }),
+            this.captureWindow.on("blur", (()=>{
+                this.captureWindow.destroy(),
+                this.free()
+            }
+            )),
+            this.captureWindow.webContents.on("before-input-event", ((e,t)=>{
+                "keyDown" === t.type && "Escape" === t.code && (this.captureWindow.destroy(),
+                this.free())
+            }
+            )),
+            this.captureWindow.once("closed", (()=>{
+                this.captureWindow = null
+            }
+            )),
+            this.captureWindow.loadURL("file://" + c().join(__dirname, "screencapture/index.html"))) : new t.Notification({
+                title: "uTools",
+                body: "截图失败"
+            }).show()
+        }
+    }
+    function at(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    class ct {
+        constructor(e) {
+            at(this, "handleMacOsScreenColorPickerMouseMove", ((e,i,n)=>{
+                this.mouseScreenX = e,
+                this.mouseScreenY = i;
+                const o = t.screen.getDisplayNearestPoint({
+                    x: e,
+                    y: i
+                }).bounds
+                  , s = e - this.workWindowWidth / 2;
+                let r = i - 20
+                  , a = !1;
+                r + this.workWindowHeight > o.y + o.height && (r -= this.workWindowWidth + (this.workWindowHeight - this.workWindowWidth) / 2,
+                a = !0),
+                this.workWindow.setBounds({
+                    width: this.workWindowWidth,
+                    height: this.workWindowHeight,
+                    x: s,
+                    y: r
+                });
+                for (let e = 0; e < 9; e++)
+                    for (let t = 0; t < 9; t++)
+                        this.pickColors[e][t] = n[9 * e + t];
+                this.workWindow.webContents.send("colors", this.pickColors, a)
+            }
+            )),
+            at(this, "handleLinuxScreenColorPickerMouseMove", ((e,i,n)=>{
+                if (void 0 === e)
+                    return;
+                this.mouseScreenX = e,
+                this.mouseScreenY = i;
+                const o = Math.round(e / this.displayScaleFactor)
+                  , s = Math.round(i / this.displayScaleFactor)
+                  , r = t.screen.getDisplayNearestPoint({
+                    x: o,
+                    y: s
+                })
+                  , a = o - this.workWindowWidth / 2;
+                let c = s - 20
+                  , l = !1;
+                if (c + this.workWindowHeight > r.bounds.y + r.bounds.height && (c -= this.workWindowWidth + (this.workWindowHeight - this.workWindowWidth) / 2,
+                l = !0),
+                this.workWindow.setBounds({
+                    width: this.workWindowWidth,
+                    height: this.workWindowHeight,
+                    x: a,
+                    y: c
+                }),
+                n) {
+                    const e = [];
+                    for (let t = 0; t < n.length; t += 4)
+                        e.push(n[t + 2] + "," + n[t + 1] + "," + n[t]);
+                    for (let t = 0; t < 9; t++)
+                        for (let i = 0; i < 9; i++)
+                            this.pickColors[t][i] = e[9 * t + i]
+                } else
+                    for (let e = 0; e < 9; e++) {
+                        const e = [];
+                        for (let t = 0; t < 9; t++)
+                            e.push("0,0,0");
+                        this.pickColors.push(e)
+                    }
+                this.workWindow.webContents.send("colors", this.pickColors, l)
+            }
+            )),
+            at(this, "handleWindowsScreenColorPickerMouseMove", ((e,i,n,o)=>{
+                if (0 !== e) {
+                    if (1 === e)
+                        return this._workWindowBlurTimeout && clearTimeout(this._workWindowBlurTimeout),
+                        void setImmediate((()=>{
+                            this.workWindow ? this.handlePicker() : k().destroyNativeWindow(this.screenshotWindowId)
+                        }
+                        ));
+                    if (2 === e) {
+                        if (!this.workWindow)
+                            return;
+                        this.workWindow.destroy()
+                    }
+                } else {
+                    if (!this.workWindow)
+                        return;
+                    this.mouseScreenX = i,
+                    this.mouseScreenY = n;
+                    const e = t.screen.screenToDipPoint({
+                        x: i,
+                        y: n
+                    })
+                      , s = t.screen.getDisplayNearestPoint(e)
+                      , r = Math.round(e.x) - this.workWindowWidth / 2;
+                    let a = Math.round(e.y) - 20
+                      , c = !1;
+                    a + this.workWindowHeight > s.bounds.y + s.bounds.height && (a -= this.workWindowWidth + (this.workWindowHeight - this.workWindowWidth) / 2,
+                    c = !0),
+                    this.workWindow.setBounds({
+                        width: this.workWindowWidth,
+                        height: this.workWindowHeight,
+                        x: r,
+                        y: a
+                    });
+                    for (let e = 0; e < 9; e++)
+                        for (let t = 0; t < 9; t++)
+                            this.pickColors[e][t] = o[9 * e + t];
+                    this.workWindow.webContents.send("colors", this.pickColors, c)
+                }
+            }
+            )),
+            at(this, "handlePicker", (()=>{
+                if (this.workWindow && (this.windowCmp.isWindow ? k().destroyNativeWindow(this.screenshotWindowId) : this.workWindow.destroy(),
+                "function" == typeof this.pickedCallback)) {
+                    const e = this.pickColors[4][4]
+                      , t = "#" + e.split(",").map((e=>{
+                        const t = parseInt(e).toString(16);
+                        return 1 === t.length ? "0" + t : t
+                    }
+                    )).join("")
+                      , i = "rgb(" + e + ")";
+                    this.pickedCallback({
+                        hex: t,
+                        rgb: i
+                    })
+                }
+            }
+            )),
+            this.windowCmp = e,
+            this.pickColors = [],
+            this.workWindowWidth = 108,
+            this.workWindowHeight = 188,
+            this.mouseScreenX = 0,
+            this.mouseScreenY = 0;
+            for (let e = 0; e < 9; e++) {
+                const e = [];
+                for (let t = 0; t < 9; t++)
+                    e.push("0,0,0");
+                this.pickColors.push(e)
+            }
+        }
+        action(e) {
+            if (this.workWindow)
+                return;
+            if (this.windowCmp.isMacOs) {
+                if (!k().isHadPrivilege())
+                    return k().requestPrivilege();
+                if (!k().isHadScreenCaptureAccess())
+                    return new t.Notification({
+                        body: "无屏幕录制权限，在「安全性与隐私」->「隐私」中允许屏幕录制权限"
+                    }).show(),
+                    void k().requestScreenCaptureAccess()
+            } else
+                this.windowCmp.isWindow && (this.screenshotWindowId = k().colorPickerScreenshot(this.handleWindowsScreenColorPickerMouseMove));
+            this.pickedCallback = e;
+            const i = {
+                show: !1,
+                alwaysOnTop: !0,
+                resizable: !1,
+                fullscreenable: !1,
+                minimizable: !1,
+                maximizable: !1,
+                closable: !1,
+                skipTaskbar: !0,
+                autoHideMenuBar: !0,
+                frame: !1,
+                transparent: !0,
+                enableLargerThanScreen: !0,
+                hasShadow: !1,
+                width: this.workWindowWidth,
+                height: this.workWindowHeight,
+                webPreferences: {
+                    preload: c().join(__dirname, "screencolorpicker/pixelPreload.js"),
+                    nodeIntegration: !1,
+                    contextIsolation: !1
+                }
+            };
+            this.windowCmp.isLinux && (i.type = "dock"),
+            this.workWindow = new t.BrowserWindow(i),
+            this.workWindow.removeMenu(),
+            this.workWindow.setAlwaysOnTop(!0, "screen-saver"),
+            this.workWindow.loadURL("file://" + c().join(__dirname, "screencolorpicker/pixel.html")),
+            this.workWindow.once("ready-to-show", (()=>{
+                const e = t.screen.getCursorScreenPoint();
+                if (this.workWindow.show(),
+                this.windowCmp.isWindow) {
+                    const i = t.screen.dipToScreenPoint(e);
+                    k().simulateMouseMove(Math.round(i.x), Math.round(i.y))
+                } else
+                    this.windowCmp.isMacOs ? (k().screenColorPickerMouseMoveEvent(this.handleMacOsScreenColorPickerMouseMove),
+                    k().simulateMouseMove(e.x, e.y)) : this.windowCmp.isLinux && (k().screenColorPickerMouseMoveEvent(this.handleLinuxScreenColorPickerMouseMove),
+                    setTimeout((()=>{
+                        const i = t.screen.getDisplayNearestPoint(e);
+                        this.displayScaleFactor = i.scaleFactor,
+                        this.displayScaleFactor > 1 ? k().simulateMouseMove(Math.round(e.x * this.displayScaleFactor), Math.round(e.y * this.displayScaleFactor)) : k().simulateMouseMove(e.x, e.y)
+                    }
+                    ), 50))
+            }
+            )),
+            this.workWindow.on("blur", (()=>{
+                this.windowCmp.isWindow ? this._workWindowBlurTimeout = setTimeout((()=>{
+                    k().destroyNativeWindow(this.screenshotWindowId)
+                }
+                ), 100) : this.workWindow.destroy()
+            }
+            )),
+            this.workWindow.once("closed", (()=>{
+                this.workWindow = null,
+                this.windowCmp.isWindow ? this._workWindowBlurTimeout = null : k().stopScreenColorPickerMouseMoveEvent()
+            }
+            )),
+            this.workWindow.webContents.on("before-input-event", ((e,i)=>{
+                if (e.preventDefault(),
+                "keyDown" === i.type)
+                    if ("Escape" !== i.key)
+                        if ("ArrowUp" !== i.key)
+                            if ("ArrowDown" !== i.key)
+                                if ("ArrowLeft" !== i.key)
+                                    if ("ArrowRight" !== i.key)
+                                        "Space" !== i.code && "Enter" !== i.code && "NumpadEnter" !== i.code || this.handlePicker();
+                                    else {
+                                        const e = t.screen.getCursorScreenPoint()
+                                          , i = t.screen.getDisplayNearestPoint(e).bounds;
+                                        if (e.x === i.x + i.width - 1)
+                                            return;
+                                        k().simulateMouseMove(this.mouseScreenX + 1, this.mouseScreenY)
+                                    }
+                                else {
+                                    const e = t.screen.getCursorScreenPoint()
+                                      , i = t.screen.getDisplayNearestPoint(e).bounds;
+                                    if (e.x === i.x)
+                                        return;
+                                    k().simulateMouseMove(this.mouseScreenX - 1, this.mouseScreenY)
+                                }
+                            else {
+                                const e = t.screen.getCursorScreenPoint()
+                                  , i = t.screen.getDisplayNearestPoint(e).bounds;
+                                if (e.y === i.y + i.height - 1)
+                                    return;
+                                k().simulateMouseMove(this.mouseScreenX, this.mouseScreenY + 1)
+                            }
+                        else {
+                            const e = t.screen.getCursorScreenPoint()
+                              , i = t.screen.getDisplayNearestPoint(e).bounds;
+                            if (e.y === i.y)
+                                return;
+                            k().simulateMouseMove(this.mouseScreenX, this.mouseScreenY - 1)
+                        }
+                    else
+                        this.windowCmp.isWindow ? k().destroyNativeWindow(this.screenshotWindowId) : this.workWindow.destroy()
+            }
+            ))
+        }
+    }
+    class lt {
+        constructor(e) {
+            this.instance = e
+        }
+        registerMainServices() {
+            const e = {}
+              , i = this.instance.window
+              , n = this.instance.voice;
+            Object.values(this.instance).forEach((t=>{
+                "object" == typeof t.mainServices && Object.assign(e, t.mainServices)
+            }
+            )),
+            t.ipcMain.on("main.services", ((t,o,...s)=>{
+                t.sender !== i.mainWindow.webContents && n.voiceWindow && n.voiceWindow.webContents !== t.sender ? t.returnValue = new Error("unauthorized") : e[o](t, ...s)
+            }
+            ))
+        }
+        registerVoiceServices() {
+            const e = this.instance.voice;
+            t.ipcMain.on("voice.services", ((t,i,...n)=>{
+                e.voiceWindow && t.sender === e.voiceWindow.webContents ? e.voiceServices[i](t, ...n) : t.returnValue = new Error("unauthorized")
+            }
+            )),
+            t.ipcMain.handle("voice.services", (async(t,i,...n)=>{
+                if (!e.voiceWindow || t.sender !== e.voiceWindow.webContents)
+                    throw new Error("unauthorized");
+                return await e.voiceServices[i](...n)
+            }
+            ))
+        }
+        registerPluginApiServices() {
+            const e = this.instance.window
+              , i = this.instance.app
+              , n = {};
+            Object.assign(n, e.pluginApiServices, i.pluginApiServices, this.instance.account.pluginApiServices, this.instance.database.pluginApiServices, this.instance.pay.pluginApiServices);
+            const o = i.pluginUtilApiServices;
+            t.ipcMain.on("plugin.api", ((t,i,s)=>{
+                if (i in n) {
+                    const o = e.getPluginIdByWebContents(t.sender);
+                    return o ? void n[i](t, o, s) : void (t.returnValue = new Error("未识别的插件应用"))
+                }
+                i in o ? o[i](t, s) : t.returnValue = new Error("未知接口")
+            }
+            )),
+            t.ipcMain.handle("plugin.api", (async(t,i,s)=>{
+                if (i in n) {
+                    const o = e.getPluginIdByWebContents(t.sender);
+                    if (!o)
+                        throw new Error("未识别的插件应用");
+                    return await n[i](o, s)
+                }
+                if (i in o)
+                    return await o[i](s);
+                throw new Error("未知接口")
+            }
+            ))
+        }
+        registerFFFFFFFFServices() {
+            const e = {}
+              , i = this.instance.window;
+            Object.values(this.instance).forEach((t=>{
+                "object" == typeof t.ffffffffServices && Object.assign(e, t.ffffffffServices)
+            }
+            )),
+            t.ipcMain.on("ffffffff.services", ((t,n,...o)=>{
+                t.sender === i.ffffffff.webContents ? e[n](t, ...o) : t.returnValue = new Error("unauthorized")
+            }
+            )),
+            t.ipcMain.handle("ffffffff.services", (async(t,n,...o)=>{
+                if (t.sender !== i.ffffffff.webContents)
+                    throw new Error("unauthorized");
+                return await e[n](...o)
+            }
+            ))
+        }
+        registerDetachServices() {
+            const e = this.instance.window
+              , i = this.instance.pluginmenu
+              , n = {
+                ...e.detachServices,
+                ...i.detachServices
+            };
+            t.ipcMain.on("detach.services", ((i,o,...s)=>{
+                const r = t.BrowserWindow.fromWebContents(i.sender);
+                if (!r)
+                    return void (i.returnValue = new Error("unauthorized"));
+                let a;
+                for (const t in e.runningPluginPool)
+                    if (e.runningPluginPool[t].detachWindows.includes(r)) {
+                        a = t;
+                        break
+                    }
+                a ? n[o](i, a, r, ...s) : i.returnValue = new Error("unauthorized")
+            }
+            ))
+        }
+        registerPayServices() {
+            const e = this.instance.pay;
+            t.ipcMain.on("pay.services", ((t,i,...n)=>{
+                const o = e.payServices[i];
+                "function" == typeof o ? o(t, ...n) : t.returnValue = new Error("未知接口")
+            }
+            ))
+        }
+        registerClipboardServices() {
+            const e = this.instance.clipboard
+              , i = this.instance.window;
+            t.ipcMain.handle("clipboard.services", (async(t,n,...o)=>{
+                const s = i.getPluginIdByWebContents(t.sender);
+                if ("clipboard" !== s && "dev_clipboard" !== s)
+                    throw new Error("unauthorized");
+                const r = e.clipboardServices[n];
+                if ("function" != typeof r)
+                    throw new Error("未知接口");
+                return await r(...o)
+            }
+            ))
+        }
+        registerDeveloperServices() {
+            const e = this.instance.developer
+              , i = this.instance.window;
+            t.ipcMain.on("developer.services", ((t,n,...o)=>{
+                if ("developer" !== i.getPluginIdByWebContents(t.sender))
+                    return void (t.returnValue = new Error("unauthorized"));
+                const s = e.developerServices[n];
+                "function" == typeof s ? s(t, ...o) : t.returnValue = new Error("未知接口")
+            }
+            )),
+            t.ipcMain.handle("developer.services", (async(t,n,...o)=>{
+                if ("developer" !== i.getPluginIdByWebContents(t.sender))
+                    throw new Error("unauthorized");
+                const s = e.developerServices[n];
+                if ("function" != typeof s)
+                    throw new Error("未知接口");
+                return await s(...o)
+            }
+            ))
+        }
+        registerScreenCaptureServices() {
+            const e = {
+                ...this.instance.screencapture.screenCaptureServices
+            };
+            e.sendKeydown = (e,t)=>{
+                e.sender.sendInputEvent({
+                    type: "keyDown",
+                    keyCode: t
+                })
+            }
+            ,
+            t.ipcMain.on("screencapture.services", ((t,i,...n)=>{
+                const o = e[i];
+                "function" == typeof o ? o(t, ...n) : t.returnValue = new Error("未知接口")
+            }
+            ))
+        }
+        init() {
+            this.registerMainServices(),
+            this.registerVoiceServices(),
+            this.registerPluginApiServices(),
+            this.registerFFFFFFFFServices(),
+            this.registerDetachServices(),
+            this.registerPayServices(),
+            this.registerClipboardServices(),
+            this.registerScreenCaptureServices(),
+            this.registerDeveloperServices()
+        }
+    }
+    const dt = require("stream");
+    var ht = e.n(dt);
+    class ut {
+        constructor(e, t) {
+            var i, n;
+            n = {
+                buildPluginUpxFile: async(e,t)=>await this.buildPluginUpxFile(e, t),
+                getAccountToken: e=>{
+                    e.returnValue = this.accountCmp.getAccountToken()
+                }
+                ,
+                getLocalAccount: e=>{
+                    const t = this.accountCmp.getAccountInfo();
+                    t && delete t.db_secrect_key,
+                    e.returnValue = t
+                }
+                ,
+                isDev: e=>{
+                    e.returnValue = s().dev()
+                }
+                ,
+                runDevPlugin: (e,t,i)=>{
+                    const n = this.pluginsCmp.mount({
+                        pluginPath: c().dirname(t),
+                        updateTime: Date.now()
+                    }, i);
+                    n instanceof Error ? e.returnValue = n : (this.windowCmp.refreshCmdSource(),
+                    e.returnValue = null)
+                }
+                ,
+                isRuningDevPlugin: (e,t)=>{
+                    t = "dev_" + t,
+                    e.returnValue = t in this.pluginsCmp.pluginContainer
+                }
+                ,
+                stopDevPlugin: (e,t)=>{
+                    if (t = "dev_" + t,
+                    this.pluginsCmp.unmount(t))
+                        return this.windowCmp.destroyPlugin(t),
+                        this.windowCmp.refreshCmdSource(),
+                        void (e.returnValue = !0);
+                    e.returnValue = !1
+                }
+                ,
+                isDevPluginOutKill: (e,t)=>{
+                    e.returnValue = this.appCmp.pluginIsOutKill("dev_" + t)
+                }
+                ,
+                toggleOutKillDevPlugin: (e,t,i)=>{
+                    t = "dev_" + t,
+                    i ? this.appCmp.addOutKillPlugin(t) : this.appCmp.removeOutKillPlugin(t),
+                    e.returnValue = !0
+                }
+            },
+            (i = "developerServices")in this ? Object.defineProperty(this, i, {
+                value: n,
+                enumerable: !0,
+                configurable: !0,
+                writable: !0
+            }) : this[i] = n,
+            this.windowCmp = e,
+            this.pluginsCmp = e.pluginsCmp,
+            this.accountCmp = e.accountCmp,
+            this.appCmp = t
+        }
+        buildPluginUpxFile(e, i) {
+            return new Promise(((n,o)=>{
+                if (!V().existsSync(e))
+                    return o(new Error("打包文件夹路径不存在"));
+                try {
+                    if (!V().statSync(e).isDirectory())
+                        return o(new Error("打包文件夹路径不存在"))
+                } catch (e) {
+                    return o(new Error("打包文件夹路径无权限"))
+                }
+                const s = c().join(e, "plugin.json");
+                if (!V().existsSync(s))
+                    return o(new Error("不存在 plugin.json 文件"));
+                try {
+                    this.pluginsCmp.testPluginJsonFile(s, i)
+                } catch (e) {
+                    return o(e)
+                }
+                let r;
+                try {
+                    r = JSON.parse(V().readFileSync(s, "utf-8"))
+                } catch (e) {
+                    return o(new Error("plugin.json 文件解析失败"))
+                }
+                const a = JSON.stringify(Object.assign(r, i))
+                  , l = t.app.getPath("temp")
+                  , d = c().join(l, "utools-developer", I());
+                f().createPackageWithOptions(e, d, {
+                    transform: e=>{
+                        if (e === s)
+                            return new (ht().Transform)({
+                                transform: function(e, t, i) {
+                                    this.replaced || (this.replaced = !0,
+                                    this.push(a)),
+                                    i()
+                                }
+                            })
+                    }
+                }).then((()=>{
+                    const e = V().createReadStream(d)
+                      , t = c().join(l, "utools-developer", i.name + "-" + i.version + ".upx")
+                      , s = V().createWriteStream(t)
+                      , r = b().createGzip();
+                    e.pipe(r).on("error", (()=>o(new Error("压缩错误")))).pipe(s).on("error", (()=>o(new Error("压缩写入错误")))).on("finish", (()=>{
+                        try {
+                            V().unlinkSync(d)
+                        } catch (e) {}
+                        n(t)
+                    }
+                    ))
+                }
+                )).catch((e=>{
+                    o(e)
+                }
+                ))
+            }
+            ))
+        }
+    }
+    function pt(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    class wt {
+        constructor(e, i, n, o) {
+            pt(this, "createPaymentWindow", ((e,i)=>{
+                const n = e.getBounds()
+                  , o = this.windowCmp.isMacOs ? 448 : 420
+                  , s = Math.floor(n.x + n.width / 2 - 166)
+                  , r = Math.floor(n.y + n.height / 2 - o / 2)
+                  , a = new t.BrowserWindow({
+                    show: !1,
+                    focusable: !1,
+                    resizable: !1,
+                    fullscreenable: !1,
+                    fullscreen: !1,
+                    minimizable: !1,
+                    maximizable: !1,
+                    movable: !1,
+                    autoHideMenuBar: !0,
+                    frame: !1,
+                    skipTaskbar: !0,
+                    parent: e,
+                    modal: !0,
+                    width: 332,
+                    height: o,
+                    x: s,
+                    y: r,
+                    title: "uTools 支付",
+                    backgroundColor: this.windowCmp.getWindowBackgroundColor(),
+                    webPreferences: {
+                        nodeIntegration: !1,
+                        contextIsolation: !1,
+                        enableRemoteModule: !1,
+                        partition: "utools.pay",
+                        preload: c().join(__dirname, "pay/preload.js")
+                    }
+                });
+                a.removeMenu(),
+                a.once("ready-to-show", (()=>{
+                    a.show(),
+                    i(a)
+                }
+                ));
+                const l = ()=>{
+                    a.isDestroyed() || a.destroy()
+                }
+                ;
+                e.once("resize", l),
+                e.once("blur", l),
+                a.once("closed", (()=>{
+                    e.removeListener("resize", l),
+                    e.removeListener("blur", l)
+                }
+                )),
+                a.loadURL("file://" + c().join(__dirname, "pay/index.html"))
+            }
+            )),
+            pt(this, "pluginApiServices", {
+                openPayment: (e,i,n)=>{
+                    const o = this.accountCmp.getAccountToken();
+                    if (!o)
+                        return void (e.returnValue = new Error("未登录帐号"));
+                    if (!n || "object" != typeof n || !n.goodsId)
+                        return void (e.returnValue = new Error("参数错误"));
+                    const s = e.sender
+                      , r = t.BrowserWindow.fromWebContents(s);
+                    r ? (this.createPaymentWindow(r, (e=>{
+                        const {goodsId: t, outOrderId: r, attach: a} = n
+                          , c = {
+                            plugin_name: i,
+                            goods_id: t,
+                            out_order_id: r || "",
+                            attach: a || ""
+                        };
+                        i.startsWith("dev_") && (c.plugin_name = i.replace("dev_", "")),
+                        m(this.config.paymentsURL + o, c).then((t=>{
+                            const n = this.pluginsCmp.pluginContainer[i];
+                            if (!n)
+                                return void e.webContents.executeJavaScript('window.initRenderError("未找到运行中的插件应用信息")');
+                            const r = t.order_id;
+                            this.orderResHub[r] = {
+                                pluginWebContents: s,
+                                status: 0,
+                                payStatusURL: this.config.payStatusURL.replace("{query}", r) + o
+                            },
+                            e.once("closed", (()=>{
+                                r in this.orderResHub && 0 === this.orderResHub[r].status && delete this.orderResHub[r]
+                            }
+                            ));
+                            const a = {
+                                pluginLogo: n.logo,
+                                pluginName: n.pluginName,
+                                payCodeURL: this.config.payCodeURL.replace("{query}", r) + o,
+                                order: t
+                            };
+                            e.webContents.executeJavaScript(`window.initRender(${JSON.stringify(a)})`)
+                        }
+                        )).catch((t=>{
+                            e.webContents.executeJavaScript(`window.initRenderError(${JSON.stringify(t.message)})`)
+                        }
+                        ))
+                    }
+                    )),
+                    e.returnValue = !0) : e.returnValue = new Error("未知窗口")
+                }
+                ,
+                fetchUserPayments: async e=>{
+                    e.startsWith("dev_") && (e = e.replace("dev_", ""));
+                    const t = this.accountCmp.getAccountToken();
+                    if (!t)
+                        throw new Error("未登录帐号");
+                    return await w(this.config.paymentsURL + t, {
+                        plugin_name: e
+                    })
+                }
+            }),
+            pt(this, "payServices", {
+                closeWindow: e=>{
+                    t.BrowserWindow.fromWebContents(e.sender).destroy()
+                }
+                ,
+                goBuyMember: e=>{
+                    t.BrowserWindow.fromWebContents(e.sender).destroy(),
+                    this.windowCmp.ffffffff.goAccountDb()
+                }
+                ,
+                startLoopCheckOrderResult: (e,i)=>{
+                    const n = this.orderResHub[i];
+                    if (!n)
+                        return;
+                    n.status = 1;
+                    const o = e.sender
+                      , s = t.BrowserWindow.fromWebContents(o)
+                      , r = 1e3
+                      , a = Date.now()
+                      , c = ()=>{
+                        if (Date.now() - a > 3e5)
+                            return s.isDestroyed() || s.destroy(),
+                            void delete this.orderResHub[i];
+                        w(n.payStatusURL).then((e=>{
+                            if (1 !== e.message)
+                                if (2 !== e.message) {
+                                    if (10 === e.message)
+                                        return new t.Notification({
+                                            title: "uTools 支付",
+                                            body: "支付成功"
+                                        }).show(),
+                                        s.isDestroyed() || s.destroy(),
+                                        delete this.orderResHub[i],
+                                        void (n.pluginWebContents && !n.pluginWebContents.isDestroyed() && n.pluginWebContents.executeJavaScript("\n              if (window.utools && window.utools.__event__ && typeof window.utools.__event__.openPaymentCallback === 'function') {\n                try { window.utools.__event__.openPaymentCallback() } catch(e) {} \n                delete window.utools.__event__.openPaymentCallback\n              }".trim()));
+                                    s.isDestroyed() || s.destroy(),
+                                    delete this.orderResHub[i]
+                                } else
+                                    setTimeout(c, r);
+                            else
+                                s.isDestroyed() ? delete this.orderResHub[i] : setTimeout(c, r)
+                        }
+                        )).catch((()=>{
+                            setTimeout(c, r)
+                        }
+                        ))
+                    }
+                    ;
+                    setTimeout(c, r)
+                }
+            }),
+            this.config = e,
+            this.accountCmp = i,
+            this.pluginsCmp = n,
+            this.windowCmp = o,
+            this.orderResHub = {}
+        }
+    }
+    const mt = require("https");
+    var gt = e.n(mt);
+    class ft {
+        constructor(e, t) {
+            this.windowCmp = e,
+            this.pluginsCmp = e.pluginsCmp,
+            this.dbCmp = t
+        }
+        open() {
+            this.bootWindow || (this.bootWindow = new t.BrowserWindow({
+                show: !1,
+                alwaysOnTop: !0,
+                resizable: !1,
+                fullscreenable: !1,
+                minimizable: !1,
+                maximizable: !1,
+                closable: !1,
+                skipTaskbar: !0,
+                autoHideMenuBar: !0,
+                frame: !1,
+                enableLargerThanScreen: !0,
+                width: 800,
+                height: 587,
+                webPreferences: {
+                    preload: c().join(__dirname, "helpboot/preload.js"),
+                    nodeIntegration: !1,
+                    contextIsolation: !1
+                }
+            }),
+            this.bootWindow.removeMenu(),
+            this.bootWindow.loadURL("file://" + c().join(__dirname, "helpboot/index.html")),
+            this.bootWindow.once("closed", (()=>{
+                this.bootWindow = null
+            }
+            )),
+            this.bootWindow.once("ready-to-show", (()=>{
+                this.bootWindow.show()
+            }
+            )),
+            t.ipcMain.once("helpboot.services.done", (async(e,i)=>{
+                if (!this.bootWindow)
+                    return;
+                if (this.bootWindow.destroy(),
+                !Array.isArray(i) || 0 === i.length)
+                    return;
+                const n = t.app.getPath("temp")
+                  , o = this.windowCmp.config.pluginDownloadURL + "?mid=" + this.windowCmp.accountCmp.machineId + "&nid=" + this.windowCmp.accountCmp.nativeId + "&helpboot=true"
+                  , s = [];
+                for (const e of i) {
+                    const t = c().join(n, "utools-" + e.name + "-" + Date.now() + ".upx");
+                    try {
+                        await this.pluginDownload(o.replace("{query}", e.name), t),
+                        await this.pluginsCmp.ffffffffServices.pluginInstall(e.name, t),
+                        s.push(e.name),
+                        d().unlinkSync(t)
+                    } catch (e) {}
+                }
+                const r = ["截图", "窗口截图", "取色", "显示桌面"];
+                this.windowCmp.isWindow && r.push("置顶窗口", "记事本"),
+                s.includes("clipboard") && r.push("剪贴板"),
+                s.includes("calc") && r.push("计算稿纸"),
+                s.includes("ocr") && r.push("截图并自动识别");
+                const a = "panelcmd/" + Date.now() + "_"
+                  , l = r.map(((e,t)=>({
+                    _id: a + t,
+                    cmd: e
+                })));
+                this.dbCmp.bulkDocs("/", l),
+                this.windowCmp.refreshCmdSource()
+            }
+            )))
+        }
+        pluginDownload(e, i) {
+            return new Promise(((n,o)=>{
+                if (!t.net.online)
+                    return o(new Error("无网络"));
+                gt().get(e, (e=>{
+                    if (200 === e.statusCode) {
+                        const t = d().createWriteStream(i);
+                        t.on("finish", (()=>n())),
+                        t.on("error", (e=>{
+                            t.close();
+                            try {
+                                d().unlinkSync(i)
+                            } catch (e) {}
+                            o(e)
+                        }
+                        )),
+                        e.pipe(t)
+                    } else
+                        301 === e.statusCode || 302 === e.statusCode ? this.pluginDownload(e.headers.location, i).then((()=>n())).catch((e=>o(e))) : o(new Error("error status code: " + e.statusCode))
+                }
+                )).on("error", (e=>{
+                    o(e)
+                }
+                ))
+            }
+            ))
+        }
+    }
+    const yt = require("net");
+    var bt = e.n(yt);
+    function Ct(e, t, i) {
+        return t in e ? Object.defineProperty(e, t, {
+            value: i,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
+        }) : e[t] = i,
+        e
+    }
+    const vt = 1e3;
+    class Wt {
+        constructor(e, i, n, o) {
+            if (Ct(this, "exitAllConnection", (()=>{
+                this._UID_ = null,
+                this._loopLocalOnlineHeartTimeout && (clearTimeout(this._loopLocalOnlineHeartTimeout),
+                this._loopLocalOnlineHeartTimeout = null),
+                this.listenServer && this.listenServer.close(),
+                this._loopCheckOnlinePingTimeout && (clearTimeout(this._loopCheckOnlinePingTimeout),
+                this._loopCheckOnlinePingTimeout = null);
+                const e = Object.values(this.onlineConnectionDocDic);
+                e.length > 0 && (this.removeRemoteSocketFeatures(e),
+                this.onlineConnectionDocDic = {})
+            }
+            )),
+            Ct(this, "checkOnlinePing", (()=>{
+                this._loopCheckOnlinePingTimeout && (clearTimeout(this._loopCheckOnlinePingTimeout),
+                this._loopCheckOnlinePingTimeout = null),
+                this.loopCheckOnlinePing()
+            }
+            )),
+            Ct(this, "loopCheckOnlinePing", (async()=>{
+                if (!this._UID_)
+                    return void (this._loopCheckOnlinePingTimeout = null);
+                const e = [];
+                for (const t in this.onlineConnectionDocDic) {
+                    const i = this.onlineConnectionDocDic[t];
+                    await this.ping(i) || e.push(i)
+                }
+                e.length > 0 && (e.forEach((e=>{
+                    delete this.onlineConnectionDocDic[e._id]
+                }
+                )),
+                this.removeRemoteSocketFeatures(e)),
+                0 !== Object.keys(this.onlineConnectionDocDic).length ? this._loopCheckOnlinePingTimeout = setTimeout(this.loopCheckOnlinePing, 6e5) : this._loopCheckOnlinePingTimeout = null
+            }
+            )),
+            Ct(this, "loopLocalOnlineHeart", (()=>{
+                this._loopLocalOnlineHeartTimeout = setTimeout((()=>{
+                    if (this._UID_) {
+                        if (t.net.online) {
+                            const e = Date.now();
+                            e - this.localSocketDoc.onlineAt > 432e5 && (this.localSocketDoc.onlineAt = e,
+                            this.putLocalSocketDoc())
+                        }
+                        this.loopLocalOnlineHeart()
+                    }
+                }
+                ), 864e5)
+            }
+            )),
+            Ct(this, "sendText", ((e,i,n)=>new Promise((o=>{
+                if (!t.net.online || !this._UID_)
+                    return o(!1);
+                if (!e.lanip || !e.port)
+                    return o(!1);
+                const s = new (bt().Socket);
+                s.setTimeout(vt),
+                s.setEncoding("utf-8"),
+                s.connect(e.port, e.lanip, (()=>{
+                    const e = Date.now()
+                      , t = JSON.stringify({
+                        timestamp: e,
+                        from: this.localSocketKey,
+                        secret: u().createHash("md5").update(e + this._UID_ + this.localSocketKey).digest("hex"),
+                        method: i
+                    });
+                    "ping" === i ? s.end(t) : s.write(t)
+                }
+                ));
+                let r = !1;
+                s.once("data", (e=>{
+                    r = !0,
+                    "ping" !== i && s.end(n)
+                }
+                )),
+                s.once("timeout", (()=>{
+                    r = !1,
+                    s.destroy()
+                }
+                )),
+                s.once("error", (()=>{
+                    r = !1,
+                    s.destroy()
+                }
+                )),
+                s.once("close", (()=>{
+                    o(r)
+                }
+                ))
+            }
+            )))),
+            Ct(this, "ping", (e=>this.sendText(e, "ping"))),
+            Ct(this, "sendFile", ((e,i,n,o)=>new Promise((s=>{
+                if (!t.net.online || !this._UID_)
+                    return s(!1);
+                if (!e.lanip || !e.port)
+                    return s(!1);
+                const r = new (bt().Socket);
+                r.setTimeout(vt),
+                r.connect(e.port, e.lanip, (()=>{
+                    const e = JSON.stringify({
+                        timestamp: o,
+                        from: this.localSocketKey,
+                        secret: u().createHash("md5").update(o + this._UID_ + this.localSocketKey).digest("hex"),
+                        method: "file",
+                        fileName: i
+                    });
+                    r.write(e, "utf-8")
+                }
+                ));
+                let a = !1;
+                r.once("data", (e=>{
+                    a = !0,
+                    V().createReadStream(n).pipe(r, {
+                        end: !0
+                    })
+                }
+                )),
+                r.once("timeout", (()=>{
+                    a = !1,
+                    r.destroy()
+                }
+                )),
+                r.once("error", (()=>{
+                    a = !1,
+                    r.destroy()
+                }
+                )),
+                r.once("close", (()=>{
+                    s(a)
+                }
+                ))
+            }
+            )))),
+            Ct(this, "readDirectoryFiles", ((e,i,n)=>{
+                let o;
+                try {
+                    o = V().readdirSync(i)
+                } catch (e) {}
+                o && (0 !== o.length ? o.forEach((o=>{
+                    const s = c().join(i, o);
+                    let r;
+                    try {
+                        r = V().lstatSync(s)
+                    } catch (e) {
+                        return
+                    }
+                    if (r.isFile()) {
+                        if (n.push({
+                            name: e + "/" + o,
+                            path: s
+                        }),
+                        1e3 === n.length && 1 === t.dialog.showMessageBoxSync({
+                            buttons: ["继续", "取消发送"],
+                            message: "已读取到 1000 个待发送文件，是否选择继续发送?",
+                            defaultId: 1,
+                            cancelId: 1
+                        }))
+                            throw new Error("取消发送")
+                    } else
+                        r.isDirectory() && this.readDirectoryFiles(e + "/" + o, s, n)
+                }
+                )) : n.push({
+                    name: e
+                }))
+            }
+            )),
+            Ct(this, "sendFiles", (async(e,i)=>{
+                const n = [];
+                for (const e of i)
+                    if (e.isFile)
+                        n.push(e);
+                    else if (e.isDirectory)
+                        try {
+                            this.readDirectoryFiles(e.name, e.path, n)
+                        } catch (e) {
+                            return
+                        }
+                if (0 === n.length)
+                    return void new t.Notification({
+                        body: "无文件可发送"
+                    }).show();
+                const o = Date.now();
+                let s = 0;
+                for (const t of n) {
+                    let i;
+                    if (i = t.path ? await this.sendFile(e, t.name, t.path, o) : await this.sendText(e, "folder", t.name),
+                    !i)
+                        break;
+                    s++
+                }
+                if (n.length === s)
+                    return new t.Notification({
+                        body: s + " 个文件已发送到远端 " + M(e.platform) + " 「下载」目录"
+                    }).show(),
+                    void await this.sendText(e, "show-file", o + "-" + i[0].name);
+                0 === s ? new t.Notification({
+                    body: "发送失败"
+                }).show() : new t.Notification({
+                    body: "连接中断，" + s + " 个文件已发送到远端 " + M(e.platform) + " 「下载」目录，未发送 " + (n.length - s) + " 个"
+                }).show(),
+                this.checkOnlinePing()
+            }
+            )),
+            Ct(this, "mainServices", {
+                onlineTrigger: ()=>{
+                    this.listenServer && (this._onlineTriggerTimeout && clearTimeout(this._onlineTriggerTimeout),
+                    this._onlineTriggerTimeout = setTimeout((()=>{
+                        this._onlineTriggerTimeout = null,
+                        this.connectionInit()
+                    }
+                    ), 1e4))
+                }
+            }),
+            this.pluginsCmp = e,
+            this.dbCmp = n,
+            this.windowCmp = i,
+            this.accountCmp = o,
+            this.localSocketKey = "socket/" + this.accountCmp.machineId,
+            this.windowCmp.isWindow)
+                this.downloadsPath = k().getDownloadsFolderPath();
+            else
+                try {
+                    this.downloadsPath = t.app.getPath("downloads")
+                } catch (e) {}
+            this.downloadsPath || (this.downloadsPath = t.app.getPath("desktop")),
+            this.onlineConnectionDocDic = {}
+        }
+        async putLocalSocketDoc() {
+            const e = await this.dbCmp.put("/", this.localSocketDoc);
+            e.ok && (this.localSocketDoc._rev = e.rev)
+        }
+        init() {
+            this.accountCmp.on("logout", this.exitAllConnection),
+            this.accountCmp.on("undbsync", this.exitAllConnection),
+            this._ignoreDbPull = !0,
+            this.dbCmp.on("replicate-start", (()=>{
+                this._ignoreDbPull = !0
+            }
+            )),
+            this.dbCmp.on("replicate-complete", (()=>{
+                this._loopLocalOnlineHeartTimeout || this.loopLocalOnlineHeart(),
+                this.connectionInit().then((()=>{
+                    this._ignoreDbPull = !1
+                }
+                ))
+            }
+            )),
+            this.dbCmp.on("pull", (e=>{
+                if (this._ignoreDbPull)
+                    return;
+                const t = e.filter((e=>e._id.startsWith("socket/") && !e._deleted && e._id !== this.localSocketKey));
+                0 !== t.length && this.setRemoteSocketFeatures(t).then((()=>{
+                    this.listenServer || this.createListenServer()
+                }
+                ))
+            }
+            ))
+        }
+        async connectionInit() {
+            const e = this.accountCmp.getAccountInfo();
+            if (!e)
+                return;
+            this._UID_ = u().createHash("md5").update(e.db_secrect_key + e.uid).digest("hex");
+            const t = await this.dbCmp.allDocs("/", "socket/");
+            if (this.localSocketDoc = t.find((e=>e._id === this.localSocketKey)),
+            this.localSocketDoc ? t.splice(t.indexOf(this.localSocketDoc), 1) : this.localSocketDoc = {
+                _id: this.localSocketKey,
+                platform: process.platform
+            },
+            t.length > 0) {
+                if (t.length > 0) {
+                    const e = Date.now() - 1728e5
+                      , i = t.filter((t=>t.onlineAt < e));
+                    i.length > 0 && (i.forEach((e=>{
+                        e._delete = !0,
+                        t.splice(t.indexOf(e), 1)
+                    }
+                    )),
+                    await this.dbCmp.bulkDocs("/", i))
+                }
+                if (t.length > 0)
+                    return await this.setRemoteSocketFeatures(t),
+                    void (this.listenServer ? (this.localSocketDoc.lanip = await E(),
+                    this.localSocketDoc.onlineAt = Date.now(),
+                    this.putLocalSocketDoc()) : this.createListenServer())
+            }
+            this.listenServer && this.listenServer.close(),
+            this.localSocketDoc.hostname = v().hostname(),
+            this.localSocketDoc.onlineAt = Date.now(),
+            this.localSocketDoc.lanip = null,
+            this.localSocketDoc.port = 0,
+            this.putLocalSocketDoc()
+        }
+        async setRemoteSocketFeatures(e) {
+            let t = !1;
+            for (const i of e) {
+                if (!i._id.startsWith("socket/") || i._id === this.localSocketKey)
+                    continue;
+                const e = this.onlineConnectionDocDic[i._id];
+                if (e && e.lanip === i.lanip && e.port === i.port)
+                    continue;
+                if (!await this.ping(i)) {
+                    e && (delete this.onlineConnectionDocDic[i._id],
+                    this.pluginsCmp.removeFeature("", i._id + "@copy"),
+                    this.pluginsCmp.removeFeature("", i._id + "@send"),
+                    t || (t = !0));
+                    continue
+                }
+                const n = "我的 " + M(i.platform) + "「" + i.hostname + "」";
+                this.pluginsCmp.setFeature("", {
+                    code: i._id + "@copy",
+                    cmds: [{
+                        type: "over",
+                        label: "复制到" + n,
+                        maxLength: 99999999
+                    }, {
+                        type: "img",
+                        label: "复制到" + n
+                    }],
+                    explain: i.lanip,
+                    icon: "res/native/" + i.platform + ".png"
+                }, !0),
+                this.pluginsCmp.setFeature("", {
+                    code: i._id + "@send",
+                    cmds: [{
+                        type: "files",
+                        label: "发送到" + n
+                    }],
+                    explain: i.lanip,
+                    icon: "res/native/" + i.platform + ".png"
+                }, !0),
+                t || (t = !0),
+                this.onlineConnectionDocDic[i._id] = i
+            }
+            t && (!this._loopCheckOnlinePingTimeout && Object.keys(this.onlineConnectionDocDic).length > 0 && (this._loopCheckOnlinePingTimeout = setTimeout(this.loopCheckOnlinePing, 6e5)),
+            this.windowCmp.refreshCmdSource())
+        }
+        removeRemoteSocketFeatures(e) {
+            0 !== e.length && (e.forEach((e=>{
+                this.pluginsCmp.removeFeature("", e._id + "@copy"),
+                this.pluginsCmp.removeFeature("", e._id + "@send")
+            }
+            )),
+            this.windowCmp.refreshCmdSource())
+        }
+        async createListenServer() {
+            this.listenServer && this.listenServer.close(),
+            this.localSocketDoc.lanip = await E(),
+            this.localSocketDoc.hostname = v().hostname(),
+            this.listenServer = bt().createServer((e=>{
+                e.setTimeout(vt),
+                e.once("timeout", (()=>{
+                    e.destroy()
+                }
+                )),
+                e.once("error", (()=>{
+                    e.destroy()
+                }
+                )),
+                e.once("data", (i=>{
+                    let n;
+                    try {
+                        n = JSON.parse(i.toString("utf-8"))
+                    } catch (t) {
+                        return void e.destroy()
+                    }
+                    if (this._UID_)
+                        if (n.secret === u().createHash("md5").update(n.timestamp + this._UID_ + n.from).digest("hex")) {
+                            if (!(n.from in this.onlineConnectionDocDic)) {
+                                let t = e.remoteAddress;
+                                this._trySetRemoteOnlineTimeout && clearTimeout(this._trySetRemoteOnlineTimeout),
+                                this._trySetRemoteOnlineTimeout = setTimeout((async()=>{
+                                    if (this._trySetRemoteOnlineTimeout = null,
+                                    n.from in this.onlineConnectionDocDic)
+                                        return;
+                                    if (bt().isIPv6(t)) {
+                                        const e = t.toLowerCase().replace("::ffff:", "").trim();
+                                        bt().isIPv4(e) && (t = e)
+                                    }
+                                    const e = await this.dbCmp.get("/", n.from);
+                                    e && (e.lanip !== t && (e.lanip = t),
+                                    this.setRemoteSocketFeatures([e]))
+                                }
+                                ), 3e3)
+                            }
+                            if ("ping" !== n.method) {
+                                if ("text" === n.method) {
+                                    const i = [];
+                                    return e.on("data", (e=>{
+                                        i.push(e)
+                                    }
+                                    )),
+                                    e.on("end", (()=>{
+                                        setTimeout((()=>{
+                                            t.clipboard.writeText(Buffer.concat(i).toString())
+                                        }
+                                        ))
+                                    }
+                                    )),
+                                    void e.write("ok")
+                                }
+                                if ("image" === n.method) {
+                                    const i = [];
+                                    return e.on("data", (e=>{
+                                        i.push(e)
+                                    }
+                                    )),
+                                    e.on("end", (()=>{
+                                        setTimeout((()=>{
+                                            t.clipboard.writeImage(t.nativeImage.createFromDataURL(Buffer.concat(i).toString()))
+                                        }
+                                        ))
+                                    }
+                                    )),
+                                    void e.write("ok")
+                                }
+                                if ("folder" === n.method)
+                                    return e.on("data", (e=>{
+                                        const t = c().join(this.downloadsPath, e.toString());
+                                        V().existsSync(t) || V().mkdirSync(t, {
+                                            recursive: !0
+                                        })
+                                    }
+                                    )),
+                                    void e.write("ok");
+                                if ("file" === n.method) {
+                                    const t = c().join(this.downloadsPath, n.fileName + "." + n.timestamp);
+                                    if (n.fileName.includes("/")) {
+                                        const e = c().dirname(t);
+                                        V().existsSync(e) || V().mkdirSync(e, {
+                                            recursive: !0
+                                        })
+                                    }
+                                    const i = V().createWriteStream(t);
+                                    return e.once("end", (()=>{
+                                        const e = c().join(this.downloadsPath, n.fileName);
+                                        try {
+                                            V().existsSync(e) ? V().renameSync(t, c().join(this.downloadsPath, n.timestamp + "-" + n.fileName)) : V().renameSync(t, e)
+                                        } catch (e) {}
+                                    }
+                                    )),
+                                    e.pipe(i, {
+                                        end: !0
+                                    }),
+                                    void e.write("ok")
+                                }
+                                if ("show-file" === n.method)
+                                    return e.on("data", (e=>{
+                                        const i = e.toString();
+                                        let n;
+                                        (V().existsSync(n = c().join(this.downloadsPath, i)) || V().existsSync(n = c().join(this.downloadsPath, i.substr(14)))) && t.shell.showItemInFolder(n)
+                                    }
+                                    )),
+                                    void e.write("ok");
+                                e.destroy()
+                            } else
+                                e.end("ok")
+                        } else
+                            e.destroy();
+                    else
+                        e.destroy()
+                }
+                ))
+            }
+            )).listen((()=>{
+                this.localSocketDoc.onlineAt = Date.now(),
+                this.localSocketDoc.port = this.listenServer.address().port,
+                this.putLocalSocketDoc()
+            }
+            )).on("close", (()=>{
+                this.listenServer = null
+            }
+            ))
+        }
+        sendData(e, i, n) {
+            const o = e.split("@")[0]
+              , s = this.onlineConnectionDocDic[o];
+            s && (this.windowCmp.hideMainWindow(),
+            "over" === i ? this.sendText(s, "text", n).then((e=>{
+                e ? new t.Notification({
+                    body: "文本已复制到远端 " + M(s.platform) + " 剪贴板"
+                }).show() : (new t.Notification({
+                    body: "发送失败"
+                }).show(),
+                this.checkOnlinePing())
+            }
+            )) : "img" === i ? this.sendText(s, "image", n).then((e=>{
+                e ? new t.Notification({
+                    body: "图片已复制到远端 " + M(s.platform) + " 剪贴板"
+                }).show() : (new t.Notification({
+                    body: "发送失败"
+                }).show(),
+                this.checkOnlinePing())
+            }
+            )) : "files" === i && this.sendFiles(s, n))
+        }
+    }
+    let St = t.app.getPath("userData")
+      , Pt = "https://open.u-tools.cn"
+      , kt = {
+        protocol: "https",
+        host: "db.u-tools.cn"
+    };
+    s().dev() && (St = c().join(t.app.getPath("appData"), "dev-utools"),
+    d().existsSync(St) || d().mkdirSync(St),
+    Pt = "http://open.test.u-tools.cn",
+    kt = {
+        protocol: "http",
+        host: "192.168.2.119",
+        port: "5984"
+    });
+    const xt = {
+        path: {
+            root: St,
+            plugins: c().join(St, "plugins"),
+            database: c().join(St, "database"),
+            settings: c().join(St, "settings"),
+            clipboardData: c().join(St, "clipboard-data")
+        },
+        app: {
+            redirectURL: Pt + "/redirect?target=",
+            downloadURL: "https://u.tools",
+            feedbackURL: "https://yuanliao.info",
+            newestVersionURL: "https://publish.u-tools.cn/version2/newest-version.json"
+        },
+        database: {
+            sync: kt
+        },
+        window: {
+            backgroundColor: "#FFFFFF",
+            darkBackgroundColor: "#303133",
+            initHeight: 56,
+            initWidth: 800,
+            openPluginHeight: 600,
+            pluginDownloadURL: Pt + "/plugins/{query}/download"
+        },
+        plugin: {
+            checkUpdateURL: Pt + "/plugins/plugin_update_check",
+            hashURL: Pt + "/plugins/{query}/hash"
+        },
+        autoupdate: {
+            linuxURL: "https://publish.u-tools.cn/version2/",
+            linuxDownloadURL: "https://u.tools"
+        },
+        report: {
+            logsURL: Pt + "/logs?access_token=",
+            interval: 6e4
+        },
+        account: {
+            muserURL: Pt + "/muser?access_token=",
+            loginURL: Pt + "/login",
+            profileURL: Pt + "/profile",
+            dbSyncURL: Pt + "/database/sync",
+            logoutURL: Pt + "/logout",
+            temporaryToken: Pt + "/temporary_token"
+        },
+        voice: {
+            contentWidth: 260,
+            initContentHeight: 56,
+            translateURL: Pt + "/translates?access_token="
+        },
+        pay: {
+            paymentsURL: Pt + "/payments?access_token=",
+            payCodeURL: Pt + "/payments/{query}/pay_code?access_token=",
+            payStatusURL: Pt + "/payments/{query}/pay_status?access_token="
+        }
+    };
+    (new class extends class {
+        constructor() {
+            this.services = {}
+        }
+        get() {
+            let e = null;
+            const t = Array.from(arguments);
+            return t.length < 1 || this.has(t[0]) && (e = this.services[t[0]].resolve(t.slice(1), this)),
+            e
+        }
+        mget() {
+            const e = Array.from(arguments)
+              , t = {};
+            for (const i in e)
+                "string" == typeof e[i] ? t[e[i]] = this.get(e[i]) : t[e[i][0]] = this.get(...e[i]);
+            return t
+        }
+        set(e, t, i) {
+            return this.services[e] = new class {
+                constructor(e, t, i) {
+                    if ("string" != typeof e || "" === e)
+                        throw new Error("Name is required");
+                    this.name = e,
+                    this.contrete = t,
+                    this.shared = i,
+                    this.instance = null
+                }
+                shareable(e) {
+                    this.shared = e
+                }
+                resolve(e, t) {
+                    return !0 === this.shared && null !== this.instance || ("function" == typeof this.contrete ? this.instance = this.contrete.apply(t, e) : (this.shared = !0,
+                    this.instance = this.contrete)),
+                    this.instance
+                }
+            }
+            (e,t,i),
+            this
+        }
+        singleton(e, t) {
+            return this.set(e, t, !0),
+            this
+        }
+        has(e) {
+            return e in this.services
+        }
+        remove(e) {
+            return delete this.services[e],
+            this
+        }
+    }
+    {
+        launch() {
+            if (!t.app.requestSingleInstanceLock())
+                return void t.app.quit();
+            t.app.on("second-instance", ((e,t,i)=>{
+                try {
+                    this.get("window").display.trigger(!0)
+                } catch (e) {}
+            }
+            )),
+            s().dev() && t.app.commandLine.appendSwitch("disable-features", "OutOfBlinkCors");
+            const e = Date.now();
+            if (s().macOS()) {
+                if (s().production() && !t.app.isInApplicationsFolder())
+                    return void t.app.moveToApplicationsFolder();
+                t.app.dock.hide()
+            } else
+                s().windows() ? (t.app.commandLine.appendSwitch("disable-http-cache"),
+                t.app.disableHardwareAcceleration(),
+                t.app.setAppUserModelId("org.yuanli.utools")) : s().linux() && t.app.disableHardwareAcceleration();
+            const i = !d().existsSync(xt.path.settings);
+            n().setPath(xt.path.settings),
+            t.app.on("ready", (()=>{
+                new class {
+                    constructor(e) {
+                        this.container = e
+                    }
+                    register() {
+                        this.container.set("config", (()=>{
+                            const e = new class {
+                                get(e=null, t=null) {
+                                    return e ? this.getData(e, r, t) : r
+                                }
+                                set(e, t={}) {
+                                    return "object" == typeof e ? this.setObject(r, e) : "string" == typeof e && "" !== e && void this.setData(e, r, t)
+                                }
+                                getData(e, t, i) {
+                                    if (-1 === e.indexOf("."))
+                                        return void 0 !== t[e] ? t[e] : i;
+                                    {
+                                        const n = e.split(".")
+                                          , o = n.splice(0, 1)[0]
+                                          , s = n.join(".");
+                                        return this.getData(s, t[o], i)
+                                    }
+                                }
+                                setData(e, t, i) {
+                                    const n = e.split(".");
+                                    if (-1 === e.indexOf("."))
+                                        t[e] = i;
+                                    else {
+                                        const e = n.splice(0, 1)[0];
+                                        "object" != typeof t[e] && (t[e] = {});
+                                        const o = n.join(".");
+                                        this.setData(o, t[e], i)
+                                    }
+                                }
+                                setObject(e, t={}) {
+                                    for (const i in t)
+                                        "object" == typeof t[i] && "object" == typeof e && "object" == typeof e[i] ? e[i] = this.setObject(e[i], t[i]) : e[i] = t[i];
+                                    return e
+                                }
+                            }
+                            ;
+                            return e.set(xt),
+                            e
+                        }
+                        ), !0),
+                        this.container.set("account", (()=>{
+                            const e = this.container.get("config").get("account");
+                            return new Ae(e)
+                        }
+                        ), !0),
+                        this.container.set("report", (()=>{
+                            const e = this.container.get("config").get("report")
+                              , i = this.container.get("account");
+                            return new class {
+                                constructor(e, i) {
+                                    this.config = e,
+                                    this.accountCmp = i,
+                                    this.reportQueue = [],
+                                    this.appVersion = t.app.getVersion(),
+                                    this.osRelease = v().release()
+                                }
+                                info(e, t) {
+                                    t ? this.reportQueue.push({
+                                        ...t,
+                                        event: e,
+                                        "@timestamp": (new Date).toISOString()
+                                    }) : this.reportQueue.push({
+                                        event: e,
+                                        "@timestamp": (new Date).toISOString()
+                                    }),
+                                    this.netTimeout || (this.netTimeout = setTimeout((()=>{
+                                        this.netTimeout = null,
+                                        this.netPost()
+                                    }
+                                    ), this.config.interval))
+                                }
+                                netPost() {
+                                    if (t.net.online && 0 !== this.reportQueue.length) {
+                                        for (const e of this.reportQueue)
+                                            e.machineId = this.accountCmp.machineId,
+                                            e.nid = this.accountCmp.nativeId,
+                                            e.platform = process.platform,
+                                            e.arch = process.arch,
+                                            e.appVersion = this.appVersion,
+                                            e.osRelease = this.osRelease;
+                                        m(this.config.logsURL + this.accountCmp.getAccountToken(), [...this.reportQueue]).catch((()=>{}
+                                        )),
+                                        this.reportQueue = []
+                                    }
+                                }
+                            }
+                            (e,i)
+                        }
+                        ), !0),
+                        this.container.set("plugins", (()=>{
+                            const e = this.container.get("config")
+                              , t = this.container.get("report")
+                              , i = this.container.get("account");
+                            return new le(c().join(__dirname, "plugins"),e.get("path.plugins"),e.get("plugin"),t,i)
+                        }
+                        ), !0),
+                        this.container.set("clipboard", (()=>{
+                            const e = this.container.get("config")
+                              , t = this.container.get("plugins");
+                            return new Ee(e.get("path.clipboardData"),t)
+                        }
+                        ), !0),
+                        this.container.set("window", (()=>{
+                            const e = this.container.get("config").get("window")
+                              , i = this.container.get("plugins")
+                              , o = this.container.get("clipboard")
+                              , r = this.container.get("report")
+                              , a = this.container.get("account");
+                            return new class {
+                                constructor(e, i, o, r, a) {
+                                    ge(this, "mainServices", {
+                                        getPluginContainer: e=>{
+                                            e.returnValue = this.pluginsCmp.pluginContainer
+                                        }
+                                        ,
+                                        setExpendHeight: (e,t)=>{
+                                            this.setExpendHeight(t),
+                                            e.returnValue = !0
+                                        }
+                                        ,
+                                        onWebcontensBlur: ()=>{
+                                            this.mainWebContentsBlurTimestamp = Date.now()
+                                        }
+                                        ,
+                                        enterPlugin: (e,t,i,n)=>{
+                                            this.enterPlugin(t, i, n),
+                                            e.returnValue = !0
+                                        }
+                                        ,
+                                        getNativeWorkWindowInfo: e=>{
+                                            e.returnValue = this.display.nativeWorkWindowInfo
+                                        }
+                                        ,
+                                        recoverPlugin: e=>{
+                                            null === this.recoverPlugin((()=>{
+                                                e.returnValue = !0
+                                            }
+                                            )) && (e.returnValue = !1)
+                                        }
+                                        ,
+                                        endPlugin: e=>{
+                                            this.endPlugin(),
+                                            e.returnValue = !0
+                                        }
+                                        ,
+                                        detachPlugin: e=>{
+                                            this.detachPlugin(),
+                                            e.returnValue = !0
+                                        }
+                                        ,
+                                        hideMainWindow: e=>{
+                                            this.hideMainWindow(),
+                                            e.returnValue = !0
+                                        }
+                                        ,
+                                        setPosition: (e,t,i)=>{
+                                            this.display.setPosition(t, i)
+                                        }
+                                        ,
+                                        sendSubInputChangeEvent: (e,t)=>{
+                                            const i = this.mainWindow.getBrowserView();
+                                            i ? (this.triggerPluginViewEvent(i, "SubInputChange", {
+                                                text: t
+                                            }),
+                                            e.returnValue = !0) : e.returnValue = !1
+                                        }
+                                        ,
+                                        sendPluginSomeKeyDownEvent: (e,t,i)=>{
+                                            if (!(t = pe[t]))
+                                                return void (e.returnValue = !1);
+                                            const n = this.mainWindow.getBrowserView();
+                                            n ? (Array.isArray(i) && i.length > 0 ? n.webContents.sendInputEvent({
+                                                type: "keyDown",
+                                                modifiers: i,
+                                                keyCode: t
+                                            }) : n.webContents.sendInputEvent({
+                                                type: "keyDown",
+                                                keyCode: t
+                                            }),
+                                            e.returnValue = !0) : e.returnValue = !1
+                                        }
+                                    }),
+                                    ge(this, "detachServices", {
+                                        setPosition: (e,t,i,n,o,s,r)=>{
+                                            i.setBounds({
+                                                width: s,
+                                                height: r,
+                                                x: n,
+                                                y: o
+                                            })
+                                        }
+                                        ,
+                                        sendPluginSomeKeyDownEvent: (e,t,i,n,o)=>{
+                                            if (!(n = pe[n]))
+                                                return;
+                                            const s = i.getBrowserView();
+                                            s && (Array.isArray(o) && o.length > 0 ? s.webContents.sendInputEvent({
+                                                type: "keyDown",
+                                                modifiers: o,
+                                                keyCode: n
+                                            }) : s.webContents.sendInputEvent({
+                                                type: "keyDown",
+                                                keyCode: n
+                                            }))
+                                        }
+                                        ,
+                                        sendSubInputChangeEvent: (e,t,i,n)=>{
+                                            const o = i.getBrowserView();
+                                            o && this.triggerPluginViewEvent(o, "SubInputChange", {
+                                                text: n
+                                            })
+                                        }
+                                        ,
+                                        openDevTool: (e,t,i)=>{
+                                            const n = i.getBrowserView();
+                                            n && this.openPluginDevTools(n)
+                                        }
+                                        ,
+                                        setAlwaysOnTop: (e,t,i,n)=>{
+                                            i.setAlwaysOnTop(n)
+                                        }
+                                        ,
+                                        closeWindow: (e,t,i)=>{
+                                            i.close()
+                                        }
+                                        ,
+                                        endFullScreen: (e,t,i)=>{
+                                            i.isFullScreen() && i.setFullScreen(!1)
+                                        }
+                                        ,
+                                        minimizeWindow: (e,t,i)=>{
+                                            i.blur(),
+                                            i.minimize()
+                                        }
+                                        ,
+                                        maximizeWindow: (e,t,i)=>{
+                                            if (this.isLinux)
+                                                return i.emit(i.listenerCount("linux-unmaximize") > 0 ? "linux-unmaximize" : "linux-maximize");
+                                            i.isMaximized() ? i.unmaximize() : i.maximize()
+                                        }
+                                        ,
+                                        webContentsFocus: (e,t,i)=>{
+                                            i.webContents.focus()
+                                        }
+                                    }),
+                                    ge(this, "ffffffffServices", {
+                                        autoLoadPlugin: (e,t,i,n)=>{
+                                            this.autoLoadPlugin(t, i, n)
+                                        }
+                                        ,
+                                        destroyPlugin: (e,t)=>{
+                                            this.destroyPlugin(t),
+                                            e.returnValue = !0
+                                        }
+                                        ,
+                                        refreshCmdSource: e=>{
+                                            this.refreshCmdSource()
+                                        }
+                                        ,
+                                        login: (e,i)=>{
+                                            /^[a-zA-Z]+$/.test(i) && this.accountCmp.login(t.BrowserWindow.fromWebContents(e.sender), (()=>{
+                                                this.ffffffff.webContents.isDestroyed() || this.ffffffff.webContents.executeJavaScript(`window[${JSON.stringify(i)}]()`)
+                                            }
+                                            ))
+                                        }
+                                        ,
+                                        refreshAccountAvatar: e=>{
+                                            const t = this.accountCmp.getAccountInfo();
+                                            t && (delete t.db_secrect_key,
+                                            this.refreshAccountInfo(t))
+                                        }
+                                        ,
+                                        pluginIsRuning: (e,t)=>{
+                                            e.returnValue = t in this.runningPluginPool
+                                        }
+                                        ,
+                                        getPluginRuningOsPids: (e,i)=>{
+                                            if (!(i in this.runningPluginPool))
+                                                return void (e.returnValue = null);
+                                            const n = t.webContents.getAllWebContents()
+                                              , o = n.filter((e=>e.session === this.pluginSessionPool[i]))
+                                              , s = o.filter((e=>"window" === e.getType()));
+                                            if (i in this.pluginUBrowserSessionPool) {
+                                                const e = n.filter((e=>e.session === this.pluginUBrowserSessionPool[i]));
+                                                e.length > 0 && o.push(...e)
+                                            }
+                                            if (0 !== o.length) {
+                                                if (s.length > 0) {
+                                                    const e = n.filter((e=>"webview" === e.getType()));
+                                                    if (e.length > 0) {
+                                                        const i = s.map((e=>t.BrowserWindow.fromWebContents(e)))
+                                                          , n = e.filter((e=>i.includes(t.BrowserWindow.fromWebContents(e))));
+                                                        n.length > 0 && o.push(...n)
+                                                    }
+                                                }
+                                                e.returnValue = o.map((e=>e.getOSProcessId()))
+                                            } else
+                                                e.returnValue = null
+                                        }
+                                        ,
+                                        killPlugin: (e,t)=>{
+                                            const i = this.runningPluginPool[t];
+                                            if (i) {
+                                                if (i.view) {
+                                                    const e = this.mainWindow.getBrowserView();
+                                                    e && e === i.view ? this.recoverPlugin((()=>{
+                                                        this.emptyRecovery()
+                                                    }
+                                                    )) : i.view.webContents.isDestroyed() || i.view.webContents.destroy()
+                                                }
+                                                i.detachWindows.length > 0 && i.detachWindows.forEach((e=>e.close())),
+                                                e.returnValue = !0
+                                            } else
+                                                e.returnValue = !1
+                                        }
+                                    }),
+                                    ge(this, "pluginApiServices", {
+                                        hideMainWindow: (e,t,i)=>{
+                                            const n = this.mainWindow.getBrowserView();
+                                            n && n.webContents === e.sender ? (this.hideMainWindow(i),
+                                            e.returnValue = !0) : e.returnValue = !1
+                                        }
+                                        ,
+                                        showMainWindow: (e,t)=>{
+                                            const i = this.mainWindow.getBrowserView();
+                                            i && i.webContents === e.sender ? (this.mainWindow.isVisible() || this.display.trigger(!0),
+                                            e.returnValue = !0) : e.returnValue = !1
+                                        }
+                                        ,
+                                        setExpendHeight: (e,i,n)=>{
+                                            (n = 0 | parseInt(n)) < 1 && (n = 1);
+                                            const o = t.BrowserWindow.fromWebContents(e.sender);
+                                            if (!o)
+                                                return void (e.returnValue = !1);
+                                            if (o === this.mainWindow)
+                                                return this.setExpendHeight(n),
+                                                void (e.returnValue = !0);
+                                            const s = this.runningPluginPool[i];
+                                            s && s.detachWindows.includes(o) ? (o.setSize(o.getSize()[0], this.config.initHeight + n),
+                                            e.returnValue = !0) : e.returnValue = !1
+                                        }
+                                        ,
+                                        setSubInput: (e,t,{isFocus: i, placeholder: n})=>{
+                                            const o = this.getWorkWebContentsBySender(e.sender);
+                                            o ? o.executeJavaScript(`window.api.setSubInput(${JSON.stringify({
+                                                placeholder: n,
+                                                isFocus: i
+                                            })})`).then((()=>{
+                                                if (i) {
+                                                    if (this.mainWindow.webContents === o && !this.mainWindow.isVisible())
+                                                        return this._isMainInputFocus = !0,
+                                                        void (e.returnValue = !0);
+                                                    o.isFocused() || o.focus(),
+                                                    o.executeJavaScript("window.api.subInputFocus()").finally((()=>{
+                                                        e.returnValue = !0
+                                                    }
+                                                    )),
+                                                    this.isMacOs && setTimeout((()=>{
+                                                        o.isDestroyed() || o.isFocused() || o.focus()
+                                                    }
+                                                    ), 50)
+                                                } else
+                                                    e.returnValue = !0
+                                            }
+                                            )).catch((()=>{
+                                                e.returnValue = !1
+                                            }
+                                            )) : e.returnValue = !1
+                                        }
+                                        ,
+                                        removeSubInput: (e,t)=>{
+                                            const i = this.getWorkWebContentsBySender(e.sender);
+                                            i ? i.executeJavaScript("window.api.removeSubInput()").then((()=>{
+                                                e.sender.isDestroyed() || e.sender.focus()
+                                            }
+                                            )).finally((()=>{
+                                                e.returnValue = !0
+                                            }
+                                            )) : e.returnValue = !1
+                                        }
+                                        ,
+                                        setSubInputValue: (e,t,i)=>{
+                                            const n = this.getWorkWebContentsBySender(e.sender);
+                                            n ? (i = String(i),
+                                            n.executeJavaScript(`window.api.setSubInputValue(${JSON.stringify({
+                                                value: i
+                                            })})`).then((()=>{
+                                                n.isFocused() || n.focus(),
+                                                n.executeJavaScript("window.api.subInputFocus()").finally((()=>{
+                                                    e.returnValue = !0
+                                                }
+                                                ))
+                                            }
+                                            )).catch((()=>{
+                                                e.returnValue = !1
+                                            }
+                                            ))) : e.returnValue = !1
+                                        }
+                                        ,
+                                        subInputFocus: (e,t)=>{
+                                            const i = this.getWorkWebContentsBySender(e.sender);
+                                            if (i) {
+                                                if (this.mainWindow.webContents === i && !this.mainWindow.isVisible())
+                                                    return this._isMainInputFocus = !0,
+                                                    void (e.returnValue = !0);
+                                                i.isFocused() || i.focus(),
+                                                i.executeJavaScript("window.api.subInputFocus()").finally((()=>{
+                                                    e.returnValue = !0
+                                                }
+                                                ))
+                                            } else
+                                                e.returnValue = !1
+                                        }
+                                        ,
+                                        subInputSelect: (e,t)=>{
+                                            const i = this.getWorkWebContentsBySender(e.sender);
+                                            i ? (i.isFocused() || i.focus(),
+                                            i.executeJavaScript("window.api.subInputSelect()").finally((()=>{
+                                                e.returnValue = !0
+                                            }
+                                            ))) : e.returnValue = !1
+                                        }
+                                        ,
+                                        subInputBlur: (e,t)=>{
+                                            e.sender.focus(),
+                                            e.returnValue = !0
+                                        }
+                                        ,
+                                        outPlugin: (e,i)=>{
+                                            const n = t.BrowserWindow.fromWebContents(e.sender);
+                                            if (!n)
+                                                return;
+                                            const o = this.triggerPluginViewEventQueues[e.sender.id]
+                                              , s = o && 1 === o.length && "PluginEnter" === o[0];
+                                            if (n === this.mainWindow)
+                                                return s ? void setTimeout((()=>{
+                                                    this.outPlugin()
+                                                }
+                                                ), 250) : void this.outPlugin();
+                                            const r = this.runningPluginPool[i];
+                                            if (!r)
+                                                return;
+                                            if (!r.detachWindows.includes(n))
+                                                return;
+                                            const a = this.pluginIsOutKill(i);
+                                            s ? setTimeout((()=>{
+                                                a || n.setBrowserView(null),
+                                                n.close()
+                                            }
+                                            ), 250) : (a || n.setBrowserView(null),
+                                            n.close())
+                                        }
+                                        ,
+                                        createBrowserWindow: (e,i,{url: n, options: o})=>{
+                                            const s = n.split("?");
+                                            if (!/\.html$/i.test(s[0]))
+                                                return void (e.returnValue = new Error("加载的不是 html 文件"));
+                                            const r = this.pluginsCmp.pluginContainer[i];
+                                            if (!r)
+                                                return void (e.returnValue = new Error("插件应用 ID 不存在"));
+                                            const a = c().join(r.location, s[0]);
+                                            if (!d().existsSync(a))
+                                                return void (e.returnValue = new Error("html 文件不存在"));
+                                            if (!(i in this.pluginSessionPool))
+                                                return void (e.returnValue = new Error("插件应用未运行"));
+                                            if ((o = o || {}).backgroundColor || (o.backgroundColor = this.getWindowBackgroundColor()),
+                                            o.icon = r.logo.replace("file://", ""),
+                                            o.autoHideMenuBar = !0,
+                                            o.webPreferences = o.webPreferences || {},
+                                            o.webPreferences.partition = null,
+                                            o.webPreferences.session = this.pluginSessionPool[i],
+                                            o.webPreferences.nodeIntegration = !1,
+                                            o.webPreferences.contextIsolation = !1,
+                                            o.webPreferences.nodeIntegrationInWorker = !1,
+                                            o.webPreferences.nodeIntegrationInSubFrames = !1,
+                                            o.webPreferences.enableRemoteModule = !1,
+                                            o.webPreferences.defaultFontFamily || (o.webPreferences.defaultFontFamily = {
+                                                standard: "system-ui",
+                                                serif: "system-ui"
+                                            }),
+                                            o.webPreferences.defaultFontSize || (o.webPreferences.defaultFontSize = 14),
+                                            o.webPreferences.preload && !o.webPreferences.preload.startsWith(r.location) && (o.webPreferences.preload = c().join(r.location, o.webPreferences.preload),
+                                            !d().existsSync(o.webPreferences.preload)))
+                                                return void (e.returnValue = new Error("preload 文件不存在"));
+                                            const l = new t.BrowserWindow(o);
+                                            let h;
+                                            l.removeMenu(),
+                                            h = this.isMacOs ? (e,t)=>{
+                                                !t.meta || "keyDown" !== t.type || "KeyW" !== t.code && "KeyQ" !== t.code || (e.preventDefault(),
+                                                l.destroy())
+                                            }
+                                            : (e,t)=>{
+                                                "keyDown" === t.type && (t.control && "KeyW" === t.code || t.alt && "F4" === t.code) && (e.preventDefault(),
+                                                l.destroy())
+                                            }
+                                            ,
+                                            l.webContents.on("before-input-event", h),
+                                            l.webContents.on("did-attach-webview", ((e,t)=>{
+                                                t.on("before-input-event", h)
+                                            }
+                                            )),
+                                            l.webContents.once("render-process-gone", (()=>{
+                                                l.destroy()
+                                            }
+                                            )),
+                                            l.loadURL("file://" + a + (s.length > 1 ? "?" + s[1] : "")),
+                                            l.webContents.on("dom-ready", (()=>{
+                                                e.sender.isDestroyed() || (l.webContents.insertCSS('body { font-family: system-ui,"PingFang SC","Helvetica Neue","Microsoft Yahei",sans-serif; }'),
+                                                e.sender.executeJavaScript("if (window.utools && window.utools.__event__ && typeof window.utools.__event__.createBrowserWindowCallback === 'function') {\n          try { window.utools.__event__.createBrowserWindowCallback() } catch(e) {} \n          delete window.utools.__event__.createBrowserWindowCallback}"))
+                                            }
+                                            )),
+                                            this.isWindow && "FFFFFFFF" !== i && this.setPluginWindowAppDetails(l, r),
+                                            e.returnValue = {
+                                                id: l.id,
+                                                methods: me.windowMethods,
+                                                invokes: me.windowInvokes,
+                                                webContents: {
+                                                    id: l.webContents.id,
+                                                    methods: me.webContentsMethods,
+                                                    invokes: me.webContentsInvokes
+                                                }
+                                            }
+                                        }
+                                        ,
+                                        pluginBrowserWindowMethod: (e,i,{id: n, target: o, method: s, args: r})=>{
+                                            const a = t.BrowserWindow.fromId(n);
+                                            if (!a)
+                                                return "isDestroyed" === s ? void (e.returnValue = !0) : void (e.returnValue = new Error("window no exist"));
+                                            if (this.getPluginIdByWebContents(a.webContents) === i)
+                                                if ("webContents" !== o)
+                                                    if (me.windowMethods.includes(s))
+                                                        try {
+                                                            e.returnValue = a[s](...r)
+                                                        } catch (t) {
+                                                            e.returnValue = t
+                                                        }
+                                                    else
+                                                        e.returnValue = new Error('BrowserWindow function "' + s + '" no found');
+                                                else {
+                                                    if (!me.webContentsMethods.includes(s))
+                                                        return void (e.returnValue = new Error('webContents function "' + s + '" no found'));
+                                                    try {
+                                                        e.returnValue = a.webContents[s](...r)
+                                                    } catch (t) {
+                                                        e.returnValue = t
+                                                    }
+                                                }
+                                            else
+                                                e.returnValue = new Error("window id error")
+                                        }
+                                        ,
+                                        pluginBrowserWindowInvoke: async(e,{id: i, target: n, method: o, args: s})=>{
+                                            const r = t.BrowserWindow.fromId(i);
+                                            if (!r)
+                                                throw new Error("window no exist");
+                                            if (this.getPluginIdByWebContents(r.webContents) !== e)
+                                                throw new Error("window id error");
+                                            if ("webContents" === n) {
+                                                if ("print" === o) {
+                                                    const e = ()=>new Promise(((e,t)=>{
+                                                        r.webContents.print(s[0] || null, ((i,n)=>{
+                                                            if (i)
+                                                                return e();
+                                                            t(new Error("errorType " + n))
+                                                        }
+                                                        ))
+                                                    }
+                                                    ));
+                                                    return await e()
+                                                }
+                                                if (!me.webContentsInvokes.includes(o))
+                                                    throw new Error('webContents function "' + o + '" no found');
+                                                return await r.webContents[o](...s)
+                                            }
+                                            if (!me.windowInvokes.includes(o))
+                                                throw new Error('BrowserWindow function "' + o + '" no found');
+                                            return await r[o](...s)
+                                        }
+                                    }),
+                                    this.runningPluginPool = {},
+                                    this.pluginSessionPool = {},
+                                    this.pluginUBrowserSessionPool = {},
+                                    this.triggerPluginViewEventQueues = {},
+                                    this.webContentsId2PluginIdCache = {},
+                                    this.config = e,
+                                    this.pluginsCmp = i,
+                                    this.clipboardCmp = o,
+                                    this.clipboardCmp.runningPluginPool = this.runningPluginPool,
+                                    this.reportCmp = r,
+                                    this.accountCmp = a,
+                                    this.pluginDetachHotKey = "",
+                                    this.pluginOutTimer = 3,
+                                    this.isMacOs = s().macOS(),
+                                    this.isWindow = s().windows(),
+                                    this.isLinux = s().linux(),
+                                    this.isDev = s().dev(),
+                                    this.osRelease = v().release(),
+                                    this.appVersion = t.app.getVersion();
+                                    const l = n().get("theme");
+                                    l && ["system", "dark", "light"].includes(l) && (t.nativeTheme.themeSource = l),
+                                    this.onMainWindowBlur = this.onMainWindowBlur.bind(this),
+                                    this.onMainWindowHide = this.onMainWindowHide.bind(this),
+                                    this.onMainWindowShow = this.onMainWindowShow.bind(this),
+                                    this.setPluginWindowAppDetails = this.setPluginWindowAppDetails.bind(this),
+                                    this.removeDbIconCache = this.removeDbIconCache.bind(this),
+                                    this.getWindowBackgroundColor = this.getWindowBackgroundColor.bind(this),
+                                    this.mainWindowBorderWidth = this.isMacOs ? 0 : 1
+                                }
+                                init() {
+                                    this.initNativeIconHandler(),
+                                    this.initMainWin(),
+                                    this.listenAccountEvent()
+                                }
+                                initNativeIconHandler() {
+                                    const e = ["unknow"];
+                                    let i = null;
+                                    this.isLinux ? (this.nativeIconHandler = (n,o)=>n in fe ? o({
+                                        mimeType: "image/png",
+                                        data: fe[n]
+                                    }) : e.includes(n) ? o({
+                                        mimeType: "image/png",
+                                        data: i
+                                    }) : void t.app.getFileIcon(n, {
+                                        size: "large"
+                                    }).then((t=>{
+                                        if (t.isEmpty())
+                                            return e.push(n),
+                                            o({
+                                                mimeType: "image/png",
+                                                data: i
+                                            });
+                                        const s = t.toPNG();
+                                        if (i.equals(s))
+                                            return e.push(n),
+                                            o({
+                                                mimeType: "image/png",
+                                                data: i
+                                            });
+                                        fe[n] = s,
+                                        o({
+                                            mimeType: "image/png",
+                                            data: s
+                                        })
+                                    }
+                                    )).catch((()=>{
+                                        e.push(n),
+                                        o({
+                                            mimeType: "image/png",
+                                            data: i
+                                        })
+                                    }
+                                    )),
+                                    t.app.getFileIcon("unknow", {
+                                        size: "large"
+                                    }).then((e=>{
+                                        i = e.toPNG()
+                                    }
+                                    ))) : (this.nativeIconHandler = (t,n)=>t in fe ? n({
+                                        mimeType: "image/png",
+                                        data: fe[t]
+                                    }) : e.includes(t) ? n({
+                                        mimeType: "image/png",
+                                        data: i
+                                    }) : void k().fetchFileIconAsPng(t, (o=>o ? i.equals(o) ? (o = null,
+                                    e.push(t),
+                                    n({
+                                        mimeType: "image/png",
+                                        data: i
+                                    })) : (fe[t] = o,
+                                    void n({
+                                        mimeType: "image/png",
+                                        data: o
+                                    })) : (e.push(t),
+                                    n({
+                                        mimeType: "image/png",
+                                        data: i
+                                    })))),
+                                    k().fetchFileIconAsPng("unknow", (e=>{
+                                        i = e || Buffer.alloc(5184, 0)
+                                    }
+                                    )))
+                                }
+                                setSessionIconProtocol(e) {
+                                    e.protocol.registerBufferProtocol("nativeicon", ((e,t)=>{
+                                        let i = e.url.substr(13);
+                                        try {
+                                            i = decodeURIComponent(i)
+                                        } catch (e) {}
+                                        this.nativeIconHandler(i, t)
+                                    }
+                                    )),
+                                    e.protocol.registerBufferProtocol("dbicon", ((e,t)=>{
+                                        let i = e.url.substr(9);
+                                        try {
+                                            i = decodeURIComponent(i)
+                                        } catch (e) {}
+                                        if (i in fe)
+                                            return t({
+                                                mimeType: "image/png",
+                                                data: fe[i]
+                                            });
+                                        this.getDbAttachment("/", i, "icon").then((e=>{
+                                            fe[i] = e,
+                                            t({
+                                                mimeType: "image/png",
+                                                data: e
+                                            })
+                                        }
+                                        )).catch((()=>{
+                                            t()
+                                        }
+                                        ))
+                                    }
+                                    ))
+                                }
+                                removeDbIconCache(e) {
+                                    e in fe && delete fe[e]
+                                }
+                                getWindowBackgroundColor() {
+                                    return t.nativeTheme.shouldUseDarkColors ? this.config.darkBackgroundColor : this.config.backgroundColor
+                                }
+                                getMainWindwoSession() {
+                                    const e = t.session.fromPartition("persist:<utools>");
+                                    return e.on("will-download", ((e,i,n)=>{
+                                        if (i.setSavePath(c().join(t.app.getPath("temp"), I() + ".upx")),
+                                        !this._updatePluginCmdCache)
+                                            return e.preventDefault();
+                                        const o = {
+                                            ...this._updatePluginCmdCache
+                                        };
+                                        delete this._updatePluginCmdCache;
+                                        const s = i.getURLChain()[0];
+                                        if (!/\/plugins\/(\w+)\/download\?/.test(s))
+                                            return e.preventDefault();
+                                        const r = RegExp.$1;
+                                        let a = null;
+                                        i.on("updated", ((e,n)=>{
+                                            if ("interrupted" === n)
+                                                return i.cancel(),
+                                                this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.endAssemblyPlugin()"),
+                                                this.reallyEnterPlugin(r, o.featureCode, o.inputCmd),
+                                                this.reportCmp.info("plugin.update.fail.download", {
+                                                    pluginId: r
+                                                }),
+                                                void new t.Notification({
+                                                    title: "uTools",
+                                                    body: "插件应用下载中断，更新失败"
+                                                }).show();
+                                            a && clearTimeout(a),
+                                            a = setTimeout((()=>{
+                                                a = null;
+                                                const e = 100 * i.getReceivedBytes() / i.getTotalBytes() | 0;
+                                                this.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.downloadProgressing(${e})`)
+                                            }
+                                            ), 200)
+                                        }
+                                        )),
+                                        i.once("done", ((e,n)=>{
+                                            a && clearTimeout(a);
+                                            const s = i.getSavePath();
+                                            if (o.pluginId !== r || !(r in this.pluginsCmp.pluginContainer)) {
+                                                try {
+                                                    d().unlinkSync(s)
+                                                } catch (e) {}
+                                                return void this.emptyRecovery()
+                                            }
+                                            if ("completed" !== n)
+                                                return;
+                                            this.destroyPlugin(r);
+                                            const c = this.pluginsCmp.pluginUpdateSet.indexOf(r);
+                                            c >= 0 && this.pluginsCmp.pluginUpdateSet.splice(c, 1),
+                                            this.pluginsCmp.install(r, s, (e=>{
+                                                e ? (this.reportCmp.info("plugin.update.fail", {
+                                                    pluginId: r,
+                                                    error: e.message
+                                                }),
+                                                new t.Notification({
+                                                    body: "插件应用更新失败: " + e.message
+                                                }).show()) : (this.refreshCmdSource(),
+                                                this.reportCmp.info("plugin.update", {
+                                                    pluginId: r,
+                                                    pluginVersion: this.pluginsCmp.pluginContainer[r].version,
+                                                    timeCost: Date.now() - o.timestamp
+                                                })),
+                                                this.reallyEnterPlugin(r, o.featureCode, o.inputCmd, !0);
+                                                try {
+                                                    d().unlinkSync(s)
+                                                } catch (e) {}
+                                            }
+                                            ))
+                                        }
+                                        ))
+                                    }
+                                    )),
+                                    this.setSessionIconProtocol(e),
+                                    e
+                                }
+                                initMainWin() {
+                                    this.mainWindow = new t.BrowserWindow({
+                                        fullscreenable: !1,
+                                        minimizable: !1,
+                                        maximizable: !1,
+                                        alwaysOnTop: !0,
+                                        closable: !1,
+                                        show: !1,
+                                        backgroundColor: this.getWindowBackgroundColor(),
+                                        resizable: !this.isLinux,
+                                        frame: !this.isLinux,
+                                        titleBarStyle: "hidden",
+                                        enableLargerThanScreen: !0,
+                                        skipTaskbar: !0,
+                                        autoHideMenuBar: !0,
+                                        type: "toolbar",
+                                        webPreferences: {
+                                            devTools: this.isDev,
+                                            nodeIntegration: !1,
+                                            contextIsolation: !1,
+                                            session: this.getMainWindwoSession(),
+                                            enableRemoteModule: !1,
+                                            backgroundThrottling: !1,
+                                            navigateOnDragDrop: !1,
+                                            spellcheck: !1,
+                                            webgl: !1,
+                                            enableWebSQL: !1,
+                                            preload: c().join(__dirname, "preload.js")
+                                        }
+                                    }),
+                                    this.mainWindow.removeMenu(),
+                                    this.mainWindowNativeWindowHandle = this.mainWindow.getNativeWindowHandle(),
+                                    this.isWindow ? this.mainWindow.setAlwaysOnTop(!0, "pop-up-menu") : this.isMacOs && (this.mainWindow.setAlwaysOnTop(!0, "floating"),
+                                    this.mainWindow.setWindowButtonVisibility(!1),
+                                    k().windowConvertToPanel(this.mainWindowNativeWindowHandle)),
+                                    this.display = new ue(this.mainWindow,this.mainWindowNativeWindowHandle,this.config.initWidth + 2 * this.mainWindowBorderWidth,this.config.initHeight + 2 * this.mainWindowBorderWidth),
+                                    this.mainWindow.loadURL("file://" + c().join(__dirname, "index.html")),
+                                    this.mainWindow.on("blur", this.onMainWindowBlur),
+                                    this.mainWindow.on("hide", this.onMainWindowHide),
+                                    this.mainWindow.on("show", this.onMainWindowShow),
+                                    this.mainWindow.on("will-resize", (e=>{
+                                        e.preventDefault(),
+                                        this.mainWindow.getBrowserView() && this.detachPlugin()
+                                    }
+                                    )),
+                                    this.mainWindow.webContents.setBackgroundThrottling(!1),
+                                    this.mainWindow.webContents.once("dom-ready", (()=>{
+                                        this.mainWindowBorderWidth > 0 && this.mainWindow.webContents.insertCSS(`.main { border-style: solid; border-width: ${this.mainWindowBorderWidth}px; }`),
+                                        this.mainWindow.webContents.executeJavaScript(`\n        window.onerror = function (message, source, lineno, colno) {\n          source = source.substr(source.indexOf('.asar/')+6)\n          const report = {\n            event: "appweb.exception",\n            "@timestamp": new Date().toISOString(),\n            platform: ${JSON.stringify(process.platform)},\n            arch: ${JSON.stringify(process.arch)},\n            appVersion: ${JSON.stringify(this.appVersion)},\n            osRelease: ${JSON.stringify(this.osRelease)},\n            error: JSON.stringify({message,source,lineno,colno})\n          }\n          fetch(${JSON.stringify(this.reportCmp.config.logsURL)},{\n            method: 'POST',\n            headers: {\n              'Content-Type': 'application/json'\n            },\n            body: JSON.stringify([report])\n          })\n        }`).catch((()=>{}
+                                        ))
+                                    }
+                                    )),
+                                    this.mainWindow.webContents.on("before-input-event", ((e,t)=>{
+                                        if ("keyDown" !== t.type || !(t.meta || t.control || t.shift || t.alt))
+                                            return;
+                                        const i = this.hotKeyAction(t);
+                                        if (i) {
+                                            if ("close" === i)
+                                                return e.preventDefault(),
+                                                void (this.mainWindow.getBrowserView() ? this.outPlugin() : this.hideMainWindow());
+                                            if ("detach" !== i)
+                                                return "setting" === i ? (e.preventDefault(),
+                                                void this.ffffffff.goSetting()) : "select" === i ? (e.preventDefault(),
+                                                void this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.mainInputSelect()")) : void ("dev" === i && (e.preventDefault(),
+                                                this.openPluginDevTools()));
+                                            this.mainWindow.getBrowserView() && (e.preventDefault(),
+                                            process.nextTick((()=>{
+                                                this.detachPlugin()
+                                            }
+                                            )))
+                                        }
+                                    }
+                                    )),
+                                    this.mainWindow.on("close", (e=>{
+                                        e.preventDefault()
+                                    }
+                                    )),
+                                    this.mainWindow.once("closed", (()=>{
+                                        t.app.emit("exit")
+                                    }
+                                    )),
+                                    this.mainWindow.webContents.once("render-process-gone", (()=>{
+                                        t.app.emit("exit")
+                                    }
+                                    )),
+                                    this.isMacOs && t.app.on("before-quit", (e=>{
+                                        e.preventDefault(),
+                                        Object.values(this.runningPluginPool).filter((e=>e.detachWindows.length > 0)).forEach((e=>{
+                                            e.detachWindows.forEach((e=>{
+                                                e.close()
+                                            }
+                                            ))
+                                        }
+                                        ))
+                                    }
+                                    )),
+                                    this.ffffffff = we.call(this)
+                                }
+                                onMainWindowBlur() {
+                                    if (!(this.ignoreMainWindowBlurExpiryTime && Date.now() - this.ignoreMainWindowBlurExpiryTime < 0) && this.mainWindow.isVisible())
+                                        return this.isWindow ? (this.display.mainWindowBlurTimestamp = Date.now(),
+                                        this.display.mainWindowBlurTimestamp - this.display.mainWindowShowTimestamp < 250 ? (this.display.trigger(!0, !0),
+                                        void setImmediate((()=>{
+                                            this.mainWindow.isFocused() || this.hideMainWindow()
+                                        }
+                                        ))) : void setTimeout((()=>{
+                                            k().isMouseLeftDown() ? this.win32CheckMouseLeftUp() : this.hideMainWindow()
+                                        }
+                                        ), 50)) : void (this.isMacOs && Date.now() - this.display.mainWindowShowTimestamp < 50 || this.hideMainWindow())
+                                }
+                                onMainWindowHide() {
+                                    if (this.mainWindowHideTimeout && (clearTimeout(this.mainWindowHideTimeout),
+                                    this.mainWindowHideTimeout = null),
+                                    this.mainWindow.getBrowserView())
+                                        if (this.isWindow)
+                                            setTimeout((()=>{
+                                                this._isMainInputFocus = this.display.mainWindowBlurTimestamp - this.mainWebContentsBlurTimestamp <= 0
+                                            }
+                                            ), 50);
+                                        else if (this.isLinux) {
+                                            const e = Date.now();
+                                            setTimeout((()=>{
+                                                this._isMainInputFocus = e - this.mainWebContentsBlurTimestamp <= 0
+                                            }
+                                            ), 50)
+                                        } else
+                                            setImmediate((()=>{
+                                                this._isMainInputFocus = Date.now() - this.mainWebContentsBlurTimestamp < 50
+                                            }
+                                            ));
+                                    else
+                                        this._isMainInputFocus = !1;
+                                    this.pluginOutTimer > 10 || (this.mainWindowHideTimeout = setTimeout((()=>{
+                                        this.mainWindowHideTimeout = null,
+                                        this.mainWindow.getBrowserView() ? this.outPlugin() : this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.getEnterFeatureCmd()").then((e=>{
+                                            e || this.emptyRecovery()
+                                        }
+                                        ))
+                                    }
+                                    ), this.pluginOutTimer > .1 ? 6e4 * this.pluginOutTimer : 50))
+                                }
+                                onMainWindowShow() {
+                                    this.mainWindowHideTimeout && (clearTimeout(this.mainWindowHideTimeout),
+                                    this.mainWindowHideTimeout = null),
+                                    this.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.localWindowMatch(${JSON.stringify(this.display.nativeWorkWindowInfo || null)})`);
+                                    const e = this.mainWindow.getBrowserView();
+                                    e ? !0 !== this._isMainInputFocus || this.display.alwaysShow ? this.isLinux ? setTimeout((()=>{
+                                        this.mainWindow.getBrowserView() === e && e.webContents.focus()
+                                    }
+                                    ), 50) : setImmediate((()=>{
+                                        this.mainWindow.getBrowserView() === e && e.webContents.focus()
+                                    }
+                                    )) : (this.mainWindow.webContents.focus(),
+                                    this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.mainInputSelect()")) : (this.mainWindow.webContents.focus(),
+                                    this.display.alwaysShow || !this.clipboardCmp.isPreCopy() ? this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.mainInputSelect()") : this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.autoPaste()"))
+                                }
+                                win32CheckMouseLeftUp() {
+                                    this.win32CheckMouseLeftUpTimer && clearTimeout(this.win32CheckMouseLeftUpTimer),
+                                    this.win32CheckMouseLeftUpTimer = setTimeout((()=>{
+                                        if (this.win32CheckMouseLeftUpTimer = null,
+                                        k().isMouseLeftDown())
+                                            return void this.win32CheckMouseLeftUp();
+                                        const e = k().getCursorPosition();
+                                        if (e) {
+                                            const t = Math.round(e.x / this.display.currentDisplay.scaleFactor)
+                                              , i = Math.round(e.y / this.display.currentDisplay.scaleFactor)
+                                              , n = this.display.mainWindowBounds;
+                                            if (t > n.x && t < n.x + n.width && i > n.y && i < n.y + n.height) {
+                                                if (this.mainWindow.focus(),
+                                                i > n.y + this.config.initHeight) {
+                                                    const e = this.mainWindow.getBrowserView();
+                                                    e && e.webContents.focus()
+                                                }
+                                                return
+                                            }
+                                            this.hideMainWindow()
+                                        } else
+                                            this.hideMainWindow()
+                                    }
+                                    ), 50)
+                                }
+                                hideMainWindow(e) {
+                                    this.display.hide(e)
+                                }
+                                hotKeyAction(e) {
+                                    const t = pe[e.code];
+                                    if (!t)
+                                        return !1;
+                                    let i = "";
+                                    if (e.meta && (i += this.isMacOs ? "Command+" : "Super+"),
+                                    e.control && (i += "Control+"),
+                                    e.shift && (i += "Shift+"),
+                                    e.alt && (i += "Alt+"),
+                                    !i)
+                                        return !1;
+                                    const n = i + t;
+                                    if (this.isMacOs)
+                                        switch (n) {
+                                        case this.pluginDetachHotKey:
+                                            return "detach";
+                                        case "Command+Q":
+                                        case "Command+W":
+                                            return "close";
+                                        case "Command+,":
+                                            return "setting";
+                                        case "Command+V":
+                                            return "paste";
+                                        case "Command+L":
+                                            return "select";
+                                        case "Command+Alt+I":
+                                            return "dev"
+                                        }
+                                    else
+                                        switch (n) {
+                                        case this.pluginDetachHotKey:
+                                            return "detach";
+                                        case "Control+W":
+                                        case "Alt+F4":
+                                            return "close";
+                                        case "Control+V":
+                                            return "paste";
+                                        case "Control+L":
+                                            return "select";
+                                        case "Control+Shift+I":
+                                            return "dev"
+                                        }
+                                    return !1
+                                }
+                                setExpendHeight(e) {
+                                    this.display.setHeight(this.config.initHeight + e + 2 * this.mainWindowBorderWidth)
+                                }
+                                reallyEnterPlugin(e, i, n, o) {
+                                    const s = this.pluginsCmp.pluginContainer[e];
+                                    if (!s)
+                                        return void this.emptyRecovery();
+                                    if (!(i in s.featureDic))
+                                        return o ? void setTimeout((()=>{
+                                            this.reallyEnterPlugin(e, i, n)
+                                        }
+                                        ), 300) : (new t.Notification({
+                                            body: "功能不存在，该功能已从插件应用「" + s.pluginName + "」中移除"
+                                        }).show(),
+                                        void this.emptyRecovery());
+                                    if (s.isDev || this.reportCmp.info("plugin.enter", {
+                                        pluginId: e,
+                                        featureCode: i,
+                                        way: n.way
+                                    }),
+                                    !(e in this.runningPluginPool))
+                                        return this.setExpendHeight(0),
+                                        void this.assemblyPlugin(s, i, n);
+                                    const r = this.runningPluginPool[e];
+                                    if (r.view)
+                                        this.displayPlugin(r.view, s, i, n);
+                                    else {
+                                        if (0 === r.detachWindows.length)
+                                            return this.setExpendHeight(0),
+                                            void this.assemblyPlugin(s, i, n);
+                                        if (s.pluginSetting.single) {
+                                            this.setExpendHeight(0);
+                                            const e = r.detachWindows[0];
+                                            return r.detachWindows = [],
+                                            r.view = e.getBrowserView(),
+                                            void this.triggerPluginViewEvent(r.view, "PluginOut", null, (()=>{
+                                                e.setBrowserView(null),
+                                                e.destroy(),
+                                                this.displayPlugin(r.view, s, i, n)
+                                            }
+                                            ))
+                                        }
+                                        this.setExpendHeight(0),
+                                        this.assemblyPlugin(s, i, n)
+                                    }
+                                }
+                                enterPlugin(e, i, n) {
+                                    if (!e)
+                                        return void this.emptyRecovery();
+                                    if (this.mainWindow.getBrowserView())
+                                        return void this.recoverPlugin((()=>{
+                                            this.enterPlugin(e, i, n)
+                                        }
+                                        ));
+                                    if (!this.pluginsCmp.pluginUpdateSet.includes(e))
+                                        return void this.reallyEnterPlugin(e, i, n);
+                                    const o = this.pluginsCmp.pluginContainer[e]
+                                      , s = this.runningPluginPool[e];
+                                    o && s && !o.pluginSetting.single && s.detachWindows.length > 0 ? this.reallyEnterPlugin(e, i, n) : t.net.online ? (this.setExpendHeight(0),
+                                    this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.startUpdatePlugin()"),
+                                    this._updatePluginCmdCache = {
+                                        pluginId: e,
+                                        featureCode: i,
+                                        inputCmd: n,
+                                        timestamp: (new Date).valueOf()
+                                    },
+                                    this.mainWindow.webContents.downloadURL(this.config.pluginDownloadURL.replace("{query}", e) + "?mid=" + this.accountCmp.machineId + "&nid=" + this.accountCmp.nativeId + "&update=true")) : this.reallyEnterPlugin(e, i, n)
+                                }
+                                getEnterPluginWinHeight(e) {
+                                    const t = this.pluginsCmp.pluginContainer[e];
+                                    return t.pluginSetting.height ? this.config.initHeight + t.pluginSetting.height + 2 * this.mainWindowBorderWidth : this.config.openPluginHeight + 2 * this.mainWindowBorderWidth
+                                }
+                                triggerPluginViewEvent(e, i, n, o) {
+                                    if (!e.webContents || e.webContents.isDestroyed())
+                                        return;
+                                    const s = e.webContents.id;
+                                    let r = this.triggerPluginViewEventQueues[s];
+                                    if (r || (r = this.triggerPluginViewEventQueues[s] = []),
+                                    r.length > 0 && "PluginOut" === i && r.find((e=>["PluginOut", "PluginEnter", "PluginReady"].includes(e))))
+                                        return "function" == typeof o && o(),
+                                        void setImmediate((()=>{
+                                            if (e.webContents && !e.webContents.isDestroyed()) {
+                                                const i = this.getPluginIdByWebContents(e.webContents)
+                                                  , n = t.BrowserWindow.fromBrowserView(e);
+                                                if (e.webContents.destroy(),
+                                                n && n !== this.mainWindow && !n.isDestroyed() && n.destroy(),
+                                                i) {
+                                                    const e = this.pluginsCmp.pluginContainer[i];
+                                                    new t.Notification({
+                                                        body: '插件应用 "' + e?.pluginName + '" 未响应，被强制完全退出'
+                                                    }).show()
+                                                }
+                                            }
+                                        }
+                                        ));
+                                    r.push(i);
+                                    const a = ` if(window.utools && window.utools.__event__ && typeof window.utools.__event__.on${i} === 'function' ) {\n      try { window.utools.__event__.on${i}(${n ? JSON.stringify(n) : ""}) } catch(e) {} }`;
+                                    e.webContents.executeJavaScript(a).then((()=>{
+                                        const e = r.indexOf(i);
+                                        -1 !== e && r.splice(e, 1),
+                                        "function" == typeof o && o()
+                                    }
+                                    ))
+                                }
+                                displayPlugin(e, t, i, n, o=!1) {
+                                    const s = this.pluginIsEnterDetach(t.name)
+                                      , r = this.getEnterPluginWinHeight(t.name);
+                                    let a = !1;
+                                    "text" === n.type && n.subInputInput && (a = n.subInputInput);
+                                    const c = {
+                                        code: i,
+                                        type: n.type,
+                                        payload: n.payload
+                                    };
+                                    if (s) {
+                                        const i = {
+                                            ...this.display.mainWindowBounds
+                                        };
+                                        return i.height = r,
+                                        void this.autoDetachPlugin(t.name, i, e, (t=>{
+                                            o ? this.triggerPluginViewEvent(e, "PluginReady", null, (()=>{
+                                                this.triggerPluginViewEvent(e, "PluginEnter", c, (()=>{
+                                                    a && this.detachSubInputAutoInput(t, a)
+                                                }
+                                                ))
+                                            }
+                                            )) : this.triggerPluginViewEvent(e, "PluginEnter", c, (()=>{
+                                                a && this.detachSubInputAutoInput(t, a)
+                                            }
+                                            ))
+                                        }
+                                        ))
+                                    }
+                                    this.display.setHeight(r),
+                                    e.webContents.setZoomFactor(1),
+                                    this.mainWindow.setBrowserView(e),
+                                    e.setBounds({
+                                        x: o ? this.mainWindowBorderWidth : 1 - this.config.initWidth,
+                                        y: this.config.initHeight + this.mainWindowBorderWidth,
+                                        width: this.config.initWidth,
+                                        height: this.display.mainWindowBounds.height - this.config.initHeight - 2 * this.mainWindowBorderWidth
+                                    }),
+                                    e.setAutoResize({
+                                        width: !0,
+                                        height: !0
+                                    }),
+                                    e.webContents.focus(),
+                                    o ? this.triggerPluginViewEvent(e, "PluginReady", null, (()=>{
+                                        this.triggerPluginViewEvent(e, "PluginEnter", c, (()=>{
+                                            a && this.subInputAutoInput(a)
+                                        }
+                                        ))
+                                    }
+                                    )) : this.triggerPluginViewEvent(e, "PluginEnter", c, (()=>{
+                                        a && this.subInputAutoInput(a),
+                                        setTimeout((()=>{
+                                            this.mainWindow.getBrowserView() === e && e.setBounds({
+                                                x: this.mainWindowBorderWidth,
+                                                y: this.config.initHeight + this.mainWindowBorderWidth,
+                                                width: this.config.initWidth,
+                                                height: this.display.mainWindowBounds.height - this.config.initHeight - 2 * this.mainWindowBorderWidth
+                                            })
+                                        }
+                                        ), 50)
+                                    }
+                                    ))
+                                }
+                                assemblyPlugin(e, i, n) {
+                                    if (void 0 !== i && this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.startAssemblyPlugin()"),
+                                    !(e.name in this.pluginSessionPool)) {
+                                        const i = t.session.fromPartition("<" + e.name + ">");
+                                        this.pluginSessionPool[e.name] = i,
+                                        e.isDev || i.webRequest.onBeforeSendHeaders(((e,t)=>{
+                                            t({
+                                                cancel: !e.url.startsWith("file://") && ("script" === e.resourceType || "stylesheet" === e.resourceType),
+                                                requestHeaders: e.requestHeaders
+                                            })
+                                        }
+                                        )),
+                                        i.setPreloads([c().join(__dirname, "apisdk.js")])
+                                    }
+                                    const o = {
+                                        textAreasAreResizable: !1,
+                                        devTools: e.isDev || e.unsafe,
+                                        nodeIntegration: !1,
+                                        contextIsolation: !1,
+                                        nodeIntegrationInWorker: !1,
+                                        enableRemoteModule: !1,
+                                        webSecurity: !1,
+                                        allowRunningInsecureContent: !1,
+                                        navigateOnDragDrop: !1,
+                                        spellcheck: !1,
+                                        webgl: !1,
+                                        enableWebSQL: !1,
+                                        session: this.pluginSessionPool[e.name],
+                                        defaultFontSize: 14,
+                                        defaultFontFamily: {
+                                            standard: "system-ui",
+                                            serif: "system-ui"
+                                        }
+                                    };
+                                    e.preload && (o.preload = e.preload);
+                                    let r = new t.BrowserView({
+                                        webPreferences: o
+                                    });
+                                    if ("FFFFFFFF" === e.name) {
+                                        const e = !this.ffffffff.webContents;
+                                        this.ffffffff.webContents = r.webContents,
+                                        e && this.setSessionIconProtocol(this.ffffffff.webContents.session)
+                                    }
+                                    e.name in this.runningPluginPool ? this.runningPluginPool[e.name].view = r : this.runningPluginPool[e.name] = {
+                                        view: r,
+                                        detachWindows: []
+                                    },
+                                    e.isTpl ? r.webContents.loadURL("file://" + c().join(__dirname, "tpl/index.html")) : r.webContents.loadURL(e.main);
+                                    const a = r.webContents.id
+                                      , l = ()=>{
+                                        const i = t.webContents.getAllWebContents();
+                                        i.filter((t=>t.session === this.pluginSessionPool[e.name] && "window" === t.getType())).forEach((e=>{
+                                            const i = t.BrowserWindow.fromWebContents(e);
+                                            i && i.destroy()
+                                        }
+                                        )),
+                                        e.name in this.pluginUBrowserSessionPool && i.filter((t=>t.session === this.pluginUBrowserSessionPool[e.name])).forEach((e=>{
+                                            const i = t.BrowserWindow.fromWebContents(e);
+                                            i && i.destroy()
+                                        }
+                                        ))
+                                    }
+                                    ;
+                                    r.webContents.once("destroyed", (()=>{
+                                        delete this.webContentsId2PluginIdCache[a],
+                                        delete this.triggerPluginViewEventQueues[a];
+                                        const t = this.runningPluginPool[e.name];
+                                        if (t) {
+                                            if (t.view) {
+                                                if (t.view !== r)
+                                                    return void (r = null);
+                                                t.view = null
+                                            }
+                                            if (t.detachWindows.length > 0)
+                                                return void (r = null);
+                                            delete this.runningPluginPool[e.name]
+                                        }
+                                        l(),
+                                        r = null
+                                    }
+                                    )),
+                                    r.webContents.once("render-process-gone", ((t,i)=>{
+                                        const n = this.runningPluginPool[e.name];
+                                        if (n) {
+                                            if (n.view && n.view === r)
+                                                n.view = null,
+                                                this.mainWindow.getBrowserView() === r && (this.mainWindow.setBrowserView(null),
+                                                this.mainWindow.webContents.focus(),
+                                                this.emptyRecovery());
+                                            else if (n.detachWindows.length > 0) {
+                                                const e = n.detachWindows.find((e=>e.getBrowserView() === r));
+                                                e && (n.detachWindows.splice(n.detachWindows.indexOf(e), 1),
+                                                e.setBrowserView(null),
+                                                e.destroy())
+                                            }
+                                            n.view || 0 !== n.detachWindows.length || (delete this.runningPluginPool[e.name],
+                                            l())
+                                        }
+                                    }
+                                    ));
+                                    const d = setTimeout((()=>{
+                                        this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.getEnterFeatureCmd()").then((t=>{
+                                            t && t.pluginId === e.name && this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.empty()")
+                                        }
+                                        )),
+                                        r.webContents.destroy(),
+                                        new t.Notification({
+                                            body: '插件应用 "' + e.pluginName + '" 装配超时，被强制完全退出'
+                                        }).show()
+                                    }
+                                    ), 15e3);
+                                    r.webContents.once("dom-ready", (()=>{
+                                        clearTimeout(d);
+                                        let t = "\n        window.__EscTimestamp = 0;\n        window.addEventListener('keydown',(e)=>{\n          if(e.code==='Escape') window.__EscTimestamp=Date.now();\n        });\n        window.onpopstate = () => { history.pushState(null, null, null) }\n      ";
+                                        e.isTpl && (this.isWindow ? t += `window.__WorkDir = ${JSON.stringify(e.location.replace(/\\/g, "/"))};` : t += `window.__WorkDir = ${JSON.stringify(e.location)};`),
+                                        e.isDev || e.unsafe || (t += `\n          window.onerror = function (message, source, lineno, colno){\n            source = source.substr(source.indexOf('.asar/')+6)\n            const report = {\n              event: "plugin.exception",\n              "@timestamp": new Date().toISOString(),\n              platform : ${JSON.stringify(process.platform)},\n              arch : ${JSON.stringify(process.arch)},\n              appVersion : ${JSON.stringify(this.appVersion)},\n              osRelease : ${JSON.stringify(this.osRelease)},\n              pluginId : ${JSON.stringify(e.name)},\n              pluginVersion : ${JSON.stringify(e.version)},\n              error: JSON.stringify({message,source,lineno,colno})\n            }\n            fetch(${JSON.stringify(this.reportCmp.config.logsURL)},{\n              method: 'POST',\n              headers: {\n                'Content-Type': 'application/json'\n              },\n              body: JSON.stringify([report])\n            })\n          }`),
+                                        r.webContents.executeJavaScript(t).catch((()=>{}
+                                        )),
+                                        this.isMacOs ? r.webContents.insertCSS('body { font-family: system-ui,"PingFang SC","Helvetica Neue","Microsoft Yahei",sans-serif; }') : r.webContents.insertCSS('\n          ::-webkit-scrollbar-track-piece{ background-color: #fff; }\n          ::-webkit-scrollbar{ width:8px; height:8px; }\n          ::-webkit-scrollbar-thumb{ background-color: #e2e2e2; border-radius: 4px; border: 2px solid #fff; }\n          ::-webkit-scrollbar-thumb:hover{ background-color: #9f9f9f; }\n          body { font-family: system-ui,"PingFang SC","Helvetica Neue","Microsoft Yahei",sans-serif; }\n        '),
+                                        void 0 === i ? this.triggerPluginViewEvent(r, "PluginReady") : this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.endAssemblyPlugin()").then((t=>{
+                                            e.name + i === t && this.displayPlugin(r, e, i, n, !0)
+                                        }
+                                        ))
+                                    }
+                                    )),
+                                    s().production() && r.webContents.on("will-navigate", ((e,t)=>{
+                                        e.preventDefault()
+                                    }
+                                    )),
+                                    r.webContents.on("before-input-event", ((e,i)=>{
+                                        if ("keyDown" !== i.type)
+                                            return;
+                                        if (!(i.meta || i.control || i.shift || i.alt)) {
+                                            if ("Escape" === i.key) {
+                                                const e = t.BrowserWindow.fromBrowserView(r);
+                                                if (e !== this.mainWindow)
+                                                    return void (e.isFullScreen() && e.setFullScreen(!1));
+                                                let i = this.triggerPluginViewEventQueues[a];
+                                                if (i && i.length > 0 && i.find((e=>["PluginOut", "PluginEnter", "PluginReady"].includes(e))))
+                                                    return void setTimeout((()=>{
+                                                        r && r.webContents && !r.webContents.isDestroyed() && (i = this.triggerPluginViewEventQueues[a],
+                                                        i && i.length > 0 && i.find((e=>["PluginOut", "PluginEnter", "PluginReady"].includes(e))) && this.outPlugin())
+                                                    }
+                                                    ), 250);
+                                                const n = Date.now();
+                                                setTimeout((()=>{
+                                                    r && r.webContents && !r.webContents.isDestroyed() && r.webContents.executeJavaScript("window.__EscTimestamp").then((e=>{
+                                                        e - n < -50 || this.outPlugin()
+                                                    }
+                                                    ))
+                                                }
+                                                ), 50)
+                                            }
+                                            return
+                                        }
+                                        const n = this.hotKeyAction(i);
+                                        if (n)
+                                            if ("close" !== n)
+                                                if ("detach" !== n) {
+                                                    if ("paste" === n) {
+                                                        const e = this.clipboardCmp.getPasteFormat();
+                                                        if ("files" !== e && "img" !== e)
+                                                            return;
+                                                        const i = t.BrowserWindow.fromBrowserView(r);
+                                                        return i === this.mainWindow ? void this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.getEnterFeatureCmd()").then((t=>{
+                                                            if (!t)
+                                                                return;
+                                                            const i = this.getCurrentPluginId();
+                                                            if (!i)
+                                                                return;
+                                                            const n = this.pluginsCmp.pluginContainer[i].featureDic[t.featureCode];
+                                                            n && n.cmds.find((t=>t.type === e)) && this.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.getPasteInputCmdForSameFeature(${JSON.stringify({
+                                                                pluginId: i,
+                                                                featureCode: t.featureCode
+                                                            })})`).then((e=>{
+                                                                e && this.triggerPluginViewEvent(r, "PluginOut", null, (()=>{
+                                                                    const t = this.triggerPluginViewEventQueues[a];
+                                                                    t && t.length > 0 && t.includes("PluginOut") || this.triggerPluginViewEvent(r, "PluginEnter", e)
+                                                                }
+                                                                ))
+                                                            }
+                                                            ))
+                                                        }
+                                                        )) : void i.webContents.executeJavaScript("window.payload.featureCode").then((t=>{
+                                                            if (!t)
+                                                                return;
+                                                            const i = this.getPluginIdByWebContents(r.webContents);
+                                                            if (!i)
+                                                                return;
+                                                            const n = this.pluginsCmp.pluginContainer[i].featureDic[t];
+                                                            n && n.cmds.find((t=>t.type === e)) && this.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.getPasteInputCmdForSameFeature(${JSON.stringify({
+                                                                pluginId: i,
+                                                                featureCode: t
+                                                            })})`).then((e=>{
+                                                                e && this.triggerPluginViewEvent(r, "PluginOut", null, (()=>{
+                                                                    const t = this.triggerPluginViewEventQueues[a];
+                                                                    t && t.length > 0 && t.includes("PluginOut") || this.triggerPluginViewEvent(r, "PluginEnter", e)
+                                                                }
+                                                                ))
+                                                            }
+                                                            ))
+                                                        }
+                                                        ))
+                                                    }
+                                                    if ("select" !== n) {
+                                                        if ("setting" === n)
+                                                            return e.preventDefault(),
+                                                            void this.ffffffff.goSetting();
+                                                        "dev" === n && (e.preventDefault(),
+                                                        this.openPluginDevTools(r))
+                                                    } else {
+                                                        e.preventDefault();
+                                                        const i = t.BrowserWindow.fromBrowserView(r);
+                                                        i === this.mainWindow ? (this.mainWindow.webContents.focus(),
+                                                        this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.mainInputSelect()")) : (i.webContents.focus(),
+                                                        i.webContents.executeJavaScript("window.api.subInputSelect()"))
+                                                    }
+                                                } else
+                                                    r === this.mainWindow.getBrowserView() && (e.preventDefault(),
+                                                    process.nextTick((()=>{
+                                                        this.detachPlugin()
+                                                    }
+                                                    )));
+                                            else {
+                                                e.preventDefault();
+                                                const i = t.BrowserWindow.fromBrowserView(r);
+                                                i === this.mainWindow ? this.outPlugin() : i.close()
+                                            }
+                                    }
+                                    ))
+                                }
+                                getCurrentPluginId() {
+                                    const e = this.mainWindow.getBrowserView();
+                                    if (null === e)
+                                        return null;
+                                    let t = null;
+                                    for (const i in this.runningPluginPool)
+                                        if (this.runningPluginPool[i].view === e) {
+                                            t = i;
+                                            break
+                                        }
+                                    return t
+                                }
+                                setPluginWindowAppDetails(e, i) {
+                                    if ("string" == typeof i && (i = this.pluginsCmp.pluginContainer[i]),
+                                    !i)
+                                        return;
+                                    const n = c().join(t.app.getPath("temp"), "utools-icons")
+                                      , o = c().join(n, i.name + "-" + (i.version || "").replace(/\./g, "-") + ".ico");
+                                    d().existsSync(o) ? e.setAppDetails({
+                                        appId: "org.yuanli.utools." + i.name,
+                                        appIconPath: o
+                                    }) : (d().existsSync(n) || d().mkdirSync(n),
+                                    he()(i.logo.replace("file://", "")).then((t=>{
+                                        d().writeFileSync(o, t),
+                                        e.setAppDetails({
+                                            appId: "org.yuanli.utools." + i.name,
+                                            appIconPath: o
+                                        })
+                                    }
+                                    )))
+                                }
+                                outPlugin() {
+                                    setImmediate((()=>{
+                                        this.recoverPlugin((()=>{
+                                            this.emptyRecovery()
+                                        }
+                                        ))
+                                    }
+                                    ))
+                                }
+                                recoverPlugin(e) {
+                                    const t = this.getCurrentPluginId();
+                                    if (!t)
+                                        return null;
+                                    const i = this.pluginIsOutKill(t);
+                                    let n = this.mainWindow.getBrowserView();
+                                    this.triggerPluginViewEvent(n, "PluginOut", null, (()=>{
+                                        this.mainWindow.setBrowserView(null),
+                                        this.mainWindow.webContents.focus(),
+                                        i && n.webContents.destroy(),
+                                        n = null,
+                                        e()
+                                    }
+                                    ))
+                                }
+                                endPlugin() {
+                                    if (!this.getCurrentPluginId())
+                                        return;
+                                    let e = this.mainWindow.getBrowserView();
+                                    this.triggerPluginViewEvent(e, "PluginOut", null, (()=>{
+                                        this.mainWindow.setBrowserView(null),
+                                        this.mainWindow.webContents.focus(),
+                                        this.emptyRecovery(),
+                                        e.webContents.destroy(),
+                                        e = null
+                                    }
+                                    ))
+                                }
+                                detachPlugin() {
+                                    const e = this.mainWindow.getBrowserView();
+                                    if (!e)
+                                        return;
+                                    const t = this.getPluginIdByWebContents(e.webContents);
+                                    if (!t)
+                                        return;
+                                    const i = e.webContents.isFocused()
+                                      , n = {
+                                        ...this.display.mainWindowBounds
+                                    };
+                                    this.mainWindow.setBrowserView(null),
+                                    this.mainWindow.hide(),
+                                    this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.getEnterFeatureCmd()").then((o=>{
+                                        o && (o.subInput ? this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.getMainInputValue()").then((s=>{
+                                            o.subInput.value = s,
+                                            this.detachPluginLogic(t, o, n, e, i)
+                                        }
+                                        )) : this.detachPluginLogic(t, o, n, e, i))
+                                    }
+                                    ))
+                                }
+                                autoDetachPlugin(e, t, i, n) {
+                                    this.mainWindow.hide(),
+                                    this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.getEnterFeatureCmd()").then((o=>{
+                                        this.detachPluginLogic(e, o, t, i, !0, n)
+                                    }
+                                    ))
+                                }
+                                detachPluginLogic(e, i, n, o, s, r) {
+                                    this.emptyRecovery();
+                                    const a = this.pluginsCmp.pluginContainer[e];
+                                    let l = a.logo;
+                                    const d = a.featureDic[i.featureCode].icon;
+                                    d && d.startsWith("file://") && (l = d);
+                                    let h = new t.BrowserWindow({
+                                        show: !1,
+                                        frame: !this.isLinux,
+                                        autoHideMenuBar: !0,
+                                        titleBarStyle: "hidden",
+                                        trafficLightPosition: {
+                                            x: 12,
+                                            y: 21
+                                        },
+                                        backgroundColor: this.getWindowBackgroundColor(),
+                                        icon: a.logo.replace("file://", ""),
+                                        title: a.pluginName,
+                                        enableLargerThanScreen: !0,
+                                        x: n.x,
+                                        y: n.y,
+                                        width: n.width,
+                                        height: n.height,
+                                        webPreferences: {
+                                            partition: "persist:<utools>",
+                                            devTools: !1,
+                                            nodeIntegration: !1,
+                                            contextIsolation: !1,
+                                            navigateOnDragDrop: !1,
+                                            spellcheck: !1,
+                                            webgl: !1,
+                                            enableWebSQL: !1,
+                                            preload: c().join(__dirname, "detach", "preload.js")
+                                        }
+                                    });
+                                    h.removeMenu(),
+                                    this.isWindow && "FFFFFFFF" !== e && this.setPluginWindowAppDetails(h, a),
+                                    this.isMacOs && !t.app.dock.isVisible() && t.app.dock.show(),
+                                    this.runningPluginPool[e].view = null,
+                                    this.runningPluginPool[e].detachWindows.push(h),
+                                    h.loadURL("file://" + c().join(__dirname, "detach/index.html")),
+                                    h.setMinimumSize(this.config.initWidth, this.config.initHeight + 1),
+                                    h.webContents.executeJavaScript(`window.initRender(${JSON.stringify({
+                                        pluginId: e,
+                                        icon: l,
+                                        label: i.label,
+                                        subInput: i.subInput,
+                                        featureCode: i.featureCode,
+                                        isDev: a.isDev,
+                                        isPluginInfo: "FFFFFFFF" !== e && !a.isDev
+                                    })})`).then((([e,t])=>{
+                                        e && e[0] > 0 && e[1] > 0 && (n.width = e[0],
+                                        n.height = e[1]),
+                                        h.setBounds(n),
+                                        n.height > this.config.openPluginHeight / 2 && h.center(),
+                                        h.show(),
+                                        t && t >= 25 && t <= 500 ? o.webContents.setZoomFactor(t / 100) : o.webContents.setZoomFactor(1),
+                                        h.setBrowserView(o),
+                                        o.setBounds({
+                                            x: 0,
+                                            y: this.config.initHeight,
+                                            width: n.width,
+                                            height: n.height - this.config.initHeight
+                                        }),
+                                        o.setAutoResize({
+                                            width: !0,
+                                            height: !0
+                                        }),
+                                        s || !i.subInput ? o.webContents.focus() : h.webContents.focus(),
+                                        "function" == typeof r && r(h),
+                                        e && 0 === e[0] && 0 === e[1] && (this.isWindow ? setImmediate((()=>{
+                                            h.maximize()
+                                        }
+                                        )) : this.isMacOs ? setImmediate((()=>{
+                                            h.setFullScreen(!0)
+                                        }
+                                        )) : this.isLinux && setImmediate((()=>{
+                                            h.emit("linux-maximize")
+                                        }
+                                        )))
+                                    }
+                                    )),
+                                    h.once("close", (t=>{
+                                        t.preventDefault();
+                                        const i = this.runningPluginPool[e].detachWindows;
+                                        i.splice(i.indexOf(h), 1),
+                                        this.triggerPluginViewEvent(o, "PluginOut", null, (()=>{
+                                            h.getBrowserView() ? (h.setBrowserView(null),
+                                            o.webContents.destroy()) : this.runningPluginPool[e].view = o,
+                                            h.destroy(),
+                                            o = null,
+                                            h = null
+                                        }
+                                        ))
+                                    }
+                                    )),
+                                    h.once("closed", (()=>{
+                                        if (o = null,
+                                        h = null,
+                                        this.isMacOs && !Object.values(this.runningPluginPool).find((e=>e.detachWindows.length > 0)))
+                                            return this.mainWindow.isVisible() ? (t.app.dock.hide(),
+                                            void setTimeout((()=>{
+                                                this.mainWindow.isVisible() || this.display.trigger(!0)
+                                            }
+                                            ), 50)) : void t.app.dock.hide()
+                                    }
+                                    )),
+                                    this.isWindow ? (h.on("maximize", (()=>{
+                                        h.webContents.executeJavaScript("window.api.maximizeTrigger()");
+                                        const e = h.getBrowserView();
+                                        if (!e)
+                                            return;
+                                        const i = t.screen.getDisplayMatching(h.getBounds());
+                                        e.setBounds({
+                                            x: 0,
+                                            y: this.config.initHeight,
+                                            width: i.workArea.width,
+                                            height: i.workArea.height - this.config.initHeight
+                                        })
+                                    }
+                                    )),
+                                    h.on("unmaximize", (()=>{
+                                        h.webContents.executeJavaScript("window.api.unmaximizeTrigger()");
+                                        const e = h.getBrowserView();
+                                        if (!e)
+                                            return;
+                                        const i = h.getBounds()
+                                          , n = t.screen.getDisplayMatching(i)
+                                          , o = n.scaleFactor * i.width % 1 == 0 ? i.width : i.width - 2
+                                          , s = n.scaleFactor * i.height % 1 == 0 ? i.height : i.height - 2;
+                                        e.setBounds({
+                                            x: 0,
+                                            y: this.config.initHeight,
+                                            width: o,
+                                            height: s - this.config.initHeight
+                                        })
+                                    }
+                                    ))) : this.isMacOs ? (h.on("enter-full-screen", (()=>{
+                                        h.webContents.executeJavaScript("window.api.enterFullScreenTrigger()")
+                                    }
+                                    )),
+                                    h.on("leave-full-screen", (()=>{
+                                        h.webContents.executeJavaScript("window.api.leaveFullScreenTrigger()")
+                                    }
+                                    ))) : this.isLinux && h.on("linux-maximize", (()=>{
+                                        const e = h.getBounds()
+                                          , i = t.screen.getDisplayMatching(e);
+                                        h.setBounds(i.workArea),
+                                        h.setMovable(!1),
+                                        h.setResizable(!1);
+                                        const n = h.getBrowserView();
+                                        n && (n.webContents.focus(),
+                                        setTimeout((()=>{
+                                            !h.isDestroyed() && h.listenerCount("linux-unmaximize") > 0 && n.setBounds({
+                                                x: 0,
+                                                y: this.config.initHeight,
+                                                width: i.workArea.width,
+                                                height: i.workArea.height - this.config.initHeight
+                                            })
+                                        }
+                                        ), 250)),
+                                        h.once("linux-unmaximize", (()=>{
+                                            h.setBounds(e),
+                                            h.setMovable(!0),
+                                            h.setResizable(!0);
+                                            const t = h.getBrowserView();
+                                            t && t.webContents.focus(),
+                                            h.webContents.executeJavaScript("window.api.unmaximizeTrigger()")
+                                        }
+                                        )),
+                                        h.webContents.executeJavaScript("window.api.maximizeTrigger()")
+                                    }
+                                    )),
+                                    h.on("page-title-updated", (e=>{
+                                        e.preventDefault()
+                                    }
+                                    )),
+                                    h.webContents.once("render-process-gone", (()=>{
+                                        h.close()
+                                    }
+                                    )),
+                                    h.on("blur", (()=>{
+                                        h.webContents.executeJavaScript("window.subInputBlurTimestamp").then((e=>{
+                                            s = !e || Date.now() - e > 100
+                                        }
+                                        ))
+                                    }
+                                    )),
+                                    h.on("focus", (()=>{
+                                        s && o.webContents.focus()
+                                    }
+                                    )),
+                                    this.triggerPluginViewEvent(o, "PluginDetach"),
+                                    a.isDev || this.reportCmp.info("plugin.detach", {
+                                        pluginId: e
+                                    })
+                                }
+                                destroyPlugin(e) {
+                                    if (!(e in this.runningPluginPool))
+                                        return;
+                                    const t = this.runningPluginPool[e];
+                                    if (t.view && (this.mainWindow.getBrowserView() === t.view ? this.endPlugin() : t.view.webContents.destroy()),
+                                    t.detachWindows.length > 0)
+                                        for (const e of t.detachWindows)
+                                            e.close()
+                                }
+                                emptyRecovery() {
+                                    this.setExpendHeight(0),
+                                    this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.empty()")
+                                }
+                                restoreShowMainWindow() {
+                                    if (!this.mainWindow.getBrowserView())
+                                        return this.display.trigger();
+                                    this.recoverPlugin((()=>{
+                                        this.setExpendHeight(0),
+                                        this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.empty()").then((()=>{
+                                            this.display.trigger()
+                                        }
+                                        ))
+                                    }
+                                    ))
+                                }
+                                refreshCmdSource() {
+                                    this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.refreshCmdSource()"),
+                                    this.voiceRefreshCmdSource && this.voiceRefreshCmdSource()
+                                }
+                                refreshAccountInfo(e) {
+                                    this.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.changeAccount(${e ? JSON.stringify(e) : ""})`),
+                                    this.voiceChangeAccount && this.voiceChangeAccount(e)
+                                }
+                                listenAccountEvent() {
+                                    this.accountCmp.on("login", (e=>{
+                                        1 === e.type && (e.mainPlaceholder = n().get("mainPlaceholder")),
+                                        this.refreshAccountInfo(e)
+                                    }
+                                    )),
+                                    this.accountCmp.on("logout", (()=>{
+                                        this.refreshAccountInfo()
+                                    }
+                                    )),
+                                    setTimeout((()=>{
+                                        const e = this.accountCmp.getAccountInfo();
+                                        if (e && 1 === e.type && e.expired_at - Math.floor(Date.now() / 1e3) < 604800) {
+                                            const e = new t.Notification({
+                                                body: "uTools 会员即将到期"
+                                            });
+                                            e.once("click", (()=>{
+                                                this.ffffffff.goAccountDb()
+                                            }
+                                            )),
+                                            e.show()
+                                        }
+                                    }
+                                    ), 1e4)
+                                }
+                                getPluginIdByWebContents(e) {
+                                    if (!e || e.isDestroyed())
+                                        return null;
+                                    const t = this.webContentsId2PluginIdCache[e.id];
+                                    if (t)
+                                        return t;
+                                    for (const t in this.pluginSessionPool)
+                                        if (this.pluginSessionPool[t] === e.session)
+                                            return this.webContentsId2PluginIdCache[e.id] = t,
+                                            t;
+                                    return null
+                                }
+                                pluginDatabasePullEvent(e) {
+                                    for (const t in e)
+                                        t in this.runningPluginPool && (this.runningPluginPool[t].view && this.triggerPluginViewEvent(this.runningPluginPool[t].view, "DbPull", e[t]),
+                                        this.runningPluginPool[t].detachWindows.length > 0 && this.runningPluginPool[t].detachWindows.forEach((i=>{
+                                            const n = i.getBrowserView();
+                                            n && this.triggerPluginViewEvent(n, "DbPull", e[t])
+                                        }
+                                        )))
+                                }
+                                autoLoadPlugin(e, t, i, n, o) {
+                                    e in this.pluginsCmp.pluginContainer && t in this.pluginsCmp.pluginContainer[e].featureDic && this.pluginsCmp.pluginContainer[e].featureDic[t].cmds.find((e=>"base" === e.type && e.label === i)) && (this.display.trigger(!0),
+                                    this.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.autoLoadPlugin(${JSON.stringify({
+                                        pluginId: e,
+                                        featureCode: t,
+                                        label: i,
+                                        value: n,
+                                        subInputInput: o
+                                    })})`))
+                                }
+                                _killAllPlugin(e) {
+                                    const t = {
+                                        ...this.runningPluginPool
+                                    };
+                                    e && delete t.FFFFFFFF,
+                                    Object.values(t).forEach((e=>{
+                                        e.view && !e.view.webContents.isDestroyed() && e.view.webContents.destroy(),
+                                        e.detachWindows.length > 0 && e.detachWindows.forEach((e=>e.close()))
+                                    }
+                                    ))
+                                }
+                                killAllPlugins(e) {
+                                    if (this.mainWindow.getBrowserView())
+                                        return e && this.mainWindow.getBrowserView().webContents === this.ffffffff.webContents ? this._killAllPlugin(e) : this.recoverPlugin((()=>{
+                                            this.emptyRecovery(),
+                                            this._killAllPlugin(e)
+                                        }
+                                        ));
+                                    setImmediate((()=>this._killAllPlugin(e)))
+                                }
+                                subInputAutoInput(e) {
+                                    setTimeout((()=>{
+                                        this.mainWindow.getBrowserView() && this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.getEnterFeatureCmd()").then((i=>{
+                                            if (i && i.subInput && i.subInput.isFocus)
+                                                if (!0 === e) {
+                                                    if ("text/plain" !== t.clipboard.availableFormats()[0])
+                                                        return;
+                                                    const e = t.clipboard.readText().trim();
+                                                    if (!e || e.length > 99)
+                                                        return;
+                                                    this.mainWindow.webContents.executeJavaScript(`window.api.setSubInputValue(${JSON.stringify({
+                                                        value: e
+                                                    })})`)
+                                                } else if ("string" == typeof e) {
+                                                    if (e.length > 99)
+                                                        return;
+                                                    this.mainWindow.webContents.executeJavaScript(`window.api.setSubInputValue(${JSON.stringify({
+                                                        value: e
+                                                    })})`)
+                                                }
+                                        }
+                                        ))
+                                    }
+                                    ), 50)
+                                }
+                                detachSubInputAutoInput(e, i) {
+                                    setTimeout((()=>{
+                                        e.isDestroyed() || e.webContents.isDestroyed() || e.webContents.executeJavaScript("window.payload.subInput").then((n=>{
+                                            if (n && n.isFocus)
+                                                if (!0 === i) {
+                                                    if ("text/plain" !== t.clipboard.availableFormats()[0])
+                                                        return;
+                                                    const i = t.clipboard.readText().trim();
+                                                    if (!i || i.length > 99)
+                                                        return;
+                                                    e.webContents.executeJavaScript(`window.api.setSubInputValue(${JSON.stringify({
+                                                        value: i
+                                                    })})`)
+                                                } else if ("string" == typeof i) {
+                                                    if (i.length > 99)
+                                                        return;
+                                                    e.webContents.executeJavaScript(`window.api.setSubInputValue(${JSON.stringify({
+                                                        value: i
+                                                    })})`)
+                                                }
+                                        }
+                                        ))
+                                    }
+                                    ), 50)
+                                }
+                                openPluginDevTools(e) {
+                                    if (!(e = e || this.mainWindow.getBrowserView()))
+                                        return;
+                                    const i = this.getPluginIdByWebContents(e.webContents);
+                                    if (!i)
+                                        return;
+                                    const n = this.pluginsCmp.pluginContainer[i];
+                                    if (n && (n.isDev || n.unsafe))
+                                        if (e.webContents.isDevToolsOpened())
+                                            e.webContents.closeDevTools();
+                                        else {
+                                            const i = t.BrowserWindow.fromWebContents(e.webContents);
+                                            if (!i)
+                                                return;
+                                            const n = i.getSize()[1] < this.config.openPluginHeight ? "detach" : "bottom";
+                                            e.webContents.openDevTools({
+                                                mode: n
+                                            })
+                                        }
+                                }
+                                getWorkWebContentsBySender(e) {
+                                    const i = this.triggerPluginViewEventQueues[e.id];
+                                    if (i && i.length > 0 && i.includes("PluginOut"))
+                                        return null;
+                                    const n = t.BrowserWindow.fromWebContents(e);
+                                    if (!n)
+                                        return null;
+                                    if (n === this.mainWindow)
+                                        return this.mainWindow.webContents;
+                                    const o = this.getPluginIdByWebContents(e);
+                                    if (!o)
+                                        return null;
+                                    const s = this.runningPluginPool[o];
+                                    return s && s.detachWindows.includes(n) ? n.webContents : null
+                                }
+                            }
+                            (e,i,o,r,a)
+                        }
+                        ), !0),
+                        this.container.set("pay", (()=>{
+                            const e = this.container.get("config").get("pay")
+                              , t = this.container.get("account")
+                              , i = this.container.get("plugins")
+                              , n = this.container.get("window");
+                            return new wt(e,t,i,n)
+                        }
+                        ), !0),
+                        this.container.set("database", (()=>{
+                            const e = this.container.get("config")
+                              , t = this.container.get("window")
+                              , i = this.container.get("account")
+                              , n = this.container.get("report");
+                            return new ve(e.get("path.database"),e.get("database"),t,i,n)
+                        }
+                        ), !0),
+                        this.container.set("voice", (()=>{
+                            const e = this.container.get("config").get("voice")
+                              , t = this.container.get("window")
+                              , i = this.container.get("database");
+                            return new je(e,t,i)
+                        }
+                        ), !0),
+                        this.container.set("screencapture", (()=>{
+                            const e = this.container.get("window");
+                            return new rt(e)
+                        }
+                        ), !0),
+                        this.container.set("screencolorpicker", (()=>{
+                            const e = this.container.get("window");
+                            return new ct(e)
+                        }
+                        ), !0),
+                        this.container.set("helpboot", (()=>{
+                            const e = this.container.get("window")
+                              , t = this.container.get("database");
+                            return new ft(e,t)
+                        }
+                        ), !0),
+                        this.container.set("app", (()=>{
+                            const e = this.container.get("config").get("app")
+                              , t = this.container.get("plugins")
+                              , i = this.container.get("window")
+                              , n = this.container.get("voice")
+                              , o = this.container.get("database")
+                              , s = this.container.get("screencapture")
+                              , r = this.container.get("screencolorpicker")
+                              , a = this.container.get("helpboot");
+                            return new Ne(e,t,i,n,o,s,r,a)
+                        }
+                        ), !0),
+                        this.container.set("featurehotkey", (()=>{
+                            const e = this.container.get("window")
+                              , t = this.container.get("database");
+                            return new He(e,t)
+                        }
+                        ), !0),
+                        this.container.set("autoupdate", (()=>{
+                            const e = this.container.get("config").get("autoupdate")
+                              , i = this.container.get("window")
+                              , n = this.container.get("voice")
+                              , o = this.container.get("report");
+                            return new class {
+                                constructor(e, i, n, o) {
+                                    Ie(this, "noticeUpdate", (e=>{
+                                        this.windowCmp.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.noticeUpdate(${e ? JSON.stringify(e) : ""})`),
+                                        this.voiceCmp.voiceWindow && this.voiceCmp.voiceWindow.webContents.executeJavaScript(`window.bridge.noticeUpdate(${e ? JSON.stringify(e) : ""})`)
+                                    }
+                                    )),
+                                    Ie(this, "linuxCheckForUpdate", ((e,i)=>{
+                                        if (!t.net.online)
+                                            return;
+                                        const n = t.app.getVersion()
+                                          , o = n.split("-")
+                                          , s = t.net.request(this.config.linuxURL + (o[1] || "latest") + "-linux.yml");
+                                        s.on("response", (t=>{
+                                            200 === t.statusCode && t.on("data", (t=>{
+                                                const o = t.toString();
+                                                if (!/^version: (.*)$/m.test(o))
+                                                    return;
+                                                const s = RegExp.$1;
+                                                L().gt(s, n) ? (this.newVersionIsDownloaded = !0,
+                                                this.noticeUpdate(this.config.linuxDownloadURL),
+                                                e && e(s)) : i && i()
+                                            }
+                                            ))
+                                        }
+                                        )),
+                                        s.end()
+                                    }
+                                    )),
+                                    Ie(this, "mainServices", {
+                                        appUpdate: ()=>{
+                                            this.newVersionIsDownloaded && (this._appUpdating || (this._appUpdating = !0,
+                                            t.app.removeAllListeners("before-quit"),
+                                            s().windows() ? t.app.once("before-quit", (()=>{
+                                                k().exit()
+                                            }
+                                            )) : s().macOS() && (k().panelRestoreToWindow(this.windowCmp.mainWindow.getNativeWindowHandle()),
+                                            this.voiceCmp.voiceWindow && k().panelRestoreToWindow(this.voiceCmp.voiceWindow.getNativeWindowHandle()),
+                                            t.app.dock.hide(),
+                                            t.app.hide()),
+                                            k().stopClipboardWatch(),
+                                            k().stopVoicePanelTriggerEvent(),
+                                            k().stopFKeyTapEvent(),
+                                            t.globalShortcut.unregisterAll(),
+                                            setTimeout((()=>{
+                                                t.webContents.getAllWebContents().forEach((e=>{
+                                                    e.removeAllListeners("destroyed"),
+                                                    e.removeAllListeners("render-process-gone")
+                                                }
+                                                )),
+                                                t.BrowserWindow.getAllWindows().forEach((e=>{
+                                                    e.removeAllListeners("close"),
+                                                    e.removeAllListeners("closed"),
+                                                    e.setClosable(!0)
+                                                }
+                                                )),
+                                                Se.autoUpdater.quitAndInstall()
+                                            }
+                                            ), 300)))
+                                        }
+                                    }),
+                                    this.config = e,
+                                    this.windowCmp = i,
+                                    this.voiceCmp = n,
+                                    this.reportCmp = o,
+                                    this.newVersionIsDownloaded = !1
+                                }
+                                init() {
+                                    s().linux() ? setImmediate((()=>{
+                                        this.linuxUpdateWatch()
+                                    }
+                                    )) : (this.registerEvent(),
+                                    setImmediate((()=>{
+                                        this.updateWatch()
+                                    }
+                                    ))),
+                                    this.windowCmp.pluginsCmp.on("appupdate", this.noticeUpdate)
+                                }
+                                updateWatch() {
+                                    this.newVersionIsDownloaded || (Se.autoUpdater.checkForUpdates().catch((e=>{
+                                        e.message.startsWith("net::ERR_") || this.reportCmp.info("app.checkforupdate.error", {
+                                            error: e.message
+                                        })
+                                    }
+                                    )),
+                                    setTimeout((()=>{
+                                        this.updateWatch()
+                                    }
+                                    ), T(36e5, 36e6)))
+                                }
+                                registerEvent() {
+                                    Se.autoUpdater.on("update-downloaded", (e=>{
+                                        this.newVersionIsDownloaded = !0,
+                                        this.noticeUpdate()
+                                    }
+                                    )),
+                                    Se.autoUpdater.on("error", (e=>{
+                                        e.message.startsWith("net::ERR_") || this.reportCmp.info("app.autoupdate.error", {
+                                            error: e.message
+                                        })
+                                    }
+                                    ))
+                                }
+                                linuxUpdateWatch() {
+                                    this.newVersionIsDownloaded || (this.linuxCheckForUpdate(),
+                                    setTimeout((()=>{
+                                        this.linuxUpdateWatch()
+                                    }
+                                    ), T(36e5, 36e6)))
+                                }
+                            }
+                            (e,i,n,o)
+                        }
+                        ), !0),
+                        this.container.set("menu", (()=>new We), !0),
+                        this.container.set("preferences", (()=>new Te(this.container.get("window"))), !0),
+                        this.container.set("tray", (()=>{
+                            const e = this.container.get("config").get("app")
+                              , t = this.container.get("window")
+                              , i = this.container.get("account");
+                            return new Pe(e,t,i)
+                        }
+                        ), !0),
+                        this.container.set("pluginmenu", (()=>new De(this.container.get("app"))), !0),
+                        this.container.set("developer", (()=>{
+                            const e = this.container.get("window")
+                              , t = this.container.get("app");
+                            return new ut(e,t)
+                        }
+                        ), !0),
+                        this.container.set("connection", (()=>{
+                            const e = this.container.get("plugins")
+                              , t = this.container.get("window")
+                              , i = this.container.get("database")
+                              , n = this.container.get("account");
+                            return new Wt(e,t,i,n)
+                        }
+                        ), !0),
+                        s().macOS() ? this.container.set("nativeapp", (()=>{
+                            const e = this.container.get("plugins")
+                              , t = this.container.get("window")
+                              , i = this.container.get("report")
+                              , n = this.container.get("app")
+                              , o = this.container.get("connection");
+                            return new Ge(e,t,i,n,o)
+                        }
+                        ), !0) : s().windows() ? this.container.set("nativeapp", (()=>{
+                            const e = this.container.get("plugins")
+                              , t = this.container.get("window")
+                              , i = this.container.get("report")
+                              , n = this.container.get("app")
+                              , o = this.container.get("connection");
+                            return new et(e,t,i,n,o)
+                        }
+                        ), !0) : s().linux() && this.container.set("nativeapp", (()=>{
+                            const e = this.container.get("plugins")
+                              , t = this.container.get("window")
+                              , i = this.container.get("report")
+                              , n = this.container.get("app")
+                              , o = this.container.get("connection");
+                            return new st(e,t,i,n,o)
+                        }
+                        ), !0),
+                        this.container.set("ipcservices", (()=>{
+                            const e = this.container.mget("account", "report", "plugins", "clipboard", "window", "pay", "database", "voice", "screencapture", "app", "featurehotkey", "autoupdate", "preferences", "pluginmenu", "developer", "connection", "nativeapp");
+                            return new lt(e)
+                        }
+                        ), !0)
+                    }
+                }
+                (this).register(),
+                this.get("ipcservices").init(),
+                this.get("plugins").init(),
+                this.get("window").init(),
+                this.get("database").init(),
+                this.get("voice").init(i),
+                this.get("app").init(i),
+                this.get("featurehotkey").init(),
+                s().linux() || this.get("menu").init(),
+                this.get("preferences").init(),
+                this.get("tray").init(),
+                this.get("pluginmenu").init(),
+                this.get("connection").init(),
+                this.get("nativeapp").init(),
+                this.get("account").init(),
+                this.get("clipboard").init(),
+                s().production() && this.get("autoupdate").init(),
+                this.get("report").info("app.ready", {
+                    timeCost: Date.now() - e
+                })
+            }
+            )),
+            process.on("uncaughtException", (e=>{
+                e.message.startsWith("net::ERR_") || (this.get("report").info("app.exception", {
+                    error: e.stack
+                }),
+                s().dev() && console.log("UncaughtException-----------", e.message, e.stack))
+            }
+            ))
+        }
+    }
+    ).launch()
+}
+)();
