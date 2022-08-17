@@ -4,9 +4,7 @@
     "pluginName": "uTools 开发者工具",
     "description": "开发 uTools 插件应用",
     "author": "福州猿力信息科技有限公司",
-    "development": {
-         "main": "http://127.0.0.1:5080/index.html"
-    },
+    "main": "index.html",
     "logo": "logo.png",
     "preload": "preload.js",
     "features": [
