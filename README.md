@@ -104,7 +104,7 @@ asar extract app.asar ./utools/app
 
 3. 再压缩回去
 ```
-asar pack ./app ./utools/app.asar
+asar pack ./utools/app ./utools/app.asar
 ```
 用新的包替换原来的!
 
