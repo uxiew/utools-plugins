@@ -1,0 +1,78 @@
+{
+  "name": "FFFFFFFF",
+  "version": "5.0.0",
+  "pluginName": "uTools",
+  "description": "uTools",
+  "author": "utools",
+  "main": "index.html",
+  "logo": "logo.png",
+  "preload": "preload.js",
+  "features": [
+    {
+      "code": "store",
+      "explain": "uTools 插件应用市场",
+      "cmds": [
+        "插件应用市场", "Plugin Apps"
+      ]
+    },
+    {
+      "code": "settings",
+      "explain": "uTools 偏好设置",
+      "cmds": [
+        "偏好设置",
+        {
+          "type": "files",
+          "maxLength": 1,
+          "label": "加入到 uTools 本地文件启动"
+        }
+      ]
+    },
+    {
+      "code": "installed",
+      "explain": "管理我的 uTools 插件应用",
+      "cmds": [
+        "我的插件应用"
+      ]
+    },
+    {
+      "code": "cmds",
+      "explain": "查看所有关键字",
+      "cmds": [
+        "所有关键字"
+      ]
+    },
+    {
+      "code": "accountdb",
+      "explain": "uTools 帐号与数据",
+      "cmds": [
+        "帐号与数据", "uTools 会员"
+      ]
+    },
+    {
+      "code": "plugininstall",
+      "icon": "icon-plugininstall.png",
+      "cmds": [
+        {
+          "type": "files",
+          "fileType": "file",
+          "match": "/\\.upx$/i",
+          "label": "uTools 插件应用安装",
+          "maxLength": 1
+        }
+      ]
+    },
+    {
+      "code": "redeemcode",
+      "icon": "icon-redeemcode.png",
+      "cmds": [
+        {
+          "type": "regex",
+          "match": "/^uTools-[0-9a-zA-Z]{32}-[A-Z]{2}$/",
+          "label": "uTools 兑换码",
+          "minLength": 42,
+          "maxLength": 42
+        }
+      ]
+    }
+  ]
+}
