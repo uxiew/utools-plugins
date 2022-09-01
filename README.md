@@ -19,14 +19,16 @@ $ npm install -g asar
 2. 解压一个包：
 注意需要拷贝 utools 下 app.asar 文件、app.asar.unpacked 目录，然后放置在同一目录下。
 ```
-$ asar extract app.asar ./utools/app
+$ mkdir ./utools-app && cp -r /Applications/uTools.app/Contents/Resources/app.asar* ./utools-app 
+$ asar extract ./utools-app/app.asar ./utools-app/app
 ```
 
 3. 修改内容(查看如下)
 
 4. 再压缩回去
 ```
-$ asar pack ./utools/app ./utools/app.asar
+$ asar pack ./utools-app/app ./utools-app/app-new.asar
+$ cp -fr ./utools-app/app-new.asar  /Applications/uTools.app/Contents/Resources/app.asar
 ```
 用新的包替换原来的!
 
