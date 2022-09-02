@@ -4,7 +4,7 @@
 # 目录结构
 ```
 ---....
----utools-debug	# utools(v3.0.2) 的 app.asar 源代码学习分析
+---utools-debug	# utools(v3.0.3) 的 app.asar 源代码学习分析
 ---upxs		# 插件合集
 ---utools-template-react  # react 开发插件的模版
 ---README.md	# 说明文档
@@ -27,8 +27,7 @@ $ asar extract ./utools-app/app.asar ./utools-app/app
 
 4. 再压缩回去
 ```
-$ asar pack ./utools-app/app ./utools-app/app-new.asar
-$ cp -fr ./utools-app/app-new.asar  /Applications/uTools.app/Contents/Resources/app.asar
+$ asar pack ./utools-app/app ./utools-app/app-new.asar && cp -fr ./utools-app/app-new.asar  /Applications/uTools.app/Contents/Resources/app.asar
 ```
 用新的包替换原来的!
 
@@ -38,7 +37,7 @@ $ cp -fr ./utools-app/app-new.asar  /Applications/uTools.app/Contents/Resources/
 
 1. **取消非官方商店插件的验证及运行限制**
   
-  `dist/main.js` 文件中 修改如下两处为：
+  `dist/main.js` 修改如下两处为：
    ```ts
    /*if (s.illegal)
                                         return new t.Notification({
@@ -58,27 +57,8 @@ $ cp -fr ./utools-app/app-new.asar  /Applications/uTools.app/Contents/Resources/
                           }
                           */
   ```
-                         
-2. **开放所有插件的 DevTool 调试功能**
-  
-  `dist/main.js` mount 函数中：添加的 `n.isDev = true` 是重点
-  ```ts
-  n.name in this.pluginContainer && R().lt(n.version, this.pluginContainer[n.name].version))
-                    throw new Error("已存在版本 " + this.pluginContainer[n.name].version);
-                return n.isDev = true,this.pluginContainer[n.name] = n,
-                this.emit("mount", n.name),
-  ```
 
-  `dist/plugins/v5/index.js`中 插件列表去除 `Dev` 显示修改：
-  ```ts
-  componentDidMount() {
-                const e = window.services.getPluginUpdateSet()
-                  , t = window.services.getPluginContainer()
-                  , n = Object.values(t).filter((e=>e.name && "FFFFFFFF" !== e.name)).sort(((e,t)=>t.updateTime - e.updateTime));
-                let r;
-  ```
-
-  `dist/plugins/v5/index.js`去除 ‘未通过安全验证，无法运行’ 提示
+  `dist/plugins/v5/index.js` 去除 ‘未通过安全验证，无法运行’ 提示
   ```ts
   primary: e.createElement("div", {
                         className: "installed-plugin-name"
@@ -87,21 +67,54 @@ $ cp -fr ./utools-app/app-new.asar  /Applications/uTools.app/Contents/Resources/
                     }, e.createElement(dh.Z, {
                         color: "warning"
                     }))),
-                    secondary: n.description
+  ```
+  
+  > 注意：可能出现格式化的错误，请搜索并更正`let$`为`let $` ！
+
+                         
+2. **开放所有插件的 DevTool 调试功能**
+  
+  `dist/main.js` mount 函数中：**添加的 `n.isDev = true` 是重点**
+  ```ts
+  n.name in this.pluginContainer && R().lt(n.version, this.pluginContainer[n.name].version))
+                    throw new Error("已存在版本 " + this.pluginContainer[n.name].version);
+                return n.isDev = true,this.pluginContainer[n.name] = n,
+                this.emit("mount", n.name),
   ```
 
-  `dist/index.js`去除 `i.isDev` 判断及其显示
+  `dist/plugins/v5/index.js` 插件列表：调整 `!e.isDev` 为 `e.name.startsWith("dev_")` 判断区分 开发中的 插件 及其显示（暂时解决方案）。
+  并且**使不安全插件排在前面**。
   ```ts
-   }, this.cmdLabel(t.cmd, t.indexAt, a)), e.createElement("div", {
+  componentDidMount() {
+                const e = window.services.getPluginUpdateSet()
+                  , t = window.services.getPluginContainer()
+                  , n = Object.values(t).filter((e=>e.name && "FFFFFFFF" !== e.name && !e.name.startsWith('dev_'))).sort(((e,t)=> e.unsafe ? -1 : t.updateTime - e.updateTime));
+                let r;
+  ```
+
+  `dist/index.js` 主搜索框的 Dev 显示：调整 `i.isDev` 为 `i['name'].startsWith("dev_")` 判断区分 开发中的 插件 及其显示（暂时解决方案）。
+  ```ts
+    }, this.cmdLabel(t.cmd, t.indexAt, a), i.name.startsWith('dev_') && e.createElement("span", {
   ```
 
 
 # 插件开发
 可以借助我的 asar 插件 对官方插件源码进行修改...
 
-## 设置
+非法插件会包含以下的字段
+```json
+{
+  "unsafe": true,
+  "main": "file:///Users/bing/Library/Application Support/uTools/plugins/unsafe-abe19672c5dd8c297c8a3028e1feea58.asar/index.html",
+  "name": "oIeD1z8L",
+  "pluginName": "npm-helper",
+  "illegal":true
+}
+```
 
-1. development 模式
+## 设置
+1. `plugin.json` 中需要`name`字段
+2. development 模式
 
   plugin.json 中加入开发模式热重载：
   ```ts

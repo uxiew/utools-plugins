@@ -87,8 +87,8 @@
                   <div>uTools 会员价</div>
                   <div class="member-price">￥${(order.member_fee / 100).toFixed(2)}</div>
                 </div>
+                ${order.is_member ? '' : '<div class="row buy-utools-vip" onclick="window.services.goBuyMember()">前往购买 uTools 会员</div>'}
               `}
-              ${order.is_member ? '' : '<div class="row buy-utools-vip" onclick="window.services.goBuyMember()">前往购买 uTools 会员</div>'}
             </div>
           </div>
           <div class="bottom">

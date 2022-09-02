@@ -166,6 +166,7 @@ window.services = {
             try {
                 try {
                     i = JSON.parse(fs.readFileSync(e, "utf8"))
+                    console.log("getUpxPluginConf: ", c, e, i)
                 } catch (e) {
                     throw new Error("配置文件解析失败")
                 }

@@ -92,58 +92,74 @@
     var b = e.n(y);
     const C = require("os");
     var v = e.n(C);
-    const W = require("internal-ip");
+    const W = require("original-fs");
     var S = e.n(W);
-    const P = require("addon");
+    const P = require("internal-ip");
     var x = e.n(P);
-    const k = x().getLocalSecretKey();
-    function D() {
+    const k = require("addon");
+    var D = e.n(k);
+    const _ = D().getLocalSecretKey();
+    function I() {
         return Math.floor(65536 * (1 + Math.random())).toString(16).substring(1)
     }
-    function _(e) {
+    function T(e) {
         return u().createHash("md5").update(e).digest("hex")
     }
-    function I() {
-        return _(D() + D() + D() + D() + D() + D() + D() + D() + Date.now())
+    function F(e) {
+        return new Promise(((t,i)=>{
+            const n = u().createHash("md5");
+            n.on("error", i).setEncoding("hex"),
+            S().createReadStream(e, {
+                highWaterMark: 1048576
+            }).on("error", i).on("end", (()=>{
+                n.end(),
+                t(n.read())
+            }
+            )).pipe(n, {
+                end: !1
+            })
+        }
+        ))
     }
-    function T(e) {
+    function M() {
+        return T(I() + I() + I() + I() + I() + I() + I() + I() + Date.now())
+    }
+    function A(e) {
         return e.startsWith("Double") ? "darwin" === process.platform ? e.replace("Meta", "Command").replace("Alt", "Option") : e.replace("Control", "Ctrl") : e.includes("Meta+") ? "darwin" === process.platform ? e.replace("Meta+", "Command+") : e.replace("Meta+", "Super+") : e
     }
-    function F(e, t) {
+    function E(e, t) {
         return e = Math.ceil(e),
         t = Math.floor(t),
         Math.floor(Math.random() * (t - e + 1)) + e
     }
-    function M(e) {
-        const t = u().createCipheriv("aes-256-cbc", k, "UTOOLS0123456789");
+    function B(e) {
+        const t = u().createCipheriv("aes-256-cbc", _, "UTOOLS0123456789");
         return t.update(e, "utf8", "hex") + t.final("hex")
     }
-    function A(e) {
+    function V(e) {
         if (!e)
             return "";
         try {
-            const t = u().createDecipheriv("aes-256-cbc", k, "UTOOLS0123456789");
+            const t = u().createDecipheriv("aes-256-cbc", _, "UTOOLS0123456789");
             return t.update(e, "hex", "utf8") + t.final("utf8")
         } catch (e) {
             return ""
         }
     }
-    function E(e) {
+    function O(e) {
         return e || (e = process.platform),
         "win32" === e ? "Windows" : "darwin" === e ? "Mac" : "linux" === e ? "Linux" : e
     }
-    async function B() {
-        const e = await S().v4();
+    async function L() {
+        const e = await x().v4();
         if (e)
             return e;
         const t = [].concat.apply([], Object.values(v().networkInterfaces())).find((e=>"IPv4" === e.family && "127.0.0.1" !== e.address && !e.internal));
         return t ? t.address : null
     }
-    const V = require("original-fs");
-    var O = e.n(V);
-    const L = require("semver");
-    var R = e.n(L)
-      , N = {
+    const R = require("semver");
+    var N = e.n(R)
+      , H = {
         yi: "$$$h$i$p$q%)%*%+%V%y&=&`&d&i'1'4'j'l(0(T(^(t)M*H+I/2/6/I0^1%2>3v4<4i4x5A5V5v7h8X9=9W9d:<:U;J=g?^@gAfAzB:C_DDDFFfGCGKGSH5HSIbJ>L>M/M5M_MlMzOBONOYPOPPPcQHR/S$S5THUbUgUrVXV_W1W2WXX`YCYmYsYvYwZBZrZsZtZu[7[;]4]B]w^;^Y^y_X___la+c*cBcScvdhdie/e`fsg`hoiTkemamin;nAnVn[oWo]pEpfqWqerJrXt;t?tpuIuPvRvbvuw1y)yCykyw,$v&6'x(;(O)h)p*K+.+D+S+`+d/u0T0c0e1j1m282[2j4^5S6H8&8h9e;9<6>2>8>[?R?V?]?o@8@?@OC+C1CzDVEoF*H=I`K)K2KSK[KnL;LZM1M8MKMoO<P7Q4QaRYV8VuWhXEXzYPZ'[l]D_=_X`5a*fDg(g]g`haiak1k6k?kUkakcl5l>lwmsmyo6q%qernsMsZsqt%thu/u0vKxfxr,%L'9(/(3(p)K*/*v+6+;+@+X.:/F/J/R0Y1n1o1u2N2Y363=3b4G566a7D7E7`7e7v8A9$:Q;);1;2;K;^;q<?<@<Q<y=t=v>=>]>k?/?s@YB=BVEwFHG)GHH5HDHcHpHzIBIcJ+JPJhL(LAM'N1N9N=NZO$O&OJORPMQ/T>TcUzVnX/Y<Y[[f^Y_sbSbobpc@cMd2e+eBfJfogliYj'jXmUmVn=qDrDs8s9sCsxt*t8tItatfuluqutw9wEwYy*y6",
         ding: "$%&A8*<eHtOLU9Vk]8hryU,9yEHJPJRKVObRkTUToUslxmPpLssxv,'K)s.P6i;eLyN_QVRVU_VpWwXl`]bLc7cme1f_wuwx",
         zheng: "$%%['m1rD3D7E^InLJSGT)T0WS[C[P[s[w[x^.aVb`e[fjgIhlhri?ksmnnNqV,*Q/&<O=7A7CRD%L5N)P.P`Q$^7^j_cc3e8m5oF,$_7N97:`</<RCOKSL[PDRPU+WDX*`Gk^qi",
@@ -555,41 +571,41 @@
         zhei: ",,HW",
         nun: ",,w%"
     }
-      , H = function() {
+      , U = function() {
         for (var e = [], t = 36; t < 123; t++)
             44 !== t && 34 !== t && 92 !== t && 45 !== t && e.push(String.fromCharCode(t));
         return e.join("")
     }()
-      , U = function(e) {
+      , K = function(e) {
         for (var t = 0, i = 1, n = e.length - 1; n > -1; n--)
-            t += i * H.indexOf(e.charAt(n)),
-            i *= H.length;
+            t += i * U.indexOf(e.charAt(n)),
+            i *= U.length;
         return t
     }
-      , K = {}
-      , j = {};
-    for (var J in N)
-        for (var $ = N[J].split(","), q = 0; q < $.length; q++)
-            for (var Q = $[q], G = 0; G < Q.length; G += 2) {
-                var Z = Q.substring(G, G + 2)
-                  , X = String.fromCharCode(U(Z) + 19968 + 6976 * q);
-                K[J] ? K[J] += X : K[J] = X,
-                j[X] ? j[X] += "," + J : j[X] = J
+      , j = {}
+      , J = {};
+    for (var $ in H)
+        for (var q = H[$].split(","), Q = 0; Q < q.length; Q++)
+            for (var G = q[Q], Z = 0; Z < G.length; Z += 2) {
+                var X = G.substring(Z, Z + 2)
+                  , Y = String.fromCharCode(K(X) + 19968 + 6976 * Q);
+                j[$] ? j[$] += Y : j[$] = Y,
+                J[Y] ? J[Y] += "," + $ : J[Y] = $
             }
-    N = null;
-    const Y = function(e, t, i) {
+    H = null;
+    const z = function(e, t, i) {
         var n = []
           , o = "function" == typeof t;
         e = String(e).split("");
         for (var s, r, a = 0; a < e.length; a++)
             s = e[a],
-            j.hasOwnProperty(s) ? ~(r = j[s]).indexOf(",") ? (r = r.split(","),
+            J.hasOwnProperty(s) ? ~(r = J[s]).indexOf(",") ? (r = r.split(","),
             r = o ? t(s, r) : "[" + r + "]",
             n.push(r)) : n.push(r) : n.push(s);
         return n.join(i || ",")
     };
-    function z(e) {
-        const t = Y(e)
+    function ee(e) {
+        const t = z(e)
           , i = [t]
           , n = t.match(/\[[a-z,]+\]/g);
         if (n)
@@ -618,14 +634,14 @@
             py: s
         }
     }
-    function ee(e, t) {
+    function te(e, t) {
         const i = [];
         if (!e)
             return i;
         if (e.length > 60)
             return i;
         if (/^[\u4e00-\u9fa5]+$/.test(e)) {
-            const n = z(e);
+            const n = ee(e);
             for (const o of n.py)
                 i.push({
                     trueType: t,
@@ -659,7 +675,7 @@
             }
             if (/[\u4e00-\u9fa5]/.test(e)) {
                 const n = e.match(/[\u4e00-\u9fa5]/g)
-                  , o = z(n.join(""));
+                  , o = ee(n.join(""));
                 for (const s of o.py) {
                     const o = s.match(/[A-Z][a-z]*/g);
                     let r = e.toUpperCase();
@@ -707,10 +723,10 @@
         }
         return i
     }
-    function te(e) {
+    function ie(e) {
         return /^\/.+\/[gimuy]*$/.test(e)
     }
-    function ie(e) {
+    function ne(e) {
         if ("string" != typeof e.code || !e.code)
             return null;
         if (!Array.isArray(e.cmds))
@@ -747,13 +763,13 @@
                                                         continue;
                                                     e.match.app = i.match.app
                                                 }
-                                                i.match.title && te(i.match.title) && (e.match.title = i.match.title)
+                                                i.match.title && ie(i.match.title) && (e.match.title = i.match.title)
                                             }
                                             i.match.class && "win32" === process.platform && ("string" == typeof i.match.class ? (e.match || (e.match = {}),
                                             e.match.class = [i.match.class]) : Array.isArray(i.match.class) && (e.match || (e.match = {}),
                                             e.match.class = i.match.class))
                                         }
-                                        e.labelCmds = ee(i.label, i.type),
+                                        e.labelCmds = te(i.label, i.type),
                                         t.push(e)
                                     }
                                 else {
@@ -762,10 +778,10 @@
                                         type: i.type,
                                         label: i.label
                                     };
-                                    te(i.exclude) && (e.exclude = i.exclude),
+                                    ie(i.exclude) && (e.exclude = i.exclude),
                                     "number" == typeof i.minLength && (e.minLength = i.minLength),
                                     "number" == typeof i.maxLength ? e.maxLength = i.maxLength : e.maxLength = 1e4,
-                                    e.labelCmds = ee(i.label, i.type),
+                                    e.labelCmds = te(i.label, i.type),
                                     t.push(e)
                                 }
                             else {
@@ -774,7 +790,7 @@
                                     type: i.type,
                                     label: i.label
                                 };
-                                e.labelCmds = ee(i.label, i.type),
+                                e.labelCmds = te(i.label, i.type),
                                 t.push(e)
                             }
                         else {
@@ -783,17 +799,17 @@
                                 type: i.type,
                                 label: i.label
                             };
-                            te(i.match) && (e.match = i.match),
+                            ie(i.match) && (e.match = i.match),
                             i.fileType && ["directory", "file"].includes(i.fileType) && (e.fileType = i.fileType),
                             i.minNum && (e.minLength = "number" == typeof i.minNum ? i.minNum : 1),
                             i.minLength && (e.minLength = "number" == typeof i.minLength ? i.minLength : 1),
                             i.maxNum && (e.maxLength = "number" == typeof i.maxNum ? i.maxNum : 1),
                             i.maxLength && (e.maxLength = "number" == typeof i.maxLength ? i.maxLength : 1),
-                            e.labelCmds = ee(i.label, i.type),
+                            e.labelCmds = te(i.label, i.type),
                             t.push(e)
                         }
                     else {
-                        if (!te(i.match))
+                        if (!ie(i.match))
                             continue;
                         const e = {
                             trueType: i.type,
@@ -803,13 +819,13 @@
                         };
                         "number" == typeof i.minLength && (e.minLength = i.minLength),
                         "number" == typeof i.maxLength && (e.maxLength = i.maxLength),
-                        e.labelCmds = ee(i.label, i.type),
+                        e.labelCmds = te(i.label, i.type),
                         t.push(e)
                     }
             } else {
                 if (i.length > 60)
                     continue;
-                const e = ee(i, "text");
+                const e = te(i, "text");
                 t.push(...e)
             }
         if (0 === t.length)
@@ -823,7 +839,7 @@
         "string" == typeof e.backgroundColor && (i.backgroundColor = e.backgroundColor),
         i
     }
-    function ne(e, t) {
+    function oe(e, t) {
         if (!d().existsSync(e))
             throw new Error("plugin.json 文件不存在");
         let i = null;
@@ -838,17 +854,16 @@
         i.platform)
             if ("string" == typeof i.platform) {
                 if (i.platform !== process.platform)
-                    throw new Error("插件应用未适配 " + E())
+                    throw new Error("插件应用未适配 " + O())
             } else {
                 if (!Array.isArray(i.platform))
-                    throw new Error("插件应用未适配 " + E());
+                    throw new Error("插件应用未适配 " + O());
                 if (!i.platform.includes(process.platform))
-                    throw new Error("插件应用未适配 " + E())
+                    throw new Error("插件应用未适配 " + O())
             }
         const n = {};
-        
-        // chandlerver5 n.isDev = !!t || s().dev() && !/\.asar$/.test(n.location),
-        if (n.location = c().dirname(e),n.isDev = !!t || s().dev() && !/\.asar$/.test(n.location),
+        if (n.location = c().dirname(e),
+        n.isDev = !!t || s().dev() && !/\.asar$/.test(n.location),
         n.isDev ? i.development && i.development.main && (i.main = i.development.main) : /unsafe-[0-9a-z]{32}\.asar$/.test(n.location) && (n.unsafe = !0),
         i.main) {
             if (!(n.isDev && /^https?:\/\//i.test(i.main) || /\.html$/i.test(i.main)))
@@ -872,7 +887,7 @@
         "string" == typeof i.homepage && /^https?:\/\/./i.test(i.homepage) && (n.homepage = i.homepage),
         "string" == typeof i.description && i.description ? n.description = i.description : n.description = "",
         !n.isDev) {
-            if (!R().valid(i.version))
+            if (!N().valid(i.version))
                 throw new Error("无效的版本号");
             n.version = i.version
         }
@@ -909,7 +924,7 @@
             throw new Error('未配置 "features"');
         if (n.featureDic = {},
         i.features.forEach((e=>{
-            const t = ie(e);
+            const t = ne(e);
             if (t) {
                 if (t.icon && !(t.icon.startsWith("dbicon://") || n.isDev && t.icon.startsWith("file://"))) {
                     const e = c().join(n.location, t.icon);
@@ -923,11 +938,11 @@
             throw new Error('"features" 未配置任何功能');
         return n
     }
-    const oe = require("events");
-    var se = e.n(oe);
-    const re = require("rimraf");
-    var ae = e.n(re);
-    function ce(e, t, i) {
+    const se = require("events");
+    var re = e.n(se);
+    const ae = require("rimraf");
+    var ce = e.n(ae);
+    function le(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -936,39 +951,40 @@
         }) : e[t] = i,
         e
     }
-    class le extends (se()) {
+    class de extends (re()) {
         constructor(e, i, n, o, s) {
             super(),
-            ce(this, "setPluginDirName", ((e,i,n,o)=>{
-                let s;
-                const r = c().join(this.userPluginsPath, "install");
-                if (d().existsSync(r)) {
-                    const e = A(d().readFileSync(r, "utf8"));
-                    e && (s = JSON.parse(e))
+            le(this, "setPluginDirName", ((e,i,n,o,s)=>{
+                let r;
+                const a = c().join(this.userPluginsPath, "install");
+                if (d().existsSync(a)) {
+                    const e = V(d().readFileSync(a, "utf8"));
+                    e && (r = JSON.parse(e))
                 }
-                s || (s = {}),
-                i ? s[e] = {
+                r || (r = {}),
+                i ? r[e] = {
                     dirName: i,
                     mtimeMs: n,
-                    upxMd5: o
-                } : delete s[e];
+                    md5: o,
+                    upxMd5: s
+                } : delete r[e];
                 try {
-                    d().writeFileSync(r, M(JSON.stringify(s)), {
+                    d().writeFileSync(a, B(JSON.stringify(r)), {
                         encoding: "utf8"
                     })
                 } catch (e) {
                     new t.Notification({
-                        body: "无法写入 " + r
+                        body: "无法写入 " + a
                     }).show()
                 }
                 return !0
             }
             )),
-            ce(this, "setPluginDirNameIllegal", (e=>{
+            le(this, "setPluginDirNameIllegal", (e=>{
                 let t;
                 const i = c().join(this.userPluginsPath, "install");
                 if (d().existsSync(i)) {
-                    const e = A(d().readFileSync(i, "utf8"));
+                    const e = V(d().readFileSync(i, "utf8"));
                     e && (t = JSON.parse(e))
                 }
                 if (!t)
@@ -979,7 +995,7 @@
                         n.illegal = !0;
                     else
                         try {
-                            const i = O().lstatSync(c().join(this.userPluginsPath, n + ".asar"));
+                            const i = S().lstatSync(c().join(this.userPluginsPath, n + ".asar"));
                             t[e] = {
                                 dirName: n,
                                 mtimeMs: i.mtimeMs,
@@ -987,14 +1003,14 @@
                             }
                         } catch {}
                     try {
-                        d().writeFileSync(i, M(JSON.stringify(t)), {
+                        d().writeFileSync(i, B(JSON.stringify(t)), {
                             encoding: "utf8"
                         })
                     } catch {}
                 }
             }
             )),
-            ce(this, "apiServiceCheckUpdate", (e=>{
+            le(this, "apiServiceCheckUpdate", (e=>{
                 const t = this.accountCmp.getAccountToken();
                 m(this.config.checkUpdateURL + (t ? "?access_token=" + t : ""), {
                     version: this.reportCmp.appVersion,
@@ -1012,12 +1028,12 @@
                         for (const t of e.plugins)
                             t.name in this.pluginContainer && !this.pluginUpdateSet.includes(t.name) && this.pluginUpdateSet.push(t.name);
                     // chandlerver5 
-                    /* if (e.illegal_plugins?.length > 0)
+                      /* if (e.illegal_plugins?.length > 0)
                         for (const t of e.illegal_plugins) {
                             const e = this.pluginContainer[t];
-                            e && (e.illegal = !0,this.setPluginDirNameIllegal(t))
-                        }
-                         */
+                            e && (e.illegal = !0,
+                            this.setPluginDirNameIllegal(t))
+                        } */
                 }
                 )).catch((e=>{
                     402 === e.code && e.message.startsWith("https://") && this.emit("appupdate", e.message)
@@ -1025,7 +1041,7 @@
                 ))
             }
             )),
-            ce(this, "currentDayCDNCheckUpdate", (e=>{
+            le(this, "currentDayCDNCheckUpdate", (e=>{
                 const i = t.net.request({
                     method: "GET",
                     url: this._cdnCheckUpdateCache.dayUrl + "?" + Date.now()
@@ -1041,7 +1057,7 @@
                         } catch {}
                         i ? e.forEach((e=>{
                             const t = i[e.name];
-                            t && R().gt(t, e.version) && e.name in this.pluginContainer && !this.pluginUpdateSet.includes(e.name) && this.pluginUpdateSet.push(e.name)
+                            t && N().gt(t, e.version) && e.name in this.pluginContainer && !this.pluginUpdateSet.includes(e.name) && this.pluginUpdateSet.push(e.name)
                         }
                         )) : this.apiServiceCheckUpdate(e)
                     }
@@ -1051,7 +1067,7 @@
                 i.end()
             }
             )),
-            ce(this, "checkUpdate", (()=>{
+            le(this, "checkUpdate", (()=>{
                 const e = Object.values(this.pluginContainer).filter((e=>e.name && !this.pluginUpdateSet.includes(e.name) && -1 === e.location.indexOf(this.innerPluginsPath) && !e.isDev && !e.illegal)).map((e=>({
                     name: e.name,
                     version: e.version,
@@ -1076,14 +1092,14 @@
                         i.end()
                     } else
                         this.apiServiceCheckUpdate(e);
-                setTimeout(this.checkUpdate, F(6e5, 18e5))
+                setTimeout(this.checkUpdate, E(6e5, 18e5))
             }
             )),
-            ce(this, "testPluginJsonFile", ((e,t)=>{
-                ne(e, t)
+            le(this, "testPluginJsonFile", ((e,t)=>{
+                oe(e, t)
             }
             )),
-            ce(this, "ffffffffServices", {
+            le(this, "ffffffffServices", {
                 getPluginContainer: e=>{
                     e.returnValue = this.pluginContainer
                 }
@@ -1150,7 +1166,7 @@
                 try {
                     e = d().readFileSync(i, "utf8")
                 } catch (e) {}
-                const n = A(e);
+                const n = V(e);
                 if (n) {
                     const e = JSON.parse(n)
                       , i = [];
@@ -1165,7 +1181,7 @@
                     for (const e of o) {
                         const t = c().join(this.userPluginsPath, e);
                         try {
-                            const n = O().lstatSync(t);
+                            const n = S().lstatSync(t);
                             /^(?:unsafe-)?[0-9a-z]{32}\.asar$/.test(e) && n.isFile() && i.push({
                                 dirName: e.replace(/\.asar$/, ""),
                                 pluginPath: t,
@@ -1182,19 +1198,28 @@
                         if (e.dirName in s) {
                             const t = s[e.dirName];
                             if (t) {
-                                if (t.mtimeMs !== e.updateTime)
-                                    return;
+                                if (t.mtimeMs !== e.updateTime) {
+                                    if (t.md5)
+                                        return void F(e.pluginPath).then((i=>{
+                                            t.md5 === i && (e.upxMd5 = t.upxMd5,
+                                            t.illegal && (e.illegal = t.illegal),
+                                            this.mount(e))
+                                        }
+                                        ));
+                                    if (Math.floor(t.mtimeMs / 1e3) !== Math.floor(e.updateTime / 1e3))
+                                        return
+                                }
                                 e.upxMd5 = t.upxMd5,
                                 t.illegal && (e.illegal = t.illegal)
                             }
                             this.mount(e)
                         } else {
                             try {
-                                O().unlinkSync(e.pluginPath)
+                                S().unlinkSync(e.pluginPath)
                             } catch {}
                             if (d().existsSync(e.pluginPath + ".unpacked"))
                                 try {
-                                    ae().sync(e.pluginPath + ".unpacked")
+                                    ce().sync(e.pluginPath + ".unpacked")
                                 } catch {}
                         }
                     }
@@ -1207,7 +1232,7 @@
             const i = e.pluginPath;
             let n = null;
             try {
-                if (n = ne(c().join(i, "plugin.json"), t),
+                if (n = oe(c().join(i, "plugin.json"), t),
                 "FFFFFFFF" === n.name && !n.location.startsWith(this.innerPluginsPath))
                     throw new Error("出错了");
                 if (n.unsafe) {
@@ -1219,7 +1244,7 @@
                 if (n.updateTime = e.updateTime,
                 e.upxMd5 && (n.upxMd5 = e.upxMd5),
                 e.illegal && (n.illegal = e.illegal),
-                n.name in this.pluginContainer && R().lt(n.version, this.pluginContainer[n.name].version))
+                n.name in this.pluginContainer && N().lt(n.version, this.pluginContainer[n.name].version))
                     throw new Error("已存在版本 " + this.pluginContainer[n.name].version);
                 return n.isDev = true,this.pluginContainer[n.name] = n,
                 this.emit("mount", n.name),
@@ -1250,8 +1275,8 @@
         }
         _install(e, i, n, o) {
             const s = d().createReadStream(i)
-              , r = c().join(t.app.getPath("temp"), I() + ".asar")
-              , a = O().createWriteStream(r)
+              , r = c().join(t.app.getPath("temp"), M() + ".asar")
+              , a = S().createWriteStream(r)
               , l = b().createGunzip();
             s.pipe(l).on("error", (()=>o(new Error("安装包解压错误")))).pipe(a).on("error", (()=>o(new Error("解压写入错误")))).on("finish", (()=>{
                 const t = c().join(r, "plugin.json");
@@ -1265,7 +1290,7 @@
                 }
                 if (e && i.name !== e)
                     return o(new Error("pluginId 与 配置 name 不一致"));
-                const s = (e ? "" : "unsafe-") + I();
+                const s = (e ? "" : "unsafe-") + M();
                 this.legalInstall.push(s);
                 let a = f().listPackage(r).find((e=>e.endsWith(".node"))) ? "*.node" : "";
                 if (i.unpack && (a = a ? `@(${i.unpack}|${a})` : i.unpack),
@@ -1282,7 +1307,7 @@
                         unpack: a
                     }).then((()=>{
                         try {
-                            ae().sync(e)
+                            ce().sync(e)
                         } catch {}
                         const i = this.mount({
                             pluginPath: t,
@@ -1291,17 +1316,23 @@
                         });
                         if (i instanceof Error) {
                             try {
-                                O().unlinkSync(t),
-                                d().existsSync(t + ".unpacked") && ae().sync(t + ".unpacked")
+                                S().unlinkSync(t),
+                                d().existsSync(t + ".unpacked") && ce().sync(t + ".unpacked")
                             } catch {}
                             o(i)
                         } else
-                            try {
-                                const e = O().lstatSync(t);
-                                this.setPluginDirName(i, s, e.mtimeMs, n) && o(null, i)
-                            } catch (e) {
-                                o(new Error("写入错误，" + e.message))
+                            F(t).then((e=>{
+                                try {
+                                    const r = S().lstatSync(t);
+                                    this.setPluginDirName(i, s, r.mtimeMs, e, n) && o(null, i)
+                                } catch (e) {
+                                    o(new Error("写入错误，" + e.message))
+                                }
                             }
+                            )).catch((e=>{
+                                o(new Error("文件 MD5 错误，" + e.message))
+                            }
+                            ))
                     }
                     )).catch((()=>{
                         o(new Error("打包失败!"))
@@ -1310,10 +1341,10 @@
                 } else {
                     const e = c().join(this.userPluginsPath, s + ".asar");
                     try {
-                        O().renameSync(r, e)
+                        S().renameSync(r, e)
                     } catch {
                         try {
-                            O().copyFileSync(r, e)
+                            S().copyFileSync(r, e)
                         } catch (e) {
                             return o(new Error("复制失败 " + e.message))
                         }
@@ -1325,16 +1356,22 @@
                     });
                     if (t instanceof Error) {
                         try {
-                            O().unlinkSync(e)
+                            S().unlinkSync(e)
                         } catch {}
                         o(t)
                     } else
-                        try {
-                            const i = O().lstatSync(e);
-                            this.setPluginDirName(t, s, i.mtimeMs, n) && o(null, t)
-                        } catch (e) {
-                            o(new Error("写入错误，" + e.message))
+                        F(e).then((i=>{
+                            try {
+                                const r = S().lstatSync(e);
+                                this.setPluginDirName(t, s, r.mtimeMs, i, n) && o(null, t)
+                            } catch (e) {
+                                o(new Error("写入错误，" + e.message))
+                            }
                         }
+                        )).catch((e=>{
+                            o(new Error("文件 MD5 错误，" + e.message))
+                        }
+                        ))
                 }
             }
             ))
@@ -1378,7 +1415,7 @@
             if (!(e in this.pluginContainer))
                 return !1;
             const n = this.pluginContainer[e]
-              , o = ie(t);
+              , o = ne(t);
             return !!o && (e && o.icon && (o.icon.startsWith("dbicon://") || n.isDev && o.icon.startsWith("file://") || (/\.(?:png|svg|jpg|jpeg)$/i.test(o.icon) && d().existsSync(c().join(n.location, o.icon)) ? o.icon = "file://" + c().join(n.location, o.icon) : delete o.icon)),
             i && (o.dynamic = !0),
             n.featureDic[t.code] = o,
@@ -1425,9 +1462,9 @@
             0))
         }
     }
-    const de = le
-      , he = require("png2ico");
-    class ue {
+    const he = de
+      , ue = require("png2ico");
+    class pe {
         constructor(e, t, i, n) {
             this.mainWindow = e,
             this.mainWindowBounds = {
@@ -1475,16 +1512,16 @@
         }
         setNativeWorkWindowInfo() {
             if (this.isMacOs && !this.isHadPrivilege) {
-                if (!x().isHadPrivilege())
-                    return void x().requestPrivilege();
+                if (!D().isHadPrivilege())
+                    return void D().requestPrivilege();
                 this.isHadPrivilege = !0
             }
-            this.nativeWorkWindowInfo = x().getNativeWorkWindow(),
+            this.nativeWorkWindowInfo = D().getNativeWorkWindow(),
             this.nativeWorkWindowInfo && (this.nativeWorkWindowInfo.appPath ? this.nativeWorkWindowInfo.app = c().basename(this.nativeWorkWindowInfo.appPath) : this.nativeWorkWindowInfo = null)
         }
         _showLogic(e) {
             this.mainWindow.isVisible() || (e || this.setNativeWorkWindowInfo(),
-            this.isWindow ? !this.nativeWorkWindowInfo || 0 !== this.nativeWorkWindowInfo.width && 0 !== this.nativeWorkWindowInfo.height ? x().focusShowWindow(this.mainWindowNativeWindowHandle, (()=>{
+            this.isWindow ? !this.nativeWorkWindowInfo || 0 !== this.nativeWorkWindowInfo.width && 0 !== this.nativeWorkWindowInfo.height ? D().focusShowWindow(this.mainWindowNativeWindowHandle, (()=>{
                 this.mainWindowShowTimestamp = Date.now(),
                 this.mainWindow.show(),
                 this.mainWindow.setBounds(this.mainWindowBounds)
@@ -1493,7 +1530,7 @@
             this.mainWindow.show(),
             this.mainWindow.setBounds(this.mainWindowBounds)) : this.isMacOs ? (this.mainWindowShowTimestamp = Date.now(),
             this.mainWindow.showInactive(),
-            x().focusShowWindow(this.mainWindowNativeWindowHandle),
+            D().focusShowWindow(this.mainWindowNativeWindowHandle),
             this.mainWindow.isVisible() || this.mainWindow.show()) : (this.mainWindowShowTimestamp = Date.now(),
             this.mainWindow.show()))
         }
@@ -1521,7 +1558,7 @@
             if (this.mainWindow.isVisible())
                 return this.isWindow && this.mainWindow.isFocused() ? (this.mainWindowBlurTimestamp = Date.now(),
                 this.mainWindow.hide(),
-                void (e && this.nativeWorkWindowInfo && x().restorePrevWindowFocus(this.nativeWorkWindowInfo.id))) : void this.mainWindow.hide()
+                void (e && this.nativeWorkWindowInfo && D().restorePrevWindowFocus(this.nativeWorkWindowInfo.id))) : void this.mainWindow.hide()
         }
         setHeight(e) {
             this.mainWindowBounds.height = e,
@@ -1533,7 +1570,7 @@
             this.mainWindow.setBounds(this.mainWindowBounds)
         }
     }
-    const pe = {
+    const we = {
         Backspace: "Backspace",
         Tab: "Tab",
         Enter: "Enter",
@@ -1611,7 +1648,7 @@
         BracketRight: "]",
         Quote: "'"
     };
-    function we() {
+    function me() {
         return {
             goSetting: ()=>{
                 this.autoLoadPlugin("FFFFFFFF", "settings", "偏好设置")
@@ -1634,13 +1671,13 @@
             }
         }
     }
-    const me = {
+    const ge = {
         windowMethods: ["destroy", "close", "focus", "blur", "isFocused", "isDestroyed", "show", "showInactive", "hide", "isVisible", "maximize", "unmaximize", "isMaximized", "minimize", "restore", "isMinimized", "setFullScreen", "isFullScreen", "setSimpleFullScreen", "isSimpleFullScreen", "isNormal", "setAspectRatio", "setBackgroundColor", "previewFile", "closeFilePreview", "setBounds", "getBounds", "getBackgroundColor", "setContentBounds", "getContentBounds", "getNormalBounds", "setEnabled", "isEnabled", "setSize", "getSize", "setContentSize", "getContentSize", "setMinimumSize", "getMinimumSize", "setMaximumSize", "getMaximumSize", "setResizable", "isResizable", "setMovable", "isMovable", "setMinimizable", "isMinimizable", "setMaximizable", "isMaximizable", "setFullScreenable", "isFullScreenable", "setClosable", "isClosable", "setAlwaysOnTop", "isAlwaysOnTop", "moveAbove", "moveTop", "center", "setPosition", "getPosition", "setTitle", "getTitle", "setSheetOffset", "flashFrame", "setSkipTaskbar", "setKiosk", "isKiosk", "isTabletMode", "getMediaSourceId", "getNativeWindowHandle", "setRepresentedFilename", "getRepresentedFilename", "setDocumentEdited", "isDocumentEdited", "focusOnWebView", "blurWebView", "setProgressBar", "setHasShadow", "hasShadow", "setOpacity", "getOpacity", "setShape", "showDefinitionForSelection", "setIcon", "setWindowButtonVisibility", "setVisibleOnAllWorkspaces", "isVisibleOnAllWorkspaces", "setIgnoreMouseEvents", "setContentProtection", "setFocusable", "setAutoHideCursor", "setVibrancy", "setTrafficLightPosition", "getTrafficLightPosition"],
         windowInvokes: ["capturePage"],
         webContentsMethods: ["isDestroyed", "focus", "isFocused", "isLoading", "isLoadingMainFrame", "isWaitingForResponse", "isCrashed", "setUserAgent", "getUserAgent", "setIgnoreMenuShortcuts", "setAudioMuted", "isAudioMuted", "isCurrentlyAudible", "setZoomFactor", "getZoomFactor", "setZoomLevel", "getZoomLevel", "undo", "redo", "cut", "copy", "copyImageAt", "paste", "pasteAndMatchStyle", "delete", "selectAll", "unselect", "replace", "replaceMisspelling", "findInPage", "stopFindInPage", "isBeingCaptured", "incrementCapturerCount", "decrementCapturerCount", "getPrinters", "openDevTools", "closeDevTools", "isDevToolsOpened", "isDevToolsFocused", "toggleDevTools", "send", "sendToFrame", "enableDeviceEmulation", "disableDeviceEmulation", "sendInputEvent", "showDefinitionForSelection", "isOffscreen", "startPainting", "stopPainting", "isPainting", "setFrameRate", "getFrameRate", "invalidate", "getWebRTCIPHandlingPolicy", "setWebRTCIPHandlingPolicy", "getOSProcessId", "getProcessId", "getBackgroundThrottling", "setBackgroundThrottling"],
         webContentsInvokes: ["insertCSS", "removeInsertedCSS", "executeJavaScript", "executeJavaScriptInIsolatedWorld", "setVisualZoomLevelLimits", "insertText", "capturePage", "print", "printToPDF", "savePage", "takeHeapSnapshot"]
     };
-    function ge(e, t, i) {
+    function fe(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -1649,10 +1686,10 @@
         }) : e[t] = i,
         e
     }
-    const fe = {}
-      , ye = require("pouchdb");
-    var be = e.n(ye);
-    function Ce(e, t, i) {
+    const ye = {}
+      , be = require("pouchdb");
+    var Ce = e.n(be);
+    function ve(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -1661,17 +1698,17 @@
         }) : e[t] = i,
         e
     }
-    class ve extends (se()) {
+    class We extends (re()) {
         constructor(e, t, i, n, o) {
             super(),
-            Ce(this, "ffffffffServices", {
+            ve(this, "ffffffffServices", {
                 getRemoteDbDocCount: this.getRemoteDbDocCount.bind(this),
                 getDbStatistics: this.dbStatistics.bind(this),
                 clearDbPluginData: this.clearPluginData.bind(this),
                 getDbDoc: this.get.bind(this),
                 getDbInfoDocCount: async()=>(await this.pouchDB.info()).doc_count
             }),
-            Ce(this, "pluginApiServices", {
+            ve(this, "pluginApiServices", {
                 dbPut: async(e,t,i)=>{
                     e.returnValue = await this.put(t, i, !0)
                 }
@@ -1749,7 +1786,7 @@
             d().existsSync(this.dbpath) || d().mkdirSync(this.dbpath);
             const t = this.accountCmp.getAccountInfo();
             e = t ? c().join(this.dbpath, t.uid) : this.defaultDbName,
-            this.pouchDB = new (be())(e,{
+            this.pouchDB = new (Ce())(e,{
                 auto_compaction: !0
             }),
             this.listenAccountEvent(),
@@ -2157,7 +2194,7 @@
                     return void (e.db_sync && this.dbSync(e));
                 const n = this.pouchDB
                   , o = !d().existsSync(t) && i === this.defaultDbName;
-                this.pouchDB = new (be())(t,{
+                this.pouchDB = new (Ce())(t,{
                     auto_compaction: !0
                 }),
                 o ? n.replicate.to(this.pouchDB).then((()=>{
@@ -2181,7 +2218,7 @@
             this.accountCmp.on("logout", (()=>{
                 this.cancelDbSync();
                 const e = this.pouchDB;
-                this.pouchDB = new (be())(this.defaultDbName,{
+                this.pouchDB = new (Ce())(this.defaultDbName,{
                     auto_compaction: !0
                 }),
                 e.close(),
@@ -2209,7 +2246,7 @@
             ))
         }
     }
-    class We {
+    class Se {
         init() {
             const e = s().macOS()
               , i = [...e ? [{
@@ -2294,8 +2331,8 @@
             t.Menu.setApplicationMenu(t.Menu.buildFromTemplate(i))
         }
     }
-    const Se = require("electron-updater");
-    class Pe {
+    const Pe = require("electron-updater");
+    class xe {
         constructor(e, i, n) {
             var o, s;
             s = ()=>{
@@ -2314,7 +2351,7 @@
                             const o = n[process.platform]?.[process.arch];
                             if (!o)
                                 return e(!1);
-                            R().gt(o, t.app.getVersion()) ? e({
+                            N().gt(o, t.app.getVersion()) ? e({
                                 downloadUrl: n.downloadUrl,
                                 newestVersion: o
                             }) : e(!1)
@@ -2475,31 +2512,31 @@
                 }).show();
             if (s().linux())
                 return this.checkNewestVersion();
-            if (Se.autoUpdater.listenerCount("update-available") > 0 || Se.autoUpdater.listenerCount("update-not-available") > 0)
+            if (Pe.autoUpdater.listenerCount("update-available") > 0 || Pe.autoUpdater.listenerCount("update-not-available") > 0)
                 return;
             const e = ()=>{
-                Se.autoUpdater.removeListener("update-available", e),
+                Pe.autoUpdater.removeListener("update-available", e),
                 new t.Notification({
                     title: "uTools 更新检测",
                     body: "已检测到新版本，已在后台自动下载"
                 }).show()
             }
               , i = ()=>{
-                Se.autoUpdater.removeListener("update-not-available", i),
+                Pe.autoUpdater.removeListener("update-not-available", i),
                 this.checkNewestVersion()
             }
             ;
-            Se.autoUpdater.addListener("update-available", e),
-            Se.autoUpdater.addListener("update-not-available", i),
+            Pe.autoUpdater.addListener("update-available", e),
+            Pe.autoUpdater.addListener("update-not-available", i),
             setTimeout((function() {
-                Se.autoUpdater.removeListener("update-available", e),
-                Se.autoUpdater.removeListener("update-not-available", i)
+                Pe.autoUpdater.removeListener("update-available", e),
+                Pe.autoUpdater.removeListener("update-not-available", i)
             }
             ), 1e4),
-            Se.autoUpdater.checkForUpdates()
+            Pe.autoUpdater.checkForUpdates()
         }
     }
-    function xe(e, t, i) {
+    function ke(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -2508,15 +2545,15 @@
         }) : e[t] = i,
         e
     }
-    const ke = [50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200, 250, 300];
-    class De {
+    const De = [50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200, 250, 300];
+    class _e {
         constructor(e) {
-            xe(this, "mainServices", {
+            ke(this, "mainServices", {
                 showPluginMenu: ()=>{
                     this.mainWindowShowPluginMenu()
                 }
             }),
-            xe(this, "detachServices", {
+            ke(this, "detachServices", {
                 buildDetachPluginOptionMenu: (e,t,i)=>{
                     this.buildDetachPluginOptionMenu(t, i)
                 }
@@ -2555,7 +2592,7 @@
                 id: "openDevTools",
                 label: "开发者工具",
                 icon: c().join(__dirname, "res", "menu", "tool@2x.png"),
-                visible: !0, 
+                visible: !1,
                 accelerator: this.windowCmp.isMacOs ? "Command+Alt+I" : "Ctrl+Shift+I",
                 click: ()=>{
                     process.nextTick((()=>{
@@ -2650,7 +2687,7 @@
             if (!n)
                 return;
             const o = this.appCmp.pluginIsOutKill(i);
-            this._mainPluginMenu.getMenuItemById("openDevTools").visible = true, // chandlerver5
+            this._mainPluginMenu.getMenuItemById("openDevTools").visible = !!n.isDev,
             this._mainPluginMenu.getMenuItemById("outkill").checked = o,
             this._mainPluginMenu.getMenuItemById("out").visible = !o,
             this._mainPluginMenu.getMenuItemById("enterdetach").checked = this.appCmp.pluginIsEnterDetach(i),
@@ -2746,7 +2783,7 @@
                 i.webContents.executeJavaScript("window.api.localStorageZoomFactor(" + t + ")")
             }
               , s = parseInt(100 * n.webContents.getZoomFactor());
-            let r = t.Menu.buildFromTemplate(ke.map((e=>({
+            let r = t.Menu.buildFromTemplate(De.map((e=>({
                 label: e + "%",
                 type: "radio",
                 checked: s === e,
@@ -2771,7 +2808,7 @@
             })
         }
     }
-    function _e(e, t, i) {
+    function Ie(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -2780,7 +2817,7 @@
         }) : e[t] = i,
         e
     }
-    const Ie = new class {
+    const Te = new class {
         isFKey(e) {
             return e.startsWith("Double") || /^F([1-9]|1[0-2])$/.test(e)
         }
@@ -2805,7 +2842,7 @@
             i && (this.keyAction ? this.keyAction[i] = t : (this.keyAction = {
                 [i]: t
             },
-            x().fKeyTapEvent((e=>{
+            D().fKeyTapEvent((e=>{
                 this.keyAction && e in this.keyAction && this.keyAction[e]()
             }
             ))))
@@ -2816,7 +2853,7 @@
             const t = this._getKey(e);
             t && (delete this.keyAction[t],
             0 === Object.keys(this.keyAction).length && (delete this.keyAction,
-            x().stopFKeyTapEvent()))
+            D().stopFKeyTapEvent()))
         }
         isRegistered(e) {
             if (!this.keyAction)
@@ -2826,7 +2863,7 @@
         }
     }
     ;
-    class Te {
+    class Fe {
         constructor(e) {
             var i, o;
             o = {
@@ -2845,18 +2882,18 @@
                 }
                 ,
                 setShowHotKey: (e,i)=>{
-                    if (i = T(i),
-                    Ie.isFKey(i) && Ie.isRegistered(i))
+                    if (i = A(i),
+                    Te.isFKey(i) && Te.isRegistered(i))
                         return void (e.returnValue = !1);
                     const o = n().get("showHotKey");
-                    o && (Ie.isFKey(o) ? Ie.unregister(o) : t.globalShortcut.isRegistered(o) && t.globalShortcut.unregister(o)),
+                    o && (Te.isFKey(o) ? Te.unregister(o) : t.globalShortcut.isRegistered(o) && t.globalShortcut.unregister(o)),
                     n().set("showHotKey", i),
                     this.setShowHotKey(i),
                     e.returnValue = !0
                 }
                 ,
                 setPluginDetachHotKey: (e,t)=>{
-                    t = T(t),
+                    t = A(t),
                     n().set("pluginDetachHotKey", t),
                     this.windowCmp.pluginDetachHotKey = this.getAppPluginHotKey(t),
                     e.returnValue = !0
@@ -2951,8 +2988,8 @@
             this.windowCmp.mainWindow.webContents.executeJavaScript(`window.spaceAsEnter=${!0 === e}`)
         }
         setShowHotKey(e) {
-            if (Ie.isFKey(e))
-                Ie.register(e, (()=>{
+            if (Te.isFKey(e))
+                Te.register(e, (()=>{
                     this.windowCmp.display.trigger()
                 }
                 ));
@@ -2975,7 +3012,7 @@
             return e.split("+").sort(((e,i)=>t.indexOf(i) - t.indexOf(e))).join("+")
         }
     }
-    function Fe(e, t, i) {
+    function Me(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -2984,10 +3021,10 @@
         }) : e[t] = i,
         e
     }
-    class Me extends (se()) {
+    class Ae extends (re()) {
         constructor(e) {
             super(),
-            Fe(this, "pluginApiServices", {
+            Me(this, "pluginApiServices", {
                 getUserServerTemporaryToken: (e,t)=>{
                     t.startsWith("dev_") && (t = t.replace("dev_", ""));
                     let i = setTimeout((()=>{
@@ -3028,7 +3065,7 @@
                     })
                 }
             }),
-            Fe(this, "ffffffffServices", {
+            Me(this, "ffffffffServices", {
                 getMachineNativeId: e=>{
                     e.returnValue = [this.machineId, this.nativeId]
                 }
@@ -3094,10 +3131,10 @@
                 }
             }),
             this.config = e,
-            this.machineId = x().getMachineId(),
-            this.machineIdSign = x().getMachineIdSignature().toString("hex"),
-            this.nativeId = x().getNativeId(),
-            this.nativeIdSign = x().getNativeIdSignature().toString("hex"),
+            this.machineId = D().getMachineId(),
+            this.machineIdSign = D().getMachineIdSignature().toString("hex"),
+            this.nativeId = D().getNativeId(),
+            this.nativeIdSign = D().getNativeIdSignature().toString("hex"),
             m(e.muserURL + this.getAccountToken(), {
                 mid: this.machineId,
                 mids: this.machineIdSign,
@@ -3112,12 +3149,12 @@
                 return null;
             let t = "";
             if ("object" == typeof e)
-                t = A(Buffer.from(e.info || "", "hex"));
+                t = V(Buffer.from(e.info || "", "hex"));
             else {
                 if ("string" != typeof e)
                     return n().delete("account"),
                     null;
-                t = A(Buffer.from(e, "hex"))
+                t = V(Buffer.from(e, "hex"))
             }
             if (!t)
                 return n().delete("account"),
@@ -3132,7 +3169,7 @@
                 return n().delete("account"),
                 null
             }
-            return i.uid ? ("string" == typeof e && i.db_secrect_key && (i.db_secrect_key = A(Buffer.from(i.db_secrect_key, "hex"))),
+            return i.uid ? ("string" == typeof e && i.db_secrect_key && (i.db_secrect_key = V(Buffer.from(i.db_secrect_key, "hex"))),
             i) : (n().delete("account"),
             null)
         }
@@ -3147,7 +3184,7 @@
                 e = t.access_token
             } else
                 e = t.token;
-            return e ? A(Buffer.from(e, "hex")) : ""
+            return e ? V(Buffer.from(e, "hex")) : ""
         }
         init() {
             const e = this.getAccountInfo();
@@ -3158,7 +3195,7 @@
             )))
         }
         remoteAccountInfo(e, i) {
-            const o = x().getRandomKeyAndSignature();
+            const o = D().getRandomKeyAndSignature();
             w(this.config.profileURL, {
                 access_token: e,
                 mid: this.machineId,
@@ -3171,11 +3208,11 @@
                 const s = o.timestamp
                   , r = o.sign
                   , a = o.user_info;
-                if (x().compareYuanliaoSignature(a + s, Buffer.from(r, "hex"))) {
+                if (D().compareYuanliaoSignature(a + s, Buffer.from(r, "hex"))) {
                     const o = this.getAccountInfo();
                     n().set("account", {
-                        token: M(e).toString("hex"),
-                        info: M(a).toString("hex"),
+                        token: B(e).toString("hex"),
+                        info: B(a).toString("hex"),
                         sign: r,
                         timestamp: s
                     });
@@ -3238,7 +3275,7 @@
             ))
         }
     }
-    function Ae(e, t, i) {
+    function Ee(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -3247,21 +3284,21 @@
         }) : e[t] = i,
         e
     }
-    class Ee extends (se()) {
+    class Be extends (re()) {
         constructor(e, i) {
             super(),
-            Ae(this, "clipboardPluginId", "clipboard"),
-            Ae(this, "autoPasteLife", 5),
-            Ae(this, "updateTimestamp", 0),
-            Ae(this, "cancelWatchTimeout", null),
-            Ae(this, "maxGroupFolderNum", 6),
-            Ae(this, "maxGroupRecordNum", 100),
-            Ae(this, "getRecordFolderNames", (()=>{
-                if (!O().existsSync(this.clipboardDataDir))
+            Ee(this, "clipboardPluginId", "clipboard"),
+            Ee(this, "autoPasteLife", 5),
+            Ee(this, "updateTimestamp", 0),
+            Ee(this, "cancelWatchTimeout", null),
+            Ee(this, "maxGroupFolderNum", 6),
+            Ee(this, "maxGroupRecordNum", 100),
+            Ee(this, "getRecordFolderNames", (()=>{
+                if (!S().existsSync(this.clipboardDataDir))
                     return [];
                 let e;
                 try {
-                    e = O().readdirSync(this.clipboardDataDir)
+                    e = S().readdirSync(this.clipboardDataDir)
                 } catch (e) {
                     return null
                 }
@@ -3269,14 +3306,14 @@
                     return [];
                 const t = e.filter((e=>/^\d{13}$/.test(e))).sort().reverse().slice(0, this.maxGroupFolderNum);
                 return e.length > t.length && e.filter((e=>!t.includes(e))).forEach((e=>{
-                    ae()(c().join(this.clipboardDataDir, e), (()=>{}
+                    ce()(c().join(this.clipboardDataDir, e), (()=>{}
                     ))
                 }
                 )),
                 t
             }
             )),
-            Ae(this, "initCurrentRecordFileStat", (()=>{
+            Ee(this, "initCurrentRecordFileStat", (()=>{
                 do {
                     try {
                         const e = this.getRecordFolderNames();
@@ -3284,9 +3321,9 @@
                             break;
                         const t = c().join(this.clipboardDataDir, e[0])
                           , i = c().join(t, "data");
-                        if (!O().existsSync(i))
+                        if (!S().existsSync(i))
                             break;
-                        let n = O().readFileSync(i, "utf-8").split("\n").length;
+                        let n = S().readFileSync(i, "utf-8").split("\n").length;
                         (0 === n || n > this.maxGroupRecordNum + 1) && (n = this.maxGroupRecordNum + 1),
                         this.currentRecordFileStat = {
                             folder: t,
@@ -3299,7 +3336,7 @@
                 })
             }
             )),
-            Ae(this, "appendRecordItem", (e=>{
+            Ee(this, "appendRecordItem", (e=>{
                 if (!e || !this.currentRecordFileStat)
                     return;
                 if (this._prevRecordItemHash && this._prevRecordItemHash === e.hash)
@@ -3309,7 +3346,7 @@
                     this.currentRecordFileStat.number === this.maxGroupRecordNum && this.getRecordFolderNames(),
                     this.currentRecordFileStat.folder = c().join(this.clipboardDataDir, Date.now().toString());
                     try {
-                        O().mkdirSync(this.currentRecordFileStat.folder, {
+                        S().mkdirSync(this.currentRecordFileStat.folder, {
                             recursive: !0
                         })
                     } catch (e) {
@@ -3319,31 +3356,35 @@
                 }
                 if ("image" === e.type) {
                     this._currentClipboardImageRecordCache = {
-                        key: x().getClipboardChangeCount(),
+                        key: D().getClipboardChangeCount(),
                         buffer: e.buffer
                     };
                     const t = c().join(this.currentRecordFileStat.folder, e.hash);
                     try {
-                        O().existsSync(t) || O().writeFileSync(t, e.buffer)
+                        S().existsSync(t) || S().writeFileSync(t, e.buffer)
                     } catch (e) {}
                     delete e.buffer
                 }
-                const t = M(JSON.stringify(e));
-                O().appendFileSync(c().join(this.currentRecordFileStat.folder, "data"), t + "\n", "utf-8"),
-                this.currentRecordFileStat.number++;
-                const i = this.runningPluginPool[this.clipboardPluginId];
-                if (!i)
-                    return;
-                let n = i.view;
-                if (!n) {
-                    const e = i.detachWindows[0];
-                    e && (n = e.getBrowserView())
+                try {
+                    const t = B(JSON.stringify(e));
+                    S().appendFileSync(c().join(this.currentRecordFileStat.folder, "data"), t + "\n", "utf-8")
+                } catch {
+                    return
                 }
-                n && ("image" === e.type && (e.value = c().join(this.currentRecordFileStat.folder, e.hash)),
-                n.webContents.send("append", e))
+                this.currentRecordFileStat.number++;
+                const t = this.runningPluginPool[this.clipboardPluginId];
+                if (!t)
+                    return;
+                let i = t.view;
+                if (!i) {
+                    const e = t.detachWindows[0];
+                    e && (i = e.getBrowserView())
+                }
+                i && ("image" === e.type && (e.value = c().join(this.currentRecordFileStat.folder, e.hash)),
+                i.webContents.send("append", e))
             }
             )),
-            Ae(this, "getRecordItem", (()=>new Promise((e=>{
+            Ee(this, "getRecordItem", (()=>new Promise((e=>{
                 const i = Date.now()
                   , n = this.getCopyFiles();
                 if (n) {
@@ -3387,7 +3428,7 @@
                         hash: s
                     })
                 }
-                x().readClipboardImage((n=>{
+                D().readClipboardImage((n=>{
                     if (!n) {
                         if (!s().macOS())
                             return e(null);
@@ -3410,7 +3451,7 @@
                 ))
             }
             )))),
-            Ae(this, "clipboardServices", {
+            Ee(this, "clipboardServices", {
                 readAllRecords: ()=>new Promise(((e,t)=>{
                     const i = this.getRecordFolderNames();
                     if (!i)
@@ -3421,14 +3462,14 @@
                     let o = 0;
                     for (const t of i) {
                         const i = c().join(this.clipboardDataDir, t, "data");
-                        if (!O().existsSync(i)) {
-                            ae()(c().join(this.clipboardDataDir, t), (()=>{}
+                        if (!S().existsSync(i)) {
+                            ce()(c().join(this.clipboardDataDir, t), (()=>{}
                             ));
                             continue
                         }
                         let s;
                         try {
-                            s = O().readFileSync(i, "utf-8")
+                            s = S().readFileSync(i, "utf-8")
                         } catch (e) {
                             continue
                         }
@@ -3436,7 +3477,7 @@
                         for (const i of r) {
                             if (!i)
                                 continue;
-                            const s = A(i);
+                            const s = V(i);
                             if (!s || !s.startsWith("{"))
                                 continue;
                             const r = JSON.parse(s);
@@ -3450,20 +3491,20 @@
                 }
                 )),
                 clearAllRecords: ()=>new Promise((e=>{
-                    ae()(this.clipboardDataDir, (t=>{
+                    ce()(this.clipboardDataDir, (t=>{
                         if (this.currentRecordFileStat = {
                             number: 0
                         },
                         t) {
-                            if (!O().existsSync(this.clipboardDataDir))
+                            if (!S().existsSync(this.clipboardDataDir))
                                 return e();
-                            const t = O().readdirSync(this.clipboardDataDir);
+                            const t = S().readdirSync(this.clipboardDataDir);
                             if (0 === t.length)
                                 return e();
                             t.filter((e=>/^\d{13}$/.test(e))).forEach((e=>{
                                 const t = c().join(this.clipboardDataDir, e, "data");
                                 try {
-                                    O().existsSync(t) && O().writeFileSync(t, "")
+                                    S().existsSync(t) && S().writeFileSync(t, "")
                                 } catch (e) {}
                             }
                             ))
@@ -3474,7 +3515,7 @@
                 }
                 ))
             }),
-            Ae(this, "mainServices", {
+            Ee(this, "mainServices", {
                 getCopyFiles: e=>{
                     e.returnValue = this.getCopyFiles()
                 }
@@ -3482,7 +3523,7 @@
                 getClipboardImage: e=>{
                     if (this._currentClipboardImageRecordCache) {
                         let t;
-                        if (this._currentClipboardImageRecordCache.key === x().getClipboardChangeCount() && (t = this._currentClipboardImageRecordCache.buffer),
+                        if (this._currentClipboardImageRecordCache.key === D().getClipboardChangeCount() && (t = this._currentClipboardImageRecordCache.buffer),
                         this._currentClipboardImageRecordCache = null,
                         t)
                             return void (e.returnValue = t)
@@ -3491,7 +3532,7 @@
                         const i = t.clipboard.readImage();
                         e.returnValue = i.isEmpty() ? null : i.toPNG()
                     } else
-                        x().readClipboardImage((i=>{
+                        D().readClipboardImage((i=>{
                             if (i || !s().macOS())
                                 e.returnValue = i;
                             else {
@@ -3502,14 +3543,14 @@
                         ))
                 }
             }),
-            Ae(this, "ffffffffServices", {
+            Ee(this, "ffffffffServices", {
                 getCopyFiles: this.mainServices.getCopyFiles
             }),
             this.clipboardDataDir = e,
             this.pluginsCmp = i
         }
         init() {
-            x().clipboardWatch((()=>{
+            D().clipboardWatch((()=>{
                 this.cancelWatchTimeout || (this.updateTimestamp = Date.now(),
                 this.emit("change"),
                 this.clipboardPluginId in this.pluginsCmp.pluginContainer && (this.currentRecordFileStat || this.initCurrentRecordFileStat(),
@@ -3539,7 +3580,7 @@
                 if (t.clipboard.has("NSFilenamesPboardType"))
                     return "files"
             } else if (s().linux() && t.clipboard.has("text/uri-list")) {
-                const e = x().getCopyFileNames();
+                const e = D().getCopyFileNames();
                 if (e && e.length > 0)
                     return "files"
             }
@@ -3547,16 +3588,16 @@
             return e.length > 0 && "text/plain" !== e[0] && e[e.length - 1].startsWith("image/") ? "img" : "text"
         }
         getCopyFiles() {
-            const e = x().getCopyFileNames();
+            const e = D().getCopyFileNames();
             if (!e || 0 === e.length)
                 return null;
             const t = [];
             return e.forEach((e=>{
-                if (!O().existsSync(e))
+                if (!S().existsSync(e))
                     return;
                 let i;
                 try {
-                    i = O().lstatSync(e)
+                    i = S().lstatSync(e)
                 } catch (e) {
                     return
                 }
@@ -3571,9 +3612,9 @@
             0 === t.length ? null : t
         }
     }
-    const Be = require("child_process");
-    var Ve = e.n(Be);
-    const Oe = {
+    const Ve = require("child_process");
+    var Oe = e.n(Ve);
+    const Le = {
         "iPhone 11": {
             size: {
                 width: 414,
@@ -3645,7 +3686,7 @@
             useragent: "Mozilla/5.0 (Linux; U; Android 10; LIO-AL00 Build/HUAWEILIO-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.86 Mobile Safari/537.36"
         }
     };
-    class Le {
+    class Re {
         async useragent(e) {
             this._browserWindow.webContents.userAgent = e
         }
@@ -3703,7 +3744,7 @@
                 throw new Error("ubrowser is hided");
             this._browserWindow.webContents.openDevTools({
                 mode: e,
-                activate: !0 // chandlerver5
+                activate: !1
             })
         }
         async javascript(e) {
@@ -3722,7 +3763,7 @@
         async press(e, ...t) {
             if (!this._pageIsDomReadyed)
                 throw new Error('"goto" method dit not executed');
-            if (this._allKeyCodes || (this._allKeyCodes = Object.values(pe)),
+            if (this._allKeyCodes || (this._allKeyCodes = Object.values(we)),
             !this._allKeyCodes.includes(e))
                 throw new Error("keyCode wrong");
             if (t.length > 0) {
@@ -3823,9 +3864,9 @@
         }
         async device(e) {
             if ("string" == typeof e) {
-                if (!(e in Oe))
+                if (!(e in Le))
                     throw new Error("type not found");
-                e = Oe[e]
+                e = Le[e]
             } else {
                 if ("object" != typeof e)
                     throw new Error("parameter error");
@@ -3992,7 +4033,7 @@
                     )),
                     s().windows() && "FFFFFFFF" !== e && r.setPluginWindowAppDetails(this._browserWindow, e))
                 }
-                this._childProcess = Ve().fork(c().join(__dirname, "ubrowser", "runner.js")),
+                this._childProcess = Oe().fork(c().join(__dirname, "ubrowser", "runner.js")),
                 this._childProcess.on("message", (({method: e, methodEndKey: t, args: i})=>{
                     if ("run" !== e)
                         if ("runEnd" === e) {
@@ -4040,7 +4081,7 @@
             ))
         }
     }
-    function Re(e, t, i) {
+    function Ne(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -4049,10 +4090,10 @@
         }) : e[t] = i,
         e
     }
-    const Ne = "localopen:";
-    class He {
+    const He = "localopen:";
+    class Ue {
         constructor(e, i, o, r, a, l, h, p) {
-            Re(this, "mainServices", {
+            Ne(this, "mainServices", {
                 getNativeIconUrl: (e,t)=>{
                     e.returnValue = this.getNativeIconUrl(t)
                 }
@@ -4087,7 +4128,7 @@
                     e.returnValue = !0) : e.returnValue = !1
                 }
             }),
-            Re(this, "ffffffffServices", {
+            Ne(this, "ffffffffServices", {
                 isDev: e=>{
                     e.returnValue = s().dev()
                 }
@@ -4112,8 +4153,8 @@
                     const t = await this.getLocalOpenDoc();
                     if (0 === t.files.length)
                         return void (e.returnValue = []);
-                    const i = t.files.map((e=>O().existsSync(e) ? this.convertLocalOpenFeature(e) : {
-                        code: Ne + e,
+                    const i = t.files.map((e=>S().existsSync(e) ? this.convertLocalOpenFeature(e) : {
+                        code: He + e,
                         explain: e,
                         cmds: [c().parse(c().basename(e)).name]
                     }));
@@ -4178,7 +4219,7 @@
                     e.returnValue = n().has("disableDbSyncRemind")
                 }
             }),
-            Re(this, "pluginApiServices", {
+            Ne(this, "pluginApiServices", {
                 setFeature: async(e,t,i)=>{
                     try {
                         await this.saveFeature(t, i)
@@ -4269,13 +4310,13 @@
                     if (s && s.webContents === e.sender && this.windowCmp.mainWindow.isVisible() && (i = !0,
                     this.windowCmp.hideMainWindow()),
                     this.windowCmp.isWindow)
-                        x().regionScreenshot((e=>{
+                        D().regionScreenshot((e=>{
                             n() && o(e ? t.nativeImage.createFromBuffer(e).toDataURL() : "")
                         }
                         ));
                     else if (this.windowCmp.isMacOs)
                         t.clipboard.writeText(""),
-                        Ve().spawn("/usr/sbin/screencapture", ["-c", "-i", "-r"], {
+                        Oe().spawn("/usr/sbin/screencapture", ["-c", "-i", "-r"], {
                             detached: !0
                         }).once("close", (()=>{
                             if (!n())
@@ -4328,7 +4369,7 @@
                 ,
                 runUBrowser: async(e,{options: t, queue: i})=>{
                     const n = this.pluginsCmp.pluginContainer[e]?.logo.replace("file://", "");
-                    return await (new Le).run({
+                    return await (new Re).run({
                         pluginId: e,
                         pluginLogo: n,
                         options: t,
@@ -4338,7 +4379,7 @@
                     })
                 }
             }),
-            Re(this, "pluginUtilApiServices", {
+            Ne(this, "pluginUtilApiServices", {
                 isDev: e=>{
                     const t = this.windowCmp.getPluginIdByWebContents(e.sender);
                     e.returnValue = !!t && !!this.pluginsCmp.pluginContainer[t]?.isDev
@@ -4363,7 +4404,7 @@
                 ,
                 getPath: (e,i)=>{
                     if ("downloads" === i && this.windowCmp.isWindow)
-                        e.returnValue = x().getDownloadsFolderPath();
+                        e.returnValue = D().getDownloadsFolderPath();
                     else
                         try {
                             e.returnValue = t.app.getPath(i)
@@ -4392,7 +4433,7 @@
                 copyFile: (e,{file: t, isRecord: i})=>{
                     t ? (Array.isArray(t) || (t = [t]),
                     0 !== (t = t.filter((e=>d().existsSync(e)))).length ? (i || this.clipboardCmp.temporaryCancelWatch(),
-                    x().copyFile.apply(null, t),
+                    D().copyFile.apply(null, t),
                     e.returnValue = !0) : e.returnValue = !1) : e.returnValue = !1
                 }
                 ,
@@ -4499,7 +4540,7 @@
                     const o = n.file ? 1 : n.files.length
                       , s = c().join(__dirname, "res", "dragfile.png");
                     (0,
-                    he.png2DragIcon)(s, o).then((i=>{
+                    ue.png2DragIcon)(s, o).then((i=>{
                         n.icon = t.nativeImage.createFromBuffer(i),
                         e.sender.startDrag(n)
                     }
@@ -4540,8 +4581,8 @@
                     n && n !== this.windowCmp.mainWindow ? e.returnValue = !1 : (this.windowCmp.hideMainWindow(!0),
                     i && (this.windowCmp.isLinux ? (this.clipboardCmp.temporaryCancelWatch(),
                     t.clipboard.writeText(i),
-                    x().simulateKeyboardTap("v", "ctrl")) : [...(new Intl.Segmenter).segment(i)].forEach((e=>{
-                        x().unicodeType(e.segment)
+                    D().simulateKeyboardTap("v", "ctrl")) : [...(new Intl.Segmenter).segment(i)].forEach((e=>{
+                        D().unicodeType(e.segment)
                     }
                     ))),
                     e.returnValue = !0)
@@ -4553,27 +4594,27 @@
                         n.push(e.toLowerCase())
                     }
                     )),
-                    x().simulateKeyboardTap.apply(null, n),
+                    D().simulateKeyboardTap.apply(null, n),
                     e.returnValue = !0
                 }
                 ,
                 simulateMouseClick: (e,t)=>{
-                    t ? x().simulateMouseClick(t.x, t.y) : x().simulateMouseClick(),
+                    t ? D().simulateMouseClick(t.x, t.y) : D().simulateMouseClick(),
                     e.returnValue = !0
                 }
                 ,
                 simulateMouseRightClick: (e,t)=>{
-                    t ? x().SimulateMouseRightClick(t.x, t.y) : x().SimulateMouseRightClick(),
+                    t ? D().SimulateMouseRightClick(t.x, t.y) : D().SimulateMouseRightClick(),
                     e.returnValue = !0
                 }
                 ,
                 simulateMouseDoubleClick: (e,t)=>{
-                    t ? x().simulateMouseDoubleClick(t.x, t.y) : x().simulateMouseDoubleClick(),
+                    t ? D().simulateMouseDoubleClick(t.x, t.y) : D().simulateMouseDoubleClick(),
                     e.returnValue = !0
                 }
                 ,
                 simulateMouseMove: (e,t)=>{
-                    t ? (x().simulateMouseMove(t.x, t.y),
+                    t ? (D().simulateMouseMove(t.x, t.y),
                     e.returnValue = !0) : e.returnValue = !1
                 }
                 ,
@@ -4681,12 +4722,12 @@
             setImmediate((async()=>{
                 let e = await this.dbCmp.get("/", "appupdate");
                 const i = t.app.getVersion();
-                (!e || R().gt(i, e.version)) && (e || (e = {
+                (!e || N().gt(i, e.version)) && (e || (e = {
                     _id: "appupdate"
                 }),
                 e.version = i,
                 await this.dbCmp.put("/", e),
-                i.startsWith("3.0.2") ? this.helpbootCmp.help(!0) : t.shell.openExternal(this.config.redirectURL + "version&ver=" + i))
+                i.startsWith("3.0") ? this.helpbootCmp.help(!0) : t.shell.openExternal(this.config.redirectURL + "version&ver=" + i))
             }
             ))
         }
@@ -4694,12 +4735,12 @@
             t.app.on("exit", (()=>{
                 this._exitApp || (this._exitApp = !0,
                 t.app.removeAllListeners("before-quit"),
-                this.windowCmp.isLinux || x().stopClipboardWatch(),
-                x().stopVoicePanelTriggerEvent(),
-                x().stopFKeyTapEvent(),
+                this.windowCmp.isLinux || D().stopClipboardWatch(),
+                D().stopVoicePanelTriggerEvent(),
+                D().stopFKeyTapEvent(),
                 t.globalShortcut.unregisterAll(),
-                this.windowCmp.isMacOs && (x().panelRestoreToWindow(this.windowCmp.mainWindow.getNativeWindowHandle()),
-                this.voiceCmp.voiceWindow && x().panelRestoreToWindow(this.voiceCmp.voiceWindow.getNativeWindowHandle()),
+                this.windowCmp.isMacOs && (D().panelRestoreToWindow(this.windowCmp.mainWindow.getNativeWindowHandle()),
+                this.voiceCmp.voiceWindow && D().panelRestoreToWindow(this.voiceCmp.voiceWindow.getNativeWindowHandle()),
                 t.app.dock.hide(),
                 t.app.hide()),
                 setTimeout((()=>{
@@ -4715,7 +4756,7 @@
                         e.destroy()
                     }
                     )),
-                    this.windowCmp.isWindow ? x().exit() : t.app.exit()
+                    this.windowCmp.isWindow ? D().exit() : t.app.exit()
                 }
                 ), 300))
             }
@@ -4993,7 +5034,7 @@
                 return "nativeicon://unknow";
             let t = !1;
             try {
-                t = O().lstatSync(e).isDirectory()
+                t = S().lstatSync(e).isDirectory()
             } catch (e) {}
             if (t)
                 return this.windowCmp.isLinux ? this.folderIconPath ? "file://" + this.folderIconPath : "nativeicon://unknow" : this.windowCmp.isMacOs && /\.app$/i.test(e) ? "nativeicon://" + e : "nativeicon://folder";
@@ -5003,10 +5044,10 @@
         convertLocalOpenFeature(e) {
             let t = !1;
             try {
-                t = O().lstatSync(e).isDirectory()
+                t = S().lstatSync(e).isDirectory()
             } catch (e) {}
             return {
-                code: Ne + e,
+                code: He + e,
                 explain: e,
                 icon: this.getNativeIconUrl(e),
                 cmds: [t ? c().basename(e) : c().parse(c().basename(e)).name]
@@ -5015,7 +5056,7 @@
         setLocalOpenFeatures(e) {
             const t = this.pluginsCmp.pluginContainer[""];
             0 !== (e = e.filter((e=>!(e in t.featureDic)))).length && e.forEach((e=>{
-                if (!O().existsSync(e))
+                if (!S().existsSync(e))
                     return;
                 const t = this.convertLocalOpenFeature(e);
                 this.pluginsCmp.setFeature("", t)
@@ -5038,7 +5079,7 @@
             if (0 === t.files.length)
                 return;
             let i;
-            if (t.files = t.files.filter((t=>!e.includes(Ne + t))),
+            if (t.files = t.files.filter((t=>!e.includes(He + t))),
             i = 0 === t.files.length ? await this.dbCmp.remove("/", t) : await this.dbCmp.put("/", t),
             i.error)
                 return;
@@ -5124,15 +5165,15 @@
                 if (!n)
                     return i(new Error("未识别到当前活动窗口"));
                 if (this.windowCmp.isWindow) {
-                    if (!["explorer.exe", "SearchApp.exe", "SearchHost.exe"].includes(n.app))
+                    if (!["explorer.exe", "SearchApp.exe", "SearchHost.exe", "FESearchHost.exe"].includes(n.app))
                         return i(new Error('当前活动窗口非 "文件资源管理器" 窗口'));
                     if ("CabinetWClass" === n.class || "ExploreWClass" === n.class) {
-                        const t = x().getExplorerCurrentPath(n.id);
+                        const t = D().getExplorerCurrentPath(n.id);
                         return t ? e(t) : i(new Error("未读取到路径"))
                     }
                     return "Progman" === n.class || "WorkerW" === n.class ? e(t.app.getPath("desktop")) : i(new Error('当前活动窗口类 "' + n.class + '" 未识别'))
                 }
-                return this.windowCmp.isMacOs ? "com.apple.finder" !== n.bundleId ? i(new Error('当前活动窗口非 "访达" 窗口')) : void Ve().exec("osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'", {
+                return this.windowCmp.isMacOs ? "com.apple.finder" !== n.bundleId ? i(new Error('当前活动窗口非 "访达" 窗口')) : void Oe().exec("osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'", {
                     encoding: "utf8"
                 }, ((t,n,o)=>{
                     if (t) {
@@ -5154,10 +5195,10 @@
                     if (!/^(chrome|firefox|MicrosoftEdge|iexplore|opera|brave|msedge)\.exe$/.test(i.app))
                         return t(new Error("当前活动窗口非可识别浏览器"));
                     const n = RegExp.$1.toLowerCase();
-                    x().readBrowserWindowUrl(n, i.id, (o=>{
+                    D().readBrowserWindowUrl(n, i.id, (o=>{
                         if (!o)
                             return "chrome" === n ? void setTimeout((()=>{
-                                x().readBrowserWindowUrl(n, i.id, (i=>{
+                                D().readBrowserWindowUrl(n, i.id, (i=>{
                                     if (i)
                                         return e(i);
                                     t(new Error("未读取到 URL"))
@@ -5176,7 +5217,7 @@
                             return t(new Error("当前活动窗口非可识别浏览器"));
                         let n;
                         n = "com.apple.Safari" === i.bundleId ? 'tell application "Safari" to return URL of front document' : `tell application "${i.app}" to return URL of active tab of front window`,
-                        Ve().exec(`osascript -e '${n}'`, {
+                        Oe().exec(`osascript -e '${n}'`, {
                             encoding: "utf8"
                         }, ((i,n,o)=>{
                             if (i) {
@@ -5218,10 +5259,10 @@
                     throw new Error("参数错误");
                 if ("files" === i.type) {
                     if ("string" == typeof i.data) {
-                        if (!O().existsSync(i.data))
+                        if (!S().existsSync(i.data))
                             throw new Error("文件不存在");
                         try {
-                            const e = O().lstatSync(i.data);
+                            const e = S().lstatSync(i.data);
                             i.data = [{
                                 isFile: e.isFile(),
                                 isDirectory: e.isDirectory(),
@@ -5236,9 +5277,9 @@
                     if (Array.isArray(i.data)) {
                         const e = [];
                         if (i.data.forEach((t=>{
-                            if (O().existsSync(t))
+                            if (S().existsSync(t))
                                 try {
-                                    const i = O().lstatSync(t);
+                                    const i = S().lstatSync(t);
                                     e.push({
                                         isFile: i.isFile(),
                                         isDirectory: i.isDirectory(),
@@ -5259,7 +5300,7 @@
                     if ("string" == typeof i.data) {
                         if (i.data.startsWith("data:image/"))
                             break;
-                        if (/\.(jpg|jpeg|png|bmp)$/i.test(i.data) && O().existsSync(i.data)) {
+                        if (/\.(jpg|jpeg|png|bmp)$/i.test(i.data) && S().existsSync(i.data)) {
                             const e = t.nativeImage.createFromPath(i.data);
                             if (e.isEmpty())
                                 throw new Error("图片为空");
@@ -5292,7 +5333,7 @@
             ))
         }
     }
-    class Ue {
+    class Ke {
         constructor(e, t) {
             var i, n;
             n = {
@@ -5384,10 +5425,10 @@
             ))
         }
         registerHotKey(e, i) {
-            const o = T(e);
+            const o = A(e);
             if (o !== n().get("showHotKey"))
-                if (Ie.isFKey(o))
-                    Ie.register(o, i);
+                if (Te.isFKey(o))
+                    Te.register(o, i);
                 else
                     try {
                         t.globalShortcut.isRegistered(o) && t.globalShortcut.unregister(o),
@@ -5395,8 +5436,8 @@
                     } catch (e) {}
         }
         unregisterHotKey(e) {
-            const i = T(e);
-            Ie.isFKey(i) ? Ie.unregister(i) : t.globalShortcut.isRegistered(i) && t.globalShortcut.unregister(i)
+            const i = A(e);
+            Te.isFKey(i) ? Te.unregister(i) : t.globalShortcut.isRegistered(i) && t.globalShortcut.unregister(i)
         }
         rendererAutoTextCmd(e, t) {
             this.windowCmp.mainWindow.isVisible() || this.windowCmp.display.setNativeWorkWindowInfo();
@@ -5421,10 +5462,10 @@
                         }
                         ), 250);
                     const e = ()=>{
-                        const e = x().getClipboardChangeCount();
-                        this.windowCmp.isWindow ? x().simulateKeyboardTap("c", "ctrl") : this.windowCmp.isMacOs ? x().simulateKeyboardTap("c", "command") : this.windowCmp.isLinux && x().simulateKeyboardTap("c", "ctrl"),
+                        const e = D().getClipboardChangeCount();
+                        this.windowCmp.isWindow ? D().simulateKeyboardTap("c", "ctrl") : this.windowCmp.isMacOs ? D().simulateKeyboardTap("c", "command") : this.windowCmp.isLinux && D().simulateKeyboardTap("c", "ctrl"),
                         setTimeout((()=>{
-                            const i = x().getClipboardChangeCount() > e;
+                            const i = D().getClipboardChangeCount() > e;
                             this.rendererAutoTextCmd(t.cmd, i),
                             setTimeout((()=>{
                                 this.callHotkeyRuningTimeout = null
@@ -5512,7 +5553,7 @@
             !0)
         }
     }
-    function Ke(e, t, i) {
+    function je(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -5521,9 +5562,9 @@
         }) : e[t] = i,
         e
     }
-    class je {
+    class Je {
         constructor(e, i, o) {
-            Ke(this, "initDefaultPanelMenus", (async()=>{
+            je(this, "initDefaultPanelMenus", (async()=>{
                 const e = this.windowCmp.pluginsCmp.pluginContainer
                   , t = []
                   , i = "panelmenus/"
@@ -5565,10 +5606,10 @@
                 }].forEach((s=>{
                     o++;
                     const r = parseInt(n + (o < 10 ? "0" + o : o));
-                    "string" != typeof s ? s.pluginId in e && (s._id = i + _(s.pluginId + "/" + s.label),
+                    "string" != typeof s ? s.pluginId in e && (s._id = i + T(s.pluginId + "/" + s.label),
                     s.createAt = r,
                     t.push(s)) : t.push({
-                        _id: i + _("/" + s),
+                        _id: i + T("/" + s),
                         pluginId: "",
                         label: s,
                         createAt: r
@@ -5578,7 +5619,7 @@
                 await this.dbCmp.bulkDocs("/", t)
             }
             )),
-            Ke(this, "getPanelMenusDocs", (async()=>{
+            je(this, "getPanelMenusDocs", (async()=>{
                 if (!this.panelMenusDocsCache) {
                     let e = await this.dbCmp.allDocs("/", "panelmenus/");
                     0 === e.length && (await this.initDefaultPanelMenus(),
@@ -5598,7 +5639,7 @@
                 return this.panelMenusDocsCache
             }
             )),
-            Ke(this, "_savePanelMenuSort", (async e=>{
+            je(this, "_savePanelMenuSort", (async e=>{
                 let t = await this.dbCmp.get("/", "panelmenusort");
                 t || (t = {
                     _id: "panelmenusort"
@@ -5607,9 +5648,9 @@
                 await this.dbCmp.put("/", t)
             }
             )),
-            Ke(this, "voiceServices", {
+            je(this, "voiceServices", {
                 getXFAuthStr: (e,t)=>{
-                    const i = `api_key="8b3ee022a0035a9d2edc93a67c606eca", algorithm="hmac-sha256", headers="host date request-line", signature="${x().xfSignature(`host: iat-api.xfyun.cn\ndate: ${t}\nGET /v2/iat HTTP/1.1`).toString("base64")}"`;
+                    const i = `api_key="8b3ee022a0035a9d2edc93a67c606eca", algorithm="hmac-sha256", headers="host date request-line", signature="${D().xfSignature(`host: iat-api.xfyun.cn\ndate: ${t}\nGET /v2/iat HTTP/1.1`).toString("base64")}"`;
                     e.returnValue = Buffer.from(i).toString("base64")
                 }
                 ,
@@ -5624,7 +5665,7 @@
                 }
                 ,
                 isSimulateCopyForClipboardUpdate: e=>{
-                    e.returnValue = x().getClipboardChangeCount() > this._simulateCopyClipboardChangeCount
+                    e.returnValue = D().getClipboardChangeCount() > this._simulateCopyClipboardChangeCount
                 }
                 ,
                 enterPlugin: (e,t,i)=>{
@@ -5638,14 +5679,14 @@
                     this.reportCmp.info("voice.input"),
                     this.windowCmp.isLinux ? (this.clipboardCmp.temporaryCancelWatch(),
                     t.clipboard.writeText(i),
-                    x().simulateKeyboardTap("v", "ctrl")) : [...(new Intl.Segmenter).segment(i)].forEach((e=>{
-                        x().unicodeType(e.segment)
+                    D().simulateKeyboardTap("v", "ctrl")) : [...(new Intl.Segmenter).segment(i)].forEach((e=>{
+                        D().unicodeType(e.segment)
                     }
                     ))
                 }
                 ,
                 getCNPinyin: (e,t)=>{
-                    e.returnValue = Y(t)
+                    e.returnValue = z(t)
                 }
                 ,
                 showMainWindowToInput: ()=>{
@@ -5828,11 +5869,11 @@
                     e.returnValue = !o.error
                 }
             }),
-            Ke(this, "ffffffffServices", {
+            je(this, "ffffffffServices", {
                 createVoicePanelMenu: async(e,t,i)=>{
                     this.panelMenusDocsCache = null;
                     const n = {
-                        _id: "panelmenus/" + _(e + "/" + i),
+                        _id: "panelmenus/" + T(e + "/" + i),
                         pluginId: e,
                         featureCode: t,
                         label: i,
@@ -5861,7 +5902,7 @@
                 }
                 ,
                 getVoicePanelMenu: async(e,t,i)=>{
-                    const n = await this.dbCmp.get("/", "panelmenus/" + _(t + "/" + i));
+                    const n = await this.dbCmp.get("/", "panelmenus/" + T(t + "/" + i));
                     e.returnValue = n
                 }
                 ,
@@ -5873,7 +5914,7 @@
                         e && this.windowCmp.voiceChangeAccount(e)
                     } else
                         n().set("enableVoicePanel", !1),
-                        this.voiceWindow && !this.voiceWindow.isDestroyed() && (this.windowCmp.isMacOs && x().panelRestoreToWindow(this.voiceWindow.getNativeWindowHandle()),
+                        this.voiceWindow && !this.voiceWindow.isDestroyed() && (this.windowCmp.isMacOs && D().panelRestoreToWindow(this.voiceWindow.getNativeWindowHandle()),
                         this.voiceWindow.destroy());
                     e.returnValue = !0
                 }
@@ -5908,10 +5949,10 @@
                         return void (e.returnValue = !1);
                     this._triggerWay = t,
                     n().set("voicePanelTriggerWay", this._triggerWay),
-                    x().stopVoicePanelTriggerEvent();
+                    D().stopVoicePanelTriggerEvent();
                     let i = n().get("voicePanelProcessBlacklist") || "";
                     i && (i = ";" + i + ";"),
-                    x().voicePanelTriggerEvent(this.nativeVoicePanelTrigger, this._triggerWay, i),
+                    D().voicePanelTriggerEvent(this.nativeVoicePanelTrigger, this._triggerWay, i),
                     e.returnValue = !0
                 }
                 ,
@@ -5927,7 +5968,7 @@
                         this._setProcessBlacklistTimeout = null,
                         t = t.trim(),
                         n().set("voicePanelProcessBlacklist", t),
-                        x().setVoicePanelProcessBlacklist(t ? ";" + t + ";" : "")
+                        D().setVoicePanelProcessBlacklist(t ? ";" + t + ";" : "")
                     }
                     ), 500),
                     e.returnValue = !0) : e.returnValue = !1
@@ -5986,7 +6027,7 @@
                 this.voiceWindow && !this.voiceWindow.webContents.isDestroyed() && this.voiceWindow.webContents.executeJavaScript(`window.bridge.changeAccount(${JSON.stringify(e)})`)
             }
             ,
-            this.windowCmp.isLinux && Ve().spawn("xmodmap", ["-e", '"pointer = 1 25 3 4 5 6 7 8 9 10"'], {
+            this.windowCmp.isLinux && Oe().spawn("xmodmap", ["-e", '"pointer = 1 25 3 4 5 6 7 8 9 10"'], {
                 shell: !0,
                 detached: !0
             })
@@ -6030,8 +6071,8 @@
                         break
                     }
                     this.clipboardCmp.temporaryCancelWatch(),
-                    this._simulateCopyClipboardChangeCount = x().getClipboardChangeCount(),
-                    x().simulateKeyboardTap("c", "command"),
+                    this._simulateCopyClipboardChangeCount = D().getClipboardChangeCount(),
+                    D().simulateKeyboardTap("c", "command"),
                     n = {
                         type: "simulatecopy",
                         wininfo: o
@@ -6047,7 +6088,7 @@
                             break;
                         if (e.webContents.isFocused()) {
                             this.clipboardCmp.temporaryCancelWatch(),
-                            this._simulateCopyClipboardChangeCount = x().getClipboardChangeCount(),
+                            this._simulateCopyClipboardChangeCount = D().getClipboardChangeCount(),
                             e.webContents.copy(),
                             n = {
                                 type: "simulatecopy",
@@ -6057,7 +6098,7 @@
                         }
                         const i = e.getBrowserView();
                         i && i.webContents.isFocused() && (this.clipboardCmp.temporaryCancelWatch(),
-                        this._simulateCopyClipboardChangeCount = x().getClipboardChangeCount(),
+                        this._simulateCopyClipboardChangeCount = D().getClipboardChangeCount(),
                         i.webContents.copy(),
                         n = {
                             type: "simulatecopy",
@@ -6079,9 +6120,9 @@
                         };
                         break
                     }
-                    if (["explorer.exe", "SearchApp.exe", "SearchHost.exe"].includes(o.app)) {
+                    if (["explorer.exe", "SearchApp.exe", "SearchHost.exe", "FESearchHost.exe"].includes(o.app)) {
                         let e;
-                        if ("CabinetWClass" === o.class || "ExploreWClass" === o.class ? e = x().getExplorerSelectedFilePath(o.id) : "Progman" !== o.class && "WorkerW" !== o.class || (e = x().getDesktopSelectedFilePath()),
+                        if ("CabinetWClass" === o.class || "ExploreWClass" === o.class ? e = D().getExplorerSelectedFilePath(o.id) : "Progman" !== o.class && "WorkerW" !== o.class || (e = D().getDesktopSelectedFilePath()),
                         e) {
                             const t = [];
                             if (e.forEach((e=>{
@@ -6116,8 +6157,8 @@
                         break
                     }
                     this.clipboardCmp.temporaryCancelWatch(),
-                    this._simulateCopyClipboardChangeCount = x().getClipboardChangeCount(),
-                    x().simulateKeyboardTap("c", "ctrl"),
+                    this._simulateCopyClipboardChangeCount = D().getClipboardChangeCount(),
+                    ["cmd.exe", "powershell.exe", "WindowsTerminal.exe"].includes(o.app) ? D().simulateKeyboardTap("insert", "ctrl") : D().simulateKeyboardTap("c", "ctrl"),
                     n = {
                         type: "simulatecopy",
                         wininfo: o
@@ -6131,15 +6172,15 @@
                     }
                     if (/\/(?:dde-file-manager|nautilus)$/.test(o.appPath)) {
                         this.clipboardCmp.temporaryCancelWatch(),
-                        this._simulateCopyClipboardChangeCount = x().getClipboardChangeCount(),
-                        x().simulateKeyboardTap("c", "ctrl"),
+                        this._simulateCopyClipboardChangeCount = D().getClipboardChangeCount(),
+                        D().simulateKeyboardTap("c", "ctrl"),
                         n = {
                             type: "simulatecopy",
                             wininfo: o
                         };
                         break
                     }
-                    if (x().wheelMouseDownIsSelection()) {
+                    if (D().wheelMouseDownIsSelection()) {
                         const e = t.clipboard.readText("selection").trim();
                         e && (n = {
                             type: "text",
@@ -6160,7 +6201,7 @@
             this.voiceWindow.setBounds(this.windowBounds),
             this.pointerInWindow = !0,
             this.windowCmp.isWindow && (this.voiceWindow.setFocusable(!1),
-            x().setAlwaysOnTop(this.voiceWindow.getNativeWindowHandle())),
+            D().setAlwaysOnTop(this.voiceWindow.getNativeWindowHandle())),
             this.voiceWindow.showInactive(),
             this.windowCmp.isMacOs && !this.voiceWindow.isVisible() && this.voiceWindow.show(),
             this.voiceWindow.webContents.send("mousemove", e - this.windowBounds.x, i - this.windowBounds.y),
@@ -6192,16 +6233,16 @@
             this.voiceWindow.webContents.executeJavaScript("window.bridge.holdUp()").then((e=>{
                 e && (this._voiceWindowShowTimeStamp = Date.now(),
                 this.windowCmp.isWindow ? (this.voiceWindow.setFocusable(!0),
-                x().focusShowWindow(this.voiceWindow.getNativeWindowHandle(), (()=>{
+                D().focusShowWindow(this.voiceWindow.getNativeWindowHandle(), (()=>{
                     this.voiceWindow.show()
                 }
-                ))) : this.windowCmp.isMacOs ? x().focusShowWindow(this.voiceWindow.getNativeWindowHandle()) : this.voiceWindow.show())
+                ))) : this.windowCmp.isMacOs ? D().focusShowWindow(this.voiceWindow.getNativeWindowHandle()) : this.voiceWindow.show())
             }
-            ))) : this.triggerEmpty()) : x().stopVoicePanelTriggerEvent()
+            ))) : this.triggerEmpty()) : D().stopVoicePanelTriggerEvent()
         }
         triggerHide(e) {
             this.windowCmp.isWindow ? (this.voiceWindow.hide(),
-            !e && this.windowCmp.display.nativeWorkWindowInfo && x().restorePrevWindowFocus(this.windowCmp.display.nativeWorkWindowInfo.id)) : this.voiceWindow.hide(),
+            !e && this.windowCmp.display.nativeWorkWindowInfo && D().restorePrevWindowFocus(this.windowCmp.display.nativeWorkWindowInfo.id)) : this.voiceWindow.hide(),
             e && !this.windowCmp.mainWindow.isVisible() && this.windowCmp.display.trigger(!0, !0)
         }
         triggerEmpty() {
@@ -6227,7 +6268,7 @@
                 this._mouseLongDownTimeout && clearTimeout(this._mouseLongDownTimeout),
                 this.voiceWindow.isVisible() && this.triggerEmpty(),
                 this._mouseLongDownTimeout = setTimeout((()=>{
-                    x().triggerMouseLongDown() && this.triggerShow(t, i),
+                    D().triggerMouseLongDown() && this.triggerShow(t, i),
                     this._mouseLongDownTimeout = null
                 }
                 ), this._longDownTriggerMS);
@@ -6325,7 +6366,7 @@
             this.voiceWindow.removeMenu(),
             this.voiceWindow.setAlwaysOnTop(!0, "pop-up-menu"),
             this.windowCmp.isMacOs && (this.voiceWindow.setWindowButtonVisibility(!1),
-            x().windowConvertToPanel(this.voiceWindow.getNativeWindowHandle())),
+            D().windowConvertToPanel(this.voiceWindow.getNativeWindowHandle())),
             this.voiceWindow.on("will-resize", (e=>{
                 e.preventDefault()
             }
@@ -6337,27 +6378,27 @@
                 this.voiceWindow.webContents.executeJavaScript(`window.borderWidth=${this.config.borderWidth};`);
                 let e = n().get("voicePanelProcessBlacklist") || "";
                 e && (e = ";" + e + ";"),
-                x().voicePanelTriggerEvent(this.nativeVoicePanelTrigger, this._triggerWay, e)
+                D().voicePanelTriggerEvent(this.nativeVoicePanelTrigger, this._triggerWay, e)
             }
             )),
             this.voiceWindow.webContents.once("destroyed", (()=>{
-                x().stopVoicePanelTriggerEvent(),
+                D().stopVoicePanelTriggerEvent(),
                 delete this.windowCmp.voiceRefreshCmdSource,
                 delete this.windowCmp.voiceChangeAccount,
                 this.voiceWindow = null
             }
             )),
             this.voiceWindow.webContents.once("render-process-gone", (()=>{
-                this.windowCmp.isMacOs && x().panelRestoreToWindow(this.voiceWindow.getNativeWindowHandle()),
+                this.windowCmp.isMacOs && D().panelRestoreToWindow(this.voiceWindow.getNativeWindowHandle()),
                 this.voiceWindow.destroy()
             }
             )),
             this.voiceWindow.on("blur", (()=>{
                 this.voiceWindow.isVisible() && Date.now() - this._voiceWindowShowTimeStamp < 300 ? this.windowCmp.isWindow ? (this.voiceWindow.show(),
-                x().focusShowWindow(this.voiceWindow.getNativeWindowHandle(), (()=>{
+                D().focusShowWindow(this.voiceWindow.getNativeWindowHandle(), (()=>{
                     this.voiceWindow.show()
                 }
-                ))) : this.windowCmp.isMacOs ? x().focusShowWindow(this.voiceWindow.getNativeWindowHandle()) : this.voiceWindow.show() : this.triggerEmpty()
+                ))) : this.windowCmp.isMacOs ? D().focusShowWindow(this.voiceWindow.getNativeWindowHandle()) : this.voiceWindow.show() : this.triggerEmpty()
             }
             )),
             this.voiceWindow.on("hide", (()=>{
@@ -6367,9 +6408,9 @@
             ))
         }
     }
-    const Je = require("chokidar");
-    var $e = e.n(Je);
-    const qe = {
+    const $e = require("chokidar");
+    var qe = e.n($e);
+    const Qe = {
         pluginstoresearch: {
             feature: {
                 code: "pluginstoresearch",
@@ -6401,7 +6442,7 @@
                     return;
                 const o = RegExp.$1
                   , s = c().join(t.app.getPath("downloads"), "uTools_" + Date.now() + "." + o);
-                O().writeFile(s, n.replace(/^data:image\/([a-z]+);base64,/, ""), "base64", (e=>{
+                S().writeFile(s, n.replace(/^data:image\/([a-z]+);base64,/, ""), "base64", (e=>{
                     e || t.shell.showItemInFolder(s)
                 }
                 ))
@@ -6421,9 +6462,9 @@
             func: (e,i,n)=>{
                 (n = n.trim()).startsWith("~") && (n = n.replace("~", t.app.getPath("home"))),
                 n = c().normalize(n),
-                O().existsSync(n) || (n = c().dirname(n),
-                O().existsSync(n)) ? (e.windowCmp.hideMainWindow(!1),
-                O().lstat(n, ((e,i)=>{
+                S().existsSync(n) || (n = c().dirname(n),
+                S().existsSync(n)) ? (e.windowCmp.hideMainWindow(!1),
+                S().lstat(n, ((e,i)=>{
                     e || i.isFile() ? t.shell.showItemInFolder(n) : t.shell.openPath(n)
                 }
                 ))) : new t.Notification({
@@ -6444,7 +6485,7 @@
                 }]
             },
             func: (e,i,n)=>{
-                const o = n.match(/^(?:\/[^/\n\r\f\v]+)+\/?$/gm).map((e=>e.trim())).filter((e=>O().existsSync(e)));
+                const o = n.match(/^(?:\/[^/\n\r\f\v]+)+\/?$/gm).map((e=>e.trim())).filter((e=>S().existsSync(e)));
                 0 !== o.length ? (e.windowCmp.hideMainWindow(),
                 e.copyFile(o)) : new t.Notification({
                     body: "文件不存在"
@@ -6465,7 +6506,7 @@
             func: (e,i,n)=>{
                 (n = n.trim()).startsWith("~") && (n = n.replace("~", t.app.getPath("home"))),
                 n = c().normalize(n),
-                O().existsSync(n) ? (e.windowCmp.hideMainWindow(!1),
+                S().existsSync(n) ? (e.windowCmp.hideMainWindow(!1),
                 t.shell.openPath(n)) : new t.Notification({
                     body: "文件不存在"
                 }).show()
@@ -6562,7 +6603,7 @@
             }
         }
     }
-      , Qe = [{
+      , Ge = [{
         code: "call:systemAction lock",
         icon: "res/native/lock.png",
         explain: "电脑锁屏",
@@ -6618,7 +6659,7 @@
         explain: "获取我的电脑局域网IP地址",
         cmds: ["内部网络IP地址"]
     }];
-    function Ge(e, t, i) {
+    function Ze(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -6627,9 +6668,9 @@
         }) : e[t] = i,
         e
     }
-    class Ze {
+    class Xe {
         constructor(e, i, o, s, r) {
-            Ge(this, "mainServices", {
+            Ze(this, "mainServices", {
                 nativeOpen: (e,i,n)=>{
                     if (this.reportCmp.info("native.open", {
                         way: n
@@ -6640,7 +6681,7 @@
                         "function" == typeof this[t] && this[t].apply(this, e)
                     } else {
                         if (i.startsWith("localopen:") && (i = i.replace("localopen:", ""),
-                        !O().existsSync(i)))
+                        !S().existsSync(i)))
                             return new t.Notification({
                                 body: "文件不存在，打开失败"
                             }).show(),
@@ -6649,15 +6690,15 @@
                         if (this.windowCmp.hideMainWindow(!1),
                         /\.sh$/i.test(i))
                             try {
-                                return O().accessSync(i, O().constants.X_OK),
-                                void Ve().spawn(i, {
+                                return S().accessSync(i, S().constants.X_OK),
+                                void Oe().spawn(i, {
                                     detached: !0
                                 })
                             } catch (e) {}
                         else if (/.scpt$/i.test(i))
                             try {
-                                if (O().lstatSync(i).isFile())
-                                    return void Ve().spawn("osascript", [i], {
+                                if (S().lstatSync(i).isFile())
+                                    return void Oe().spawn("osascript", [i], {
                                         detached: !0
                                     })
                             } catch (e) {}
@@ -6675,13 +6716,13 @@
                     if (this.reportCmp.info("native.open", {
                         way: o
                     }),
-                    t in qe)
+                    t in Qe)
                         try {
-                            qe[t].func(this, i, n)
+                            Qe[t].func(this, i, n)
                         } catch (e) {}
                 }
             }),
-            Ge(this, "ffffffffServices", {
+            Ze(this, "ffffffffServices", {
                 setEnableNativeApp: (e,t)=>{
                     n().set("enableNativeApp", !0 === t),
                     setImmediate((()=>{
@@ -6709,7 +6750,7 @@
         }
         convertAppFeature(e) {
             const t = {}
-              , i = x().getAppLocalName(e)
+              , i = D().getAppLocalName(e)
               , n = c().parse(e).name;
             if (i)
                 if (i.includes("\n")) {
@@ -6727,9 +6768,9 @@
         dirAppRead(e, t, i, n, o) {
             let s = null;
             try {
-                if (!O().existsSync(t))
+                if (!S().existsSync(t))
                     return;
-                s = O().readdirSync(t)
+                s = S().readdirSync(t)
             } catch (e) {
                 return
             }
@@ -6738,7 +6779,7 @@
                     const s = c().join(t, r);
                     let a;
                     try {
-                        a = O().lstatSync(s)
+                        a = S().lstatSync(s)
                     } catch (e) {
                         continue
                     }
@@ -6746,7 +6787,7 @@
                 }
         }
         dirAppWatch(e, t) {
-            return $e().watch(e, {
+            return qe().watch(e, {
                 persistent: !0,
                 ignoreInitial: !0,
                 ignorePermissionErrors: !0,
@@ -6756,14 +6797,14 @@
                 ignored: /\.app\/.*|\/\../
             }).on("addDir", (e=>{
                 /\.app$/.test(e) && setTimeout((()=>{
-                    O().existsSync(e) && (this.pluginsCmp.setFeature("", this.convertAppFeature(e)),
+                    S().existsSync(e) && (this.pluginsCmp.setFeature("", this.convertAppFeature(e)),
                     this.windowCmp.refreshCmdSource())
                 }
                 ), 1e4)
             }
             )).on("unlinkDir", (e=>{
                 /\.app$/.test(e) && setImmediate((()=>{
-                    O().existsSync(e) || e in this.pluginsCmp.pluginContainer[""].featureDic && (delete this.pluginsCmp.pluginContainer[""].featureDic[e],
+                    S().existsSync(e) || e in this.pluginsCmp.pluginContainer[""].featureDic && (delete this.pluginsCmp.pluginContainer[""].featureDic[e],
                     this.windowCmp.refreshCmdSource())
                 }
                 ))
@@ -6778,16 +6819,16 @@
             this.dirAppRead(".app", "/System/Applications", 1, 0, e),
             ["Terminal", "Visual Studio Code"].forEach((t=>{
                 const i = e.find((e=>e.endsWith(t + ".app")));
-                i && (qe["path_open_to_" + t] = {
+                i && (Qe["path_open_to_" + t] = {
                     func: (e,i,n)=>{
                         e.windowCmp.hideMainWindow(!1),
                         "files" !== i ? this.appCmp.readCurrentFolderPath().then((e=>{
-                            Ve().spawn("open", ["-a", `"${t}"`, `"${e}"`], {
+                            Oe().spawn("open", ["-a", `"${t}"`, `"${e}"`], {
                                 detached: !0,
                                 shell: !0
                             })
                         }
-                        )) : Ve().spawn("open", ["-a", `"${t}"`, `"${n[0].path}"`], {
+                        )) : Oe().spawn("open", ["-a", `"${t}"`, `"${n[0].path}"`], {
                             detached: !0,
                             shell: !0
                         })
@@ -6818,7 +6859,7 @@
             this.dirAppRead(".app", "/System/Library/CoreServices/Applications", 0, 0, e),
             ["Finder.app", "Paired Devices.app", "Ticket Viewer.app"].forEach((t=>{
                 const i = c().join("/System/Library/CoreServices", t);
-                O().existsSync(i) && e.push(i)
+                S().existsSync(i) && e.push(i)
             }
             )),
             e.map((e=>this.convertAppFeature(e))).forEach((e=>{
@@ -6828,13 +6869,13 @@
             this.baseAppDirWatch = this.dirAppWatch(["/Applications", process.env.HOME + "/Applications"], 1)
         }
         setMatchAppFeatures() {
-            Object.values(qe).forEach((e=>{
+            Object.values(Qe).forEach((e=>{
                 e.feature && this.pluginsCmp.setFeature("", e.feature)
             }
             ))
         }
         setActionAppFeatures() {
-            Qe.forEach((e=>{
+            Ge.forEach((e=>{
                 e.icon || (e.icon = "res/native/symbolic.svg"),
                 this.pluginsCmp.setFeature("", e)
             }
@@ -6873,7 +6914,7 @@
             return new Promise(((n,o)=>{
                 let s = ""
                   , r = "";
-                const a = Ve().spawn("osascript", ["-ss"], {
+                const a = Oe().spawn("osascript", ["-ss"], {
                     detached: !0
                 });
                 a.on("close", (e=>{
@@ -6915,16 +6956,16 @@
                     message: "确定要执行「" + i + "」吗？",
                     defaultId: 1
                 }).then((({response: t})=>{
-                    1 === t && x().macAction(e)
+                    1 === t && D().macAction(e)
                 }
                 ))
             } else
                 this.windowCmp.hideMainWindow(),
-                x().macAction(e)
+                D().macAction(e)
         }
         copyFile(e) {
             Array.isArray(e) || (e = [e]),
-            0 !== (e = e.filter((e=>O().existsSync(e)))).length && x().copyFile.apply(null, e)
+            0 !== (e = e.filter((e=>S().existsSync(e)))).length && D().copyFile.apply(null, e)
         }
         goHelp() {
             this.windowCmp.hideMainWindow(!1),
@@ -6937,12 +6978,12 @@
             const e = this.windowCmp.display.nativeWorkWindowInfo;
             e && (this.windowCmp.hideMainWindow(),
             setTimeout((()=>{
-                if (!x().isHadScreenCaptureAccess())
+                if (!D().isHadScreenCaptureAccess())
                     return new t.Notification({
                         body: "无屏幕录制权限，在「安全性与隐私」->「隐私」中允许屏幕录制权限"
                     }).show(),
-                    void x().requestScreenCaptureAccess();
-                const i = x().windowScreenshot(e.id);
+                    void D().requestScreenCaptureAccess();
+                const i = D().windowScreenshot(e.id);
                 i ? t.clipboard.writeImage(t.nativeImage.createFromBuffer(i)) : new t.Notification({
                     body: "窗口截图失败，「安全性与隐私」中允许屏幕录制权限再尝试"
                 }).show()
@@ -6962,16 +7003,16 @@
         showDesktop() {
             this.windowCmp.hideMainWindow(!1);
             const e = "/System/Applications/Mission Control.app/Contents/MacOS/Mission Control";
-            O().existsSync(e) ? Ve().spawn(e, ["1"], {
+            S().existsSync(e) ? Oe().spawn(e, ["1"], {
                 detached: !0
-            }) : Ve().spawn(e.replace("/System", ""), ["1"], {
+            }) : Oe().spawn(e.replace("/System", ""), ["1"], {
                 detached: !0
             })
         }
         getLanIp() {
             this.windowCmp.hideMainWindow(),
             setTimeout((async()=>{
-                const e = await B();
+                const e = await L();
                 e ? (t.clipboard.writeText(e),
                 new t.Notification({
                     body: '内部网络IP地址 "' + e + '" 已复制到剪贴板'
@@ -6983,13 +7024,13 @@
         }
         screenCapture() {
             this.windowCmp.hideMainWindow(),
-            Ve().spawn("/usr/sbin/screencapture", ["-c", "-i", "-r"], {
+            Oe().spawn("/usr/sbin/screencapture", ["-c", "-i", "-r"], {
                 detached: !0
             })
         }
         regionScreenshot() {
             this.windowCmp.hideMainWindow(),
-            Ve().spawn("/usr/sbin/screencapture", ["-c", "-i", "-r"], {
+            Oe().spawn("/usr/sbin/screencapture", ["-c", "-i", "-r"], {
                 detached: !0
             }).once("close", (()=>{
                 setTimeout((()=>{
@@ -7003,7 +7044,7 @@
             this.appCmp.showNativeWorkWindowInfo()
         }
     }
-    const Xe = [{
+    const Ye = [{
         code: "ms-settings:about",
         cmds: ["电脑信息"]
     }, {
@@ -7205,7 +7246,7 @@
         code: "ms-settings:windowsupdate-action",
         cmds: ["检测系统更新"]
     }]
-      , Ye = {
+      , ze = {
         pluginstoresearch: {
             feature: {
                 code: "pluginstoresearch",
@@ -7236,8 +7277,8 @@
                 !/^data:image\/([a-z]+);base64,/.test(n))
                     return;
                 const o = RegExp.$1
-                  , s = c().join(x().getDownloadsFolderPath() || t.app.getPath("desktop"), "uTools_" + Date.now() + "." + o);
-                O().writeFile(s, n.replace(/^data:image\/([a-z]+);base64,/, ""), "base64", (e=>{
+                  , s = c().join(D().getDownloadsFolderPath() || t.app.getPath("desktop"), "uTools_" + Date.now() + "." + o);
+                S().writeFile(s, n.replace(/^data:image\/([a-z]+);base64,/, ""), "base64", (e=>{
                     e || t.shell.showItemInFolder(s)
                 }
                 ))
@@ -7256,9 +7297,9 @@
             },
             func: (e,i,n)=>{
                 n = c().normalize(n.trim()),
-                O().existsSync(n) || (n = c().dirname(n),
-                O().existsSync(n)) ? (e.windowCmp.hideMainWindow(!1),
-                O().lstat(n, ((e,i)=>{
+                S().existsSync(n) || (n = c().dirname(n),
+                S().existsSync(n)) ? (e.windowCmp.hideMainWindow(!1),
+                S().lstat(n, ((e,i)=>{
                     e || i.isFile() ? t.shell.showItemInFolder(n) : t.shell.openPath(n)
                 }
                 ))) : new t.Notification({
@@ -7279,7 +7320,7 @@
                 }]
             },
             func: (e,i,n)=>{
-                const o = n.match(/^[A-Za-z]:(?:\\|\/\/?|\\{2})(?![/\\])[^:*?"<>|\f\n\r\t\v]*$/gm).map((e=>c().normalize(e.trim()))).filter((e=>O().existsSync(e)));
+                const o = n.match(/^[A-Za-z]:(?:\\|\/\/?|\\{2})(?![/\\])[^:*?"<>|\f\n\r\t\v]*$/gm).map((e=>c().normalize(e.trim()))).filter((e=>S().existsSync(e)));
                 0 !== o.length ? (e.windowCmp.hideMainWindow(),
                 e.copyFile(o)) : new t.Notification({
                     body: "文件不存在"
@@ -7299,7 +7340,7 @@
             },
             func: (e,i,n)=>{
                 n = c().normalize(n.trim()),
-                O().existsSync(n) ? (e.windowCmp.hideMainWindow(!1),
+                S().existsSync(n) ? (e.windowCmp.hideMainWindow(!1),
                 t.shell.openPath(n)) : new t.Notification({
                     body: "文件不存在"
                 }).show()
@@ -7366,13 +7407,13 @@
             },
             func: (e,i,n)=>{
                 e.windowCmp.hideMainWindow();
-                const o = x().getAllOpenedExplorerCurrentPath();
+                const o = D().getAllOpenedExplorerCurrentPath();
                 if (0 === o.length)
                     return void new t.Notification({
                         body: '未检测到 "文件资源管理器" 窗口'
                     }).show();
                 let s = [...new Set(o)];
-                s = s.filter((e=>O().existsSync(e))),
+                s = s.filter((e=>S().existsSync(e))),
                 1 !== s.length ? (s.push("取消"),
                 t.dialog.showMessageBox({
                     buttons: s,
@@ -7381,25 +7422,25 @@
                     defaultId: 0,
                     cancelId: s.length - 1
                 }).then((({response: e})=>{
-                    e !== s.length - 1 && (x().setDialogBoxValue(n.id, s[e]) ? x().simulateKeyboardTap("enter") : (t.clipboard.writeText(s[e]),
-                    x().simulateKeyboardTap("l", "ctrl"),
+                    e !== s.length - 1 && (D().setDialogBoxValue(n.id, s[e]) ? D().simulateKeyboardTap("enter") : (t.clipboard.writeText(s[e]),
+                    D().simulateKeyboardTap("l", "ctrl"),
                     setTimeout((()=>{
-                        x().simulateKeyboardTap("v", "ctrl"),
-                        x().simulateKeyboardTap("enter")
+                        D().simulateKeyboardTap("v", "ctrl"),
+                        D().simulateKeyboardTap("enter")
                     }
                     ), 200)))
                 }
-                ))) : x().setDialogBoxValue(n.id, s[0]) ? x().simulateKeyboardTap("enter") : (t.clipboard.writeText(s[0]),
-                x().simulateKeyboardTap("l", "ctrl"),
+                ))) : D().setDialogBoxValue(n.id, s[0]) ? D().simulateKeyboardTap("enter") : (t.clipboard.writeText(s[0]),
+                D().simulateKeyboardTap("l", "ctrl"),
                 setTimeout((()=>{
-                    x().simulateKeyboardTap("v", "ctrl"),
-                    x().simulateKeyboardTap("enter")
+                    D().simulateKeyboardTap("v", "ctrl"),
+                    D().simulateKeyboardTap("enter")
                 }
                 ), 200))
             }
         }
     }
-      , ze = [{
+      , et = [{
         code: "call:actionSpawn rundll32.exe user32.dll,LockWorkStation",
         icon: "res/native/lock.png",
         explain: "电脑锁屏",
@@ -7465,7 +7506,7 @@
         explain: "获取我的电脑局域网IP地址",
         cmds: ["内部网络IP地址"]
     }];
-    function et(e, t, i) {
+    function tt(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -7474,15 +7515,15 @@
         }) : e[t] = i,
         e
     }
-    class tt {
+    class it {
         constructor(e, i, o, s, r) {
-            et(this, "mainServices", {
+            tt(this, "mainServices", {
                 nativeOpen: (e,i,n,o)=>{
                     if (this.reportCmp.info("native.open", {
                         way: n
                     }),
                     i.startsWith("localopen:") && (i = i.replace("localopen:", ""),
-                    !O().existsSync(i)))
+                    !S().existsSync(i)))
                         return new t.Notification({
                             body: "文件不存在，打开失败"
                         }).show(),
@@ -7491,7 +7532,7 @@
                     if (/^([A-Za-z]:\\|\\\\)/.test(i))
                         i = c().normalize(i),
                         this.windowCmp.hideMainWindow(!1),
-                        o && x().adminShellExecute(i) || t.shell.openPath(i);
+                        o && D().adminShellExecute(i) || t.shell.openPath(i);
                     else {
                         if (i.startsWith("ms-settings:"))
                             return this.windowCmp.hideMainWindow(!1),
@@ -7502,7 +7543,7 @@
                             return void ("function" == typeof this[t] && this[t].apply(this, e))
                         }
                         this.windowCmp.hideMainWindow(!1),
-                        x().activateApplication(i)
+                        D().activateApplication(i)
                     }
                 }
                 ,
@@ -7516,13 +7557,13 @@
                     if (this.reportCmp.info("native.open", {
                         way: o
                     }),
-                    t in Ye)
+                    t in ze)
                         try {
-                            Ye[t].func(this, i, n)
+                            ze[t].func(this, i, n)
                         } catch (e) {}
                 }
             }),
-            et(this, "ffffffffServices", {
+            tt(this, "ffffffffServices", {
                 setEnableNativeApp: (e,t)=>{
                     n().set("enableNativeApp", !0 === t),
                     setImmediate((()=>{
@@ -7552,34 +7593,34 @@
             ))
         }
         dirRead(e, t, i, n, o) {
-            if (!O().existsSync(e))
+            if (!S().existsSync(e))
                 return;
             let s = [];
             try {
-                s = O().readdirSync(e)
+                s = S().readdirSync(e)
             } catch (e) {}
             if (0 !== s.length)
                 for (const r of s) {
                     const s = c().join(e, r);
                     let a = !1;
                     try {
-                        a = O().lstatSync(s).isDirectory()
+                        a = S().lstatSync(s).isDirectory()
                     } catch (e) {}
                     a ? i < t && this.dirRead(s, t, i + 1, n, o) : /\.lnk$/i.test(r) && (!o && (r.toLowerCase().startsWith("uninstall") || r.startsWith("卸载") || r.toLowerCase().endsWith("卸载.lnk")) || n.push(s))
                 }
         }
         setLnkMatchFeature(e, i, n) {
-            Ye["path_open_to" + e] = {
+            ze["path_open_to" + e] = {
                 func: (i,o,s)=>{
                     let r;
                     if (i.windowCmp.hideMainWindow(!1),
-                    r = "files" === o ? s[0].path : x().getExplorerCurrentPath(s.id),
+                    r = "files" === o ? s[0].path : D().getExplorerCurrentPath(s.id),
                     r)
                         if ("Visual Studio Code" !== e) {
                             if ("PowerShell" === e)
                                 return r.includes("'") ? void new t.Notification({
                                     body: "路径包含特殊字符 '"
-                                }).show() : void Ve().spawn("start", ["powershell", "-noexit", "-command", `"Set-Location '${r}'"`], {
+                                }).show() : void Oe().spawn("start", ["powershell", "-noexit", "-command", `"Set-Location '${r}'"`], {
                                     shell: "cmd.exe",
                                     detached: !0
                                 });
@@ -7588,13 +7629,13 @@
                                     return void new t.Notification({
                                         body: "路径包含特殊字符 &'^"
                                     }).show();
-                                Ve().spawn("start", ["cmd", "/k", `"cd /d ${r}"`], {
+                                Oe().spawn("start", ["cmd", "/k", `"cd /d ${r}"`], {
                                     shell: "cmd.exe",
                                     detached: !0
                                 })
                             }
                         } else
-                            Ve().spawn(n, [r], {
+                            Oe().spawn(n, [r], {
                                 detached: !0
                             })
                 }
@@ -7612,7 +7653,7 @@
                 }, {
                     type: "window",
                     match: {
-                        app: ["explorer.exe", "SearchApp.exe", "SearchHost.exe"],
+                        app: ["explorer.exe", "SearchApp.exe", "SearchHost.exe", "FESearchHost.exe"],
                         class: ["CabinetWClass", "ExploreWClass"]
                     },
                     label: e + " 中打开"
@@ -7628,7 +7669,7 @@
             i && this.dirRead(i, 0, 0, e),
             this.dirRead(process.env.ProgramData + "\\Microsoft\\Windows\\Start Menu", 3, 0, e),
             this.dirRead(process.env.APPDATA + "\\Microsoft\\Windows\\Start Menu", 3, 0, e);
-            const n = x().getLnksInfo.apply(null, e);
+            const n = D().getLnksInfo.apply(null, e);
             this.lnkNameTargetDic = {},
             n.forEach((e=>{
                 void 0 !== e.target && (e.name = c().parse(e.path).name,
@@ -7644,7 +7685,7 @@
                     icon: "nativeicon://" + e.path
                 };
                 if ("" === e.target || 0 === e.target.indexOf("%")) {
-                    const i = x().getLnkLocalName(e.path);
+                    const i = D().getLnkLocalName(e.path);
                     i && e.name !== i && t.cmds.unshift(i)
                 }
                 if (0 === e.target.indexOf("%")) {
@@ -7675,7 +7716,7 @@
                 cmds: ["恶意软件删除工具", "MRT"],
                 icon: "nativeicon://" + s + "\\System32\\MRT.exe"
             }].forEach((e=>{
-                O().existsSync(e.code) && o.push(e)
+                S().existsSync(e.code) && o.push(e)
             }
             )),
             [{
@@ -7712,7 +7753,7 @@
             this.startMenuLnkWatcher = this.lnkDirWatch([process.env.ProgramData + "\\Microsoft\\Windows\\Start Menu", process.env.APPDATA + "\\Microsoft\\Windows\\Start Menu"], 3)
         }
         lnkDirWatch(e, t) {
-            return $e().watch(e, {
+            return qe().watch(e, {
                 persistent: !0,
                 ignoreInitial: !0,
                 followSymlinks: !1,
@@ -7734,9 +7775,9 @@
                     return;
                 const i = c().basename(e);
                 i.toLowerCase().startsWith("uninstall") || i.startsWith("卸载") || i.toLowerCase().endsWith("卸载.lnk") || setTimeout((()=>{
-                    if (!O().existsSync(e))
+                    if (!S().existsSync(e))
                         return;
-                    const t = x().getLnksInfo(e)[0];
+                    const t = D().getLnksInfo(e)[0];
                     if (!t)
                         return;
                     if (t.target) {
@@ -7764,7 +7805,7 @@
             ))
         }
         setActionAppFeatures() {
-            ze.forEach((e=>{
+            et.forEach((e=>{
                 e.icon || (e.icon = "res/native/symbolic.svg"),
                 this.pluginsCmp.setFeature("", e)
             }
@@ -7776,21 +7817,21 @@
             if (0 === t.indexOf("ms-resource:")) {
                 const i = e.substr(0, e.indexOf("_"));
                 if (t.includes(i))
-                    return x().getIndirectString(`@{${e}?${t}}`);
+                    return D().getIndirectString(`@{${e}?${t}}`);
                 let n = t.replace("ms-resource:", "");
                 return 0 === n.indexOf("/") ? (n = n.replace(/^\/+/, "/"),
-                x().getIndirectString(`@{${e}?ms-resource://${i}${n}}`)) : n.toLowerCase().indexOf("/resources/") > 0 || 0 === n.toLowerCase().indexOf("resources/") ? x().getIndirectString(`@{${e}?ms-resource://${i}/${n}}`) : x().getIndirectString(`@{${e}?ms-resource://${i}/resources/${n}}`)
+                D().getIndirectString(`@{${e}?ms-resource://${i}${n}}`)) : n.toLowerCase().indexOf("/resources/") > 0 || 0 === n.toLowerCase().indexOf("resources/") ? D().getIndirectString(`@{${e}?ms-resource://${i}/${n}}`) : D().getIndirectString(`@{${e}?ms-resource://${i}/resources/${n}}`)
             }
             return /&#x[a-f0-9]{2,5};/i.test(t) ? t.replace(/&#x([a-f0-9]{2,5});/gi, ((e,t)=>String.fromCharCode(parseInt(t, 16)))) : t
         }
         setUWPFeatures() {
-            (x().uwp.getAppxPackage() || []).forEach((e=>{
+            (D().uwp.getAppxPackage() || []).forEach((e=>{
                 const t = c().join(e.location, "AppxManifest.xml");
-                if (!O().existsSync(t))
+                if (!S().existsSync(t))
                     return;
                 let i = null;
                 try {
-                    i = O().readFileSync(t, "utf8")
+                    i = S().readFileSync(t, "utf8")
                 } catch (e) {
                     return
                 }
@@ -7819,17 +7860,17 @@
                         !a)
                             continue;
                         a = a.replace(/\\/g, "/");
-                        let l = x().getIndirectString(`@{${e.fullname}?ms-resource://${e.fullname.substr(0, e.fullname.indexOf("_"))}/Files/${a}}`);
+                        let l = D().getIndirectString(`@{${e.fullname}?ms-resource://${e.fullname.substr(0, e.fullname.indexOf("_"))}/Files/${a}}`);
                         if (!l && (l = c().join(e.location, a),
-                        !O().existsSync(l))) {
+                        !S().existsSync(l))) {
                             const e = c().dirname(l)
                               , t = c().parse(l)
                               , i = [".targetsize-48_altform-unplated", ".targetsize-48_altform-lightunplated", ".targetsize-48"];
                             for (let n = 0; n < i.length && (l = c().join(e, t.name + i[n] + t.ext),
-                            !O().existsSync(l)); n++)
+                            !S().existsSync(l)); n++)
                                 ;
                         }
-                        if (!O().existsSync(l))
+                        if (!S().existsSync(l))
                             continue;
                         const d = this.getUWPLocalString(e.fullname, s.Description) || r
                           , h = {
@@ -7843,7 +7884,7 @@
                     }
             }
             )),
-            x().uwp.uwpChangeNotify((e=>{
+            D().uwp.uwpChangeNotify((e=>{
                 0 === e && setTimeout((()=>{
                     this.goRefreshUwpFeatures()
                 }
@@ -7864,7 +7905,7 @@
             this.windowCmp.refreshCmdSource()
         }
         setSettingsFeatures() {
-            Xe.forEach((e=>{
+            Ye.forEach((e=>{
                 e.explain = "电脑系统设置",
                 e.icon = "res/native/mssetting.png",
                 e.backgroundColor = this.systemAccentColor,
@@ -7873,7 +7914,7 @@
             ))
         }
         setMatchAppFeatures() {
-            Object.values(Ye).forEach((e=>{
+            Object.values(ze).forEach((e=>{
                 e.feature && this.pluginsCmp.setFeature("", e.feature)
             }
             ))
@@ -7929,9 +7970,9 @@
                 message: " 确定要执行「" + i + "」吗？",
                 defaultId: 1
             }).then((({response: t})=>{
-                1 === t && ("sleep" === e[0] ? Ve().spawn("rundll32.exe", ["powrprof.dll,SetSuspendState", "0,1,0"], {
+                1 === t && ("sleep" === e[0] ? Oe().spawn("rundll32.exe", ["powrprof.dll,SetSuspendState", "0,1,0"], {
                     detached: !0
-                }) : Ve().spawn("Shutdown.exe", e, {
+                }) : Oe().spawn("Shutdown.exe", e, {
                     detached: !0
                 }))
             }
@@ -7940,20 +7981,20 @@
         processSpawn(...e) {
             this.windowCmp.hideMainWindow(!1);
             const t = e.shift();
-            Ve().spawn(t, e, {
+            Oe().spawn(t, e, {
                 detached: !0
             })
         }
         actionSpawn(...e) {
             this.windowCmp.hideMainWindow(!1);
             const t = e.shift();
-            Ve().spawn(t, e, {
+            Oe().spawn(t, e, {
                 detached: !0
             })
         }
         copyFile(e) {
             Array.isArray(e) || (e = [e]),
-            0 !== (e = e.filter((e=>O().existsSync(e)))).length && x().copyFile.apply(null, e)
+            0 !== (e = e.filter((e=>S().existsSync(e)))).length && D().copyFile.apply(null, e)
         }
         goHelp() {
             this.windowCmp.hideMainWindow(!1),
@@ -7963,7 +8004,7 @@
             this.windowCmp.killAllPlugins()
         }
         mousePosWindowInfo() {
-            const e = x().getMousePosWindow();
+            const e = D().getMousePosWindow();
             e ? (e.app = c().basename(e.appPath),
             this.appCmp.showNativeWorkWindowInfo(e)) : new t.Notification({
                 body: "未捕获到窗口信息"
@@ -7988,13 +8029,13 @@
                 detail: " 回收站内全部文件永久删除",
                 defaultId: 1
             }).then((({response: e})=>{
-                1 === e && x().emptyRecycleBin()
+                1 === e && D().emptyRecycleBin()
             }
             ))
         }
         getLanIp() {
             this.windowCmp.hideMainWindow(),
-            B().then((e=>{
+            L().then((e=>{
                 e ? (t.clipboard.writeText(e),
                 new t.Notification({
                     body: '内部网络IP地址 "' + e + '" 已复制到剪贴板'
@@ -8007,7 +8048,7 @@
         setNativeWindowAlwaysOnTop() {
             this.windowCmp.hideMainWindow();
             const e = this.windowCmp.display.nativeWorkWindowInfo;
-            e && "#32770" !== e.class && ("explorer.exe" !== e.app || "Progman" !== e.class && "WorkerW" !== e.class) && (x().setWindowAlwaysOnTop(e.id) ? new t.Notification({
+            e && "#32770" !== e.class && ("explorer.exe" !== e.app || "Progman" !== e.class && "WorkerW" !== e.class) && (D().setWindowAlwaysOnTop(e.id) ? new t.Notification({
                 body: e.app + " 窗口置顶"
             }).show() : new t.Notification({
                 body: e.app + " 窗口取消置顶"
@@ -8015,7 +8056,7 @@
         }
         regionScreenshot() {
             this.windowCmp.hideMainWindow(),
-            x().regionScreenshot((e=>{
+            D().regionScreenshot((e=>{
                 e && (this.clipboardCmp.once("change", (()=>{
                     this.windowCmp.restoreShowMainWindow()
                 }
@@ -8040,13 +8081,13 @@
               , n = t.screen.getDisplayMatching(i);
             let o;
             if (i.width >= n.workAreaSize.width || i.height >= n.workAreaSize.height)
-                if (x().windowIsZoomed(e.id)) {
+                if (D().windowIsZoomed(e.id)) {
                     const e = t.screen.dipToScreenRect(null, n.workArea);
-                    o = x().screenCapture(e.x, e.y, e.width, e.height)
+                    o = D().screenCapture(e.x, e.y, e.width, e.height)
                 } else
-                    o = x().screenCapture(e.x, e.y, e.width, e.height);
+                    o = D().screenCapture(e.x, e.y, e.width, e.height);
             else
-                o = x().windowScreenshot(e.id, n.scaleFactor, this.isWindows11);
+                o = D().windowScreenshot(e.id, n.scaleFactor, this.isWindows11);
             if (o) {
                 const e = t.nativeImage.createFromBuffer(o);
                 t.clipboard.writeImage(e)
@@ -8056,7 +8097,7 @@
             this.appCmp.showNativeWorkWindowInfo()
         }
     }
-    const it = {
+    const nt = {
         pluginstoresearch: {
             feature: {
                 code: "pluginstoresearch",
@@ -8088,7 +8129,7 @@
                     return;
                 const o = RegExp.$1
                   , s = c().join(t.app.getPath("downloads"), "uTools_" + Date.now() + "." + o);
-                O().writeFile(s, n.replace(/^data:image\/([a-z]+);base64,/, ""), "base64", (e=>{
+                S().writeFile(s, n.replace(/^data:image\/([a-z]+);base64,/, ""), "base64", (e=>{
                     e || t.shell.showItemInFolder(s)
                 }
                 ))
@@ -8108,9 +8149,9 @@
             func: (e,i,n)=>{
                 (n = n.trim()).startsWith("~") && (n = n.replace("~", t.app.getPath("home"))),
                 n = c().normalize(n),
-                O().existsSync(n) || (n = c().dirname(n),
-                O().existsSync(n)) ? (e.windowCmp.hideMainWindow(),
-                O().lstat(n, ((e,i)=>{
+                S().existsSync(n) || (n = c().dirname(n),
+                S().existsSync(n)) ? (e.windowCmp.hideMainWindow(),
+                S().lstat(n, ((e,i)=>{
                     e || i.isFile() ? t.shell.showItemInFolder(n) : t.shell.openPath(n)
                 }
                 ))) : new t.Notification({
@@ -8132,7 +8173,7 @@
                 }]
             },
             func: (e,i,n)=>{
-                const o = n.match(/^(?:\/[^/\n\r\f\v]+)+\/?$/gm).map((e=>e.trim())).filter((e=>O().existsSync(e)));
+                const o = n.match(/^(?:\/[^/\n\r\f\v]+)+\/?$/gm).map((e=>e.trim())).filter((e=>S().existsSync(e)));
                 0 !== o.length ? (e.windowCmp.hideMainWindow(),
                 e.copyFile(o)) : new t.Notification({
                     title: "uTools",
@@ -8155,7 +8196,7 @@
             func: (e,i,n)=>{
                 (n = n.trim()).startsWith("~") && (n = n.replace("~", t.app.getPath("home"))),
                 n = c().normalize(n),
-                O().existsSync(n) ? (e.windowCmp.hideMainWindow(!1),
+                S().existsSync(n) ? (e.windowCmp.hideMainWindow(!1),
                 t.shell.openPath(n)) : new t.Notification({
                     title: "uTools",
                     body: "文件不存在"
@@ -8224,10 +8265,10 @@
             func: (e,i,n)=>{
                 e.windowCmp.hideMainWindow(),
                 t.clipboard.writeText(""),
-                x().simulateKeyboardTap("l", "ctrl"),
+                D().simulateKeyboardTap("l", "ctrl"),
                 setTimeout((()=>{
-                    x().simulateKeyboardTap("c", "ctrl"),
-                    x().simulateKeyboardTap("escape")
+                    D().simulateKeyboardTap("c", "ctrl"),
+                    D().simulateKeyboardTap("escape")
                 }
                 ), 100)
             }
@@ -8248,12 +8289,12 @@
             func: (e,i,n)=>{
                 e.windowCmp.hideMainWindow(),
                 t.clipboard.writeText(""),
-                x().simulateKeyboardTap("l", "ctrl"),
-                x().simulateKeyboardTap("c", "ctrl"),
-                x().simulateKeyboardTap("escape"),
+                D().simulateKeyboardTap("l", "ctrl"),
+                D().simulateKeyboardTap("c", "ctrl"),
+                D().simulateKeyboardTap("escape"),
                 setTimeout((()=>{
                     const e = t.clipboard.readText();
-                    e && O().existsSync(e) && Ve().exec('zenity --title "新建文件" --entry --text "文件名称"', ((i,n,o)=>{
+                    e && S().existsSync(e) && Oe().exec('zenity --title "新建文件" --entry --text "文件名称"', ((i,n,o)=>{
                         if (i) {
                             if (!o)
                                 return;
@@ -8269,14 +8310,14 @@
                         if (!n)
                             return;
                         const s = c().join(e, n.trim());
-                        if (O().existsSync(s))
+                        if (S().existsSync(s))
                             new t.Notification({
                                 title: "uTools",
                                 body: "文件已存在"
                             }).show();
                         else
                             try {
-                                O().closeSync(O().openSync(s, "w"))
+                                S().closeSync(S().openSync(s, "w"))
                             } catch (e) {
                                 new t.Notification({
                                     title: "uTools",
@@ -8290,7 +8331,7 @@
             }
         }
     }
-      , nt = [{
+      , ot = [{
         code: "call:shutdown reboot",
         explain: "电脑重启",
         icon: "res/native/reboot.png",
@@ -8331,7 +8372,7 @@
         explain: "获取我的电脑局域网IP地址",
         cmds: ["内部网络IP地址"]
     }]
-      , ot = [{
+      , st = [{
         code: "dbus-send --type=method_call --dest=org.gnome.ScreenSaver  /org/gnome/ScreenSaver org.gnome.ScreenSaver.Lock",
         explain: "电脑锁屏",
         icon: "res/native/lock.png",
@@ -8382,7 +8423,7 @@
         explain: "获取我的电脑局域网IP地址",
         cmds: ["内部网络IP地址"]
     }];
-    function st(e, t, i) {
+    function rt(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -8391,9 +8432,9 @@
         }) : e[t] = i,
         e
     }
-    class rt {
+    class at {
         constructor(e, i, o, s, r) {
-            st(this, "mainServices", {
+            rt(this, "mainServices", {
                 nativeOpen: (e,i,n)=>{
                     if (this.reportCmp.info("native.open", {
                         way: n
@@ -8404,7 +8445,7 @@
                         "function" == typeof this[t] && this[t].apply(this, e)
                     } else {
                         if (i.startsWith("localopen:") && (i = i.replace("localopen:", ""),
-                        !O().existsSync(i)))
+                        !S().existsSync(i)))
                             return new t.Notification({
                                 title: "uTools",
                                 body: "文件不存在，打开失败"
@@ -8417,13 +8458,13 @@
                                 i = this.entryFileExec[i];
                             else
                                 try {
-                                    if (O().accessSync(i, O().constants.X_OK),
-                                    O().lstatSync(i).isDirectory())
+                                    if (S().accessSync(i, S().constants.X_OK),
+                                    S().lstatSync(i).isDirectory())
                                         return t.shell.openPath(i)
                                 } catch (e) {
                                     return t.shell.openPath(i)
                                 }
-                        Ve().exec(i)
+                        Oe().exec(i)
                     }
                 }
                 ,
@@ -8437,13 +8478,13 @@
                     if (this.reportCmp.info("native.open", {
                         way: o
                     }),
-                    t in it)
+                    t in nt)
                         try {
-                            it[t].func(this, i, n)
+                            nt[t].func(this, i, n)
                         } catch (e) {}
                 }
             }),
-            st(this, "ffffffffServices", {
+            rt(this, "ffffffffServices", {
                 setEnableNativeApp: (e,t)=>{
                     n().set("enableNativeApp", !0 === t),
                     setImmediate((()=>{
@@ -8462,7 +8503,7 @@
             this.screencaptureCmp = s.screencaptureCmp,
             this.screencolorpickerCmp = s.screencolorpickerCmp,
             this.entryFileExec = {};
-            const a = Ve().execSync("cat /etc/*release | grep -E ^NAME", {
+            const a = Oe().execSync("cat /etc/*release | grep -E ^NAME", {
                 encoding: "utf8"
             }).toLowerCase();
             /name="(.+?)"/.test(a) ? (this.osName = RegExp.$1,
@@ -8471,12 +8512,12 @@
         init() {
             n().has("enableNativeApp") || n().set("enableNativeApp", !0);
             let e = null;
-            "deepin" === this.osName ? (e = x().getGSetting("com.deepin.dde.appearance", "icon-theme"),
+            "deepin" === this.osName ? (e = D().getGSetting("com.deepin.dde.appearance", "icon-theme"),
             this.localIconThemes = [e],
             ["deepin", "hicolor"].forEach((e=>{
                 this.localIconThemes.includes(e) || this.localIconThemes.push(e)
             }
-            ))) : "ubuntu" === this.osName && (e = x().getGSetting("org.gnome.desktop.interface", "icon-theme"),
+            ))) : "ubuntu" === this.osName && (e = D().getGSetting("org.gnome.desktop.interface", "icon-theme"),
             ["ubuntu-mono-dark", "ubuntu-mono-light"].includes(e) && (e = "Yaru"),
             this.localIconThemes = [e],
             ["hicolor", "Adwaita", "Humanity"].forEach((e=>{
@@ -8499,18 +8540,18 @@
                     for (const t of i)
                         for (const i of n) {
                             let n = c().join("/usr/share/icons", o, s, t, e + i);
-                            if (O().existsSync(n))
+                            if (S().existsSync(n))
                                 return n;
                             if (n = c().join("/usr/share/icons", o, t, s, e + i),
-                            O().existsSync(n))
+                            S().existsSync(n))
                                 return n
                         }
-            return O().existsSync(c().join("/usr/share/pixmaps", e + ".png")) ? c().join("/usr/share/pixmaps", e + ".png") : this.emptyIcon
+            return S().existsSync(c().join("/usr/share/pixmaps", e + ".png")) ? c().join("/usr/share/pixmaps", e + ".png") : this.emptyIcon
         }
         convertEntryFile2Feature(e) {
             let t = null;
             try {
-                t = O().readFileSync(e, "utf8")
+                t = S().readFileSync(e, "utf8")
             } catch (e) {
                 return null
             }
@@ -8541,7 +8582,7 @@
             if (!s)
                 return null;
             if (s.startsWith("/")) {
-                if (!O().existsSync(s))
+                if (!S().existsSync(s))
                     return null
             } else if (e.startsWith("/usr/share/applications") || e.startsWith("/var/lib/snapd/desktop/applications"))
                 s = this.getIcon(s);
@@ -8549,11 +8590,11 @@
                 if (!e.startsWith(process.env.HOME + "/.local/share/applications"))
                     return null;
                 s = c().join(process.env.HOME, ".local/share/icons", s + ".png"),
-                O().existsSync(s) || (s = this.emptyIcon)
+                S().existsSync(s) || (s = this.emptyIcon)
             }
             let r = "";
             const a = process.env.LANG.split(".")[0];
-            r = "Comment[" + a + "]"in n ? n["Comment[" + a + "]"] : n.Comment ? "X-Ubuntu-Gettext-Domain"in n ? x().getLocaleName(n["X-Ubuntu-Gettext-Domain"], n.Comment) : n.Comment : e;
+            r = "Comment[" + a + "]"in n ? n["Comment[" + a + "]"] : n.Comment ? "X-Ubuntu-Gettext-Domain"in n ? D().getLocaleName(n["X-Ubuntu-Gettext-Domain"], n.Comment) : n.Comment : e;
             let l = n.Exec.replace(/ %[A-Za-z]/g, "").replace(/"/g, "").trim();
             "true" === n.Terminal && (l = "gnome-terminal -x " + l),
             this.entryFileExec[e] = l,
@@ -8569,7 +8610,7 @@
                 e && e !== n.Name && ("deepin" === this.osName && (e = e.replace(/^(?:深度|deepin)/i, "").trim()),
                 d.cmds.unshift(e))
             } else if ("X-Ubuntu-Gettext-Domain"in n) {
-                const e = x().getLocaleName(n["X-Ubuntu-Gettext-Domain"], n.Name);
+                const e = D().getLocaleName(n["X-Ubuntu-Gettext-Domain"], n.Name);
                 e && e !== n.Name && d.cmds.unshift(e)
             }
             return d
@@ -8577,9 +8618,9 @@
         dirAppRead(e, t, i, n, o) {
             let s = null;
             try {
-                if (!O().existsSync(t))
+                if (!S().existsSync(t))
                     return;
-                s = O().readdirSync(t)
+                s = S().readdirSync(t)
             } catch (e) {
                 return
             }
@@ -8587,7 +8628,7 @@
                 for (const r of s) {
                     const s = c().join(t, r);
                     try {
-                        if (!O().lstatSync(s).isFile())
+                        if (!S().lstatSync(s).isFile())
                             continue
                     } catch (e) {
                         continue
@@ -8596,7 +8637,7 @@
                 }
         }
         appDirWatch(e, t) {
-            return $e().watch(e, {
+            return qe().watch(e, {
                 persistent: !0,
                 ignoreInitial: !0,
                 followSymlinks: !1,
@@ -8610,7 +8651,7 @@
             }
             )).on("add", (e=>{
                 /\.desktop$/i.test(e) && setTimeout((()=>{
-                    if (!O().existsSync(e))
+                    if (!S().existsSync(e))
                         return;
                     const t = this.convertEntryFile2Feature(e);
                     t && (this.pluginsCmp.setFeature("", t),
@@ -8633,29 +8674,29 @@
                 ["Visual Studio Code"].includes(i.cmds[0]))) {
                     const e = i.cmds[0]
                       , n = this.entryFileExec[i.code];
-                    it["path_open_to_" + e] = {
+                    nt["path_open_to_" + e] = {
                         func: (e,i,o)=>{
                             if (e.windowCmp.hideMainWindow(),
                             "files" === i) {
                                 const e = n.split(/ +/)
                                   , t = e.shift();
                                 return e.push(o[0].path),
-                                void Ve().spawn(t, e, {
+                                void Oe().spawn(t, e, {
                                     detached: !0
                                 })
                             }
                             t.clipboard.writeText(""),
-                            x().simulateKeyboardTap("l", "ctrl"),
-                            x().simulateKeyboardTap("c", "ctrl"),
-                            x().simulateKeyboardTap("escape"),
+                            D().simulateKeyboardTap("l", "ctrl"),
+                            D().simulateKeyboardTap("c", "ctrl"),
+                            D().simulateKeyboardTap("escape"),
                             setTimeout((()=>{
                                 const e = t.clipboard.readText();
-                                if (!e || !O().existsSync(e))
+                                if (!e || !S().existsSync(e))
                                     return;
                                 const i = n.split(/ +/)
                                   , o = i.shift();
                                 i.push(e),
-                                Ve().spawn(o, i, {
+                                Oe().spawn(o, i, {
                                     detached: !0
                                 })
                             }
@@ -8686,7 +8727,7 @@
             this.baseAppDirWatch = this.appDirWatch(e, 0)
         }
         setMatchAppFeatures() {
-            Object.values(it).forEach((e=>{
+            Object.values(nt).forEach((e=>{
                 e.feature && this.pluginsCmp.setFeature("", e.feature)
             }
             ))
@@ -8694,11 +8735,11 @@
         setActionAppFeatures() {
             let e = null;
             if ("ubuntu" === this.osName)
-                e = ot;
+                e = st;
             else {
                 if ("deepin" !== this.osName)
                     return;
-                e = nt
+                e = ot
             }
             e.forEach((e=>{
                 e.icon || (e.icon = "res/native/symbolic.svg"),
@@ -8737,7 +8778,7 @@
         }
         copyFile(e) {
             Array.isArray(e) || (e = [e]),
-            0 !== (e = e.filter((e=>O().existsSync(e)))).length && x().copyFile.apply(null, e)
+            0 !== (e = e.filter((e=>S().existsSync(e)))).length && D().copyFile.apply(null, e)
         }
         goHelp() {
             this.windowCmp.hideMainWindow(!1),
@@ -8758,7 +8799,7 @@
         }
         getLanIp() {
             this.windowCmp.hideMainWindow(),
-            B().then((e=>{
+            L().then((e=>{
                 e ? (t.clipboard.writeText(e),
                 new t.Notification({
                     title: "uTools",
@@ -8773,7 +8814,7 @@
         showDesktop() {
             this.windowCmp.hideMainWindow(),
             setTimeout((()=>{
-                x().simulateKeyboardTap("d", "ctrl", "alt")
+                D().simulateKeyboardTap("d", "ctrl", "alt")
             }
             ), 50)
         }
@@ -8787,7 +8828,7 @@
                 detail: " ",
                 defaultId: 1
             }).then((({response: t})=>{
-                1 === t && Ve().spawn("shutdown", ["reboot" === e[0] ? "-r" : "-h", "now"], {
+                1 === t && Oe().spawn("shutdown", ["reboot" === e[0] ? "-r" : "-h", "now"], {
                     detached: !0
                 })
             }
@@ -8812,10 +8853,10 @@
             const e = this.windowCmp.display.nativeWorkWindowInfo;
             e && 0 !== e.width && 0 !== e.height ? setTimeout((()=>{
                 const i = c().join(t.app.getPath("temp"), "utools_screenshot_" + Date.now() + ".png");
-                if (x().screenCaptureToFile(e.x, e.y, e.width, e.height, i)) {
+                if (D().screenCaptureToFile(e.x, e.y, e.width, e.height, i)) {
                     t.clipboard.writeImage(t.nativeImage.createFromPath(i));
                     try {
-                        O().unlinkSync(i)
+                        S().unlinkSync(i)
                     } catch (e) {}
                 } else
                     new t.Notification({
@@ -8832,7 +8873,7 @@
             this.appCmp.showNativeWorkWindowInfo()
         }
     }
-    class at {
+    class ct {
         constructor(e) {
             var i, n;
             n = {
@@ -8900,7 +8941,7 @@
                 height: Math.round(n.bounds.height * n.scaleFactor)
             };
             this.captureImageFile = c().join(t.app.getPath("temp"), "utools_screenshot_" + Date.now() + ".png"),
-            x().screenCaptureToFile(a.x, a.y, a.width, a.height, this.captureImageFile) ? (this.isInitedSession || (t.session.fromPartition("utools.screencapture").protocol.registerFileProtocol("capture", ((e,t)=>{
+            D().screenCaptureToFile(a.x, a.y, a.width, a.height, this.captureImageFile) ? (this.isInitedSession || (t.session.fromPartition("utools.screencapture").protocol.registerFileProtocol("capture", ((e,t)=>{
                 this.captureImageFile && t({
                     path: this.captureImageFile
                 })
@@ -8955,7 +8996,7 @@
             }).show()
         }
     }
-    function ct(e, t, i) {
+    function lt(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -8964,9 +9005,9 @@
         }) : e[t] = i,
         e
     }
-    class lt {
+    class dt {
         constructor(e) {
-            ct(this, "handleMacOsScreenColorPickerMouseMove", ((e,i,n)=>{
+            lt(this, "handleMacOsScreenColorPickerMouseMove", ((e,i,n)=>{
                 this.mouseScreenX = e,
                 this.mouseScreenY = i;
                 const o = t.screen.getDisplayNearestPoint({
@@ -8990,7 +9031,7 @@
                 this.workWindow.webContents.send("colors", this.pickColors, a)
             }
             )),
-            ct(this, "handleLinuxScreenColorPickerMouseMove", ((e,i,n)=>{
+            lt(this, "handleLinuxScreenColorPickerMouseMove", ((e,i,n)=>{
                 if (void 0 === e)
                     return;
                 this.mouseScreenX = e,
@@ -9029,12 +9070,12 @@
                 this.workWindow.webContents.send("colors", this.pickColors, l)
             }
             )),
-            ct(this, "handleWindowsScreenColorPickerMouseMove", ((e,i,n,o)=>{
+            lt(this, "handleWindowsScreenColorPickerMouseMove", ((e,i,n,o)=>{
                 if (0 !== e) {
                     if (1 === e)
                         return this._workWindowBlurTimeout && clearTimeout(this._workWindowBlurTimeout),
                         void setImmediate((()=>{
-                            this.workWindow ? this.handlePicker() : x().destroyNativeWindow(this.screenshotWindowId)
+                            this.workWindow ? this.handlePicker() : D().destroyNativeWindow(this.screenshotWindowId)
                         }
                         ));
                     if (2 === e) {
@@ -9070,8 +9111,8 @@
                 }
             }
             )),
-            ct(this, "handlePicker", (()=>{
-                if (this.workWindow && (this.windowCmp.isWindow ? x().destroyNativeWindow(this.screenshotWindowId) : this.workWindow.destroy(),
+            lt(this, "handlePicker", (()=>{
+                if (this.workWindow && (this.windowCmp.isWindow ? D().destroyNativeWindow(this.screenshotWindowId) : this.workWindow.destroy(),
                 "function" == typeof this.pickedCallback)) {
                     const e = this.pickColors[4][4]
                       , t = "#" + e.split(",").map((e=>{
@@ -9104,15 +9145,15 @@
             if (this.workWindow)
                 return;
             if (this.windowCmp.isMacOs) {
-                if (!x().isHadPrivilege())
-                    return x().requestPrivilege();
-                if (!x().isHadScreenCaptureAccess())
+                if (!D().isHadPrivilege())
+                    return D().requestPrivilege();
+                if (!D().isHadScreenCaptureAccess())
                     return new t.Notification({
                         body: "无屏幕录制权限，在「安全性与隐私」->「隐私」中允许屏幕录制权限"
                     }).show(),
-                    void x().requestScreenCaptureAccess()
+                    void D().requestScreenCaptureAccess()
             } else
-                this.windowCmp.isWindow && (this.screenshotWindowId = x().colorPickerScreenshot(this.handleWindowsScreenColorPickerMouseMove));
+                this.windowCmp.isWindow && (this.screenshotWindowId = D().colorPickerScreenshot(this.handleWindowsScreenColorPickerMouseMove));
             this.pickedCallback = e;
             const i = {
                 show: !1,
@@ -9147,28 +9188,28 @@
                 if (this.workWindow.show(),
                 this.windowCmp.isWindow) {
                     const i = t.screen.dipToScreenPoint(e);
-                    x().simulateMouseMove(Math.round(i.x), Math.round(i.y))
+                    D().simulateMouseMove(Math.round(i.x), Math.round(i.y))
                 } else
-                    this.windowCmp.isMacOs ? (x().screenColorPickerMouseMoveEvent(this.handleMacOsScreenColorPickerMouseMove),
-                    x().simulateMouseMove(e.x, e.y)) : this.windowCmp.isLinux && (x().screenColorPickerMouseMoveEvent(this.handleLinuxScreenColorPickerMouseMove),
+                    this.windowCmp.isMacOs ? (D().screenColorPickerMouseMoveEvent(this.handleMacOsScreenColorPickerMouseMove),
+                    D().simulateMouseMove(e.x, e.y)) : this.windowCmp.isLinux && (D().screenColorPickerMouseMoveEvent(this.handleLinuxScreenColorPickerMouseMove),
                     setTimeout((()=>{
                         const i = t.screen.getDisplayNearestPoint(e);
                         this.displayScaleFactor = i.scaleFactor,
-                        this.displayScaleFactor > 1 ? x().simulateMouseMove(Math.round(e.x * this.displayScaleFactor), Math.round(e.y * this.displayScaleFactor)) : x().simulateMouseMove(e.x, e.y)
+                        this.displayScaleFactor > 1 ? D().simulateMouseMove(Math.round(e.x * this.displayScaleFactor), Math.round(e.y * this.displayScaleFactor)) : D().simulateMouseMove(e.x, e.y)
                     }
                     ), 50))
             }
             )),
             this.workWindow.on("blur", (()=>{
                 this.windowCmp.isWindow ? this._workWindowBlurTimeout = setTimeout((()=>{
-                    x().destroyNativeWindow(this.screenshotWindowId)
+                    D().destroyNativeWindow(this.screenshotWindowId)
                 }
                 ), 100) : this.workWindow.destroy()
             }
             )),
             this.workWindow.once("closed", (()=>{
                 this.workWindow = null,
-                this.windowCmp.isWindow ? this._workWindowBlurTimeout = null : x().stopScreenColorPickerMouseMoveEvent()
+                this.windowCmp.isWindow ? this._workWindowBlurTimeout = null : D().stopScreenColorPickerMouseMoveEvent()
             }
             )),
             this.workWindow.webContents.on("before-input-event", ((e,i)=>{
@@ -9185,36 +9226,36 @@
                                           , i = t.screen.getDisplayNearestPoint(e).bounds;
                                         if (e.x === i.x + i.width - 1)
                                             return;
-                                        x().simulateMouseMove(this.mouseScreenX + 1, this.mouseScreenY)
+                                        D().simulateMouseMove(this.mouseScreenX + 1, this.mouseScreenY)
                                     }
                                 else {
                                     const e = t.screen.getCursorScreenPoint()
                                       , i = t.screen.getDisplayNearestPoint(e).bounds;
                                     if (e.x === i.x)
                                         return;
-                                    x().simulateMouseMove(this.mouseScreenX - 1, this.mouseScreenY)
+                                    D().simulateMouseMove(this.mouseScreenX - 1, this.mouseScreenY)
                                 }
                             else {
                                 const e = t.screen.getCursorScreenPoint()
                                   , i = t.screen.getDisplayNearestPoint(e).bounds;
                                 if (e.y === i.y + i.height - 1)
                                     return;
-                                x().simulateMouseMove(this.mouseScreenX, this.mouseScreenY + 1)
+                                D().simulateMouseMove(this.mouseScreenX, this.mouseScreenY + 1)
                             }
                         else {
                             const e = t.screen.getCursorScreenPoint()
                               , i = t.screen.getDisplayNearestPoint(e).bounds;
                             if (e.y === i.y)
                                 return;
-                            x().simulateMouseMove(this.mouseScreenX, this.mouseScreenY - 1)
+                            D().simulateMouseMove(this.mouseScreenX, this.mouseScreenY - 1)
                         }
                     else
-                        this.windowCmp.isWindow ? x().destroyNativeWindow(this.screenshotWindowId) : this.workWindow.destroy()
+                        this.windowCmp.isWindow ? D().destroyNativeWindow(this.screenshotWindowId) : this.workWindow.destroy()
             }
             ))
         }
     }
-    class dt {
+    class ht {
         constructor(e) {
             this.instance = e
         }
@@ -9381,9 +9422,9 @@
             this.registerDeveloperServices()
         }
     }
-    const ht = require("stream");
-    var ut = e.n(ht);
-    class pt {
+    const ut = require("stream");
+    var pt = e.n(ut);
+    class wt {
         constructor(e, t) {
             var i, n;
             n = {
@@ -9448,16 +9489,16 @@
         }
         buildPluginUpxFile(e, i) {
             return new Promise(((n,o)=>{
-                if (!O().existsSync(e))
+                if (!S().existsSync(e))
                     return o(new Error("打包文件夹路径不存在"));
                 try {
-                    if (!O().statSync(e).isDirectory())
+                    if (!S().statSync(e).isDirectory())
                         return o(new Error("打包文件夹路径不存在"))
                 } catch (e) {
                     return o(new Error("打包文件夹路径无权限"))
                 }
                 const s = c().join(e, "plugin.json");
-                if (!O().existsSync(s))
+                if (!S().existsSync(s))
                     return o(new Error("不存在 plugin.json 文件"));
                 try {
                     this.pluginsCmp.testPluginJsonFile(s, i)
@@ -9466,17 +9507,17 @@
                 }
                 let r;
                 try {
-                    r = JSON.parse(O().readFileSync(s, "utf-8"))
+                    r = JSON.parse(S().readFileSync(s, "utf-8"))
                 } catch (e) {
                     return o(new Error("plugin.json 文件解析失败"))
                 }
                 const a = JSON.stringify(Object.assign(r, i))
                   , l = t.app.getPath("temp")
-                  , d = c().join(l, "utools-developer", I());
+                  , d = c().join(l, "utools-developer", M());
                 f().createPackageWithOptions(e, d, {
                     transform: e=>{
                         if (e === s)
-                            return new (ut().Transform)({
+                            return new (pt().Transform)({
                                 transform: function(e, t, i) {
                                     this.replaced || (this.replaced = !0,
                                     this.push(a)),
@@ -9485,13 +9526,13 @@
                             })
                     }
                 }).then((()=>{
-                    const e = O().createReadStream(d)
+                    const e = S().createReadStream(d)
                       , t = c().join(l, "utools-developer", i.name + "-" + i.version + ".upx")
-                      , s = O().createWriteStream(t)
+                      , s = S().createWriteStream(t)
                       , r = b().createGzip();
                     e.pipe(r).on("error", (()=>o(new Error("压缩错误")))).pipe(s).on("error", (()=>o(new Error("压缩写入错误")))).on("finish", (()=>{
                         try {
-                            O().unlinkSync(d)
+                            S().unlinkSync(d)
                         } catch (e) {}
                         n(t)
                     }
@@ -9505,7 +9546,7 @@
             ))
         }
     }
-    function wt(e, t, i) {
+    function mt(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -9514,9 +9555,9 @@
         }) : e[t] = i,
         e
     }
-    class mt {
+    class gt {
         constructor(e, i, n, o) {
-            wt(this, "createPaymentWindow", ((e,i)=>{
+            mt(this, "createPaymentWindow", ((e,i)=>{
                 const n = e.getBounds()
                   , o = this.windowCmp.isMacOs ? 468 : 440
                   , s = Math.floor(n.x + n.width / 2 - 166)
@@ -9570,7 +9611,7 @@
                 a.loadURL("file://" + c().join(__dirname, "pay/index.html"))
             }
             )),
-            wt(this, "pluginApiServices", {
+            mt(this, "pluginApiServices", {
                 openPayment: (e,i,n)=>{
                     const o = this.accountCmp.getAccountToken();
                     if (!o)
@@ -9637,7 +9678,7 @@
                     e.returnValue = i.purchased.includes(t)) : e.returnValue = !1
                 }
             }),
-            wt(this, "payServices", {
+            mt(this, "payServices", {
                 closeWindow: e=>{
                     t.BrowserWindow.fromWebContents(e.sender).destroy()
                 }
@@ -9706,9 +9747,9 @@
             this.orderResHub = {}
         }
     }
-    const gt = require("https");
-    var ft = e.n(gt);
-    class yt {
+    const ft = require("https");
+    var yt = e.n(ft);
+    class bt {
         constructor(e, t) {
             this.windowCmp = e,
             this.pluginsCmp = e.pluginsCmp,
@@ -9817,7 +9858,7 @@
             return new Promise(((n,o)=>{
                 if (!t.net.online)
                     return o(new Error("无网络"));
-                ft().get(e, (e=>{
+                yt().get(e, (e=>{
                     if (200 === e.statusCode) {
                         const t = d().createWriteStream(i);
                         t.on("finish", (()=>n())),
@@ -9841,9 +9882,9 @@
             ))
         }
     }
-    const bt = require("net");
-    var Ct = e.n(bt);
-    function vt(e, t, i) {
+    const Ct = require("net");
+    var vt = e.n(Ct);
+    function Wt(e, t, i) {
         return t in e ? Object.defineProperty(e, t, {
             value: i,
             enumerable: !0,
@@ -9852,10 +9893,10 @@
         }) : e[t] = i,
         e
     }
-    const Wt = 1e3;
-    class St {
+    const St = 1e3;
+    class Pt {
         constructor(e, i, n, o) {
-            if (vt(this, "exitAllConnection", (()=>{
+            if (Wt(this, "exitAllConnection", (()=>{
                 this._UID_ = null,
                 this._loopLocalOnlineHeartTimeout && (clearTimeout(this._loopLocalOnlineHeartTimeout),
                 this._loopLocalOnlineHeartTimeout = null),
@@ -9867,13 +9908,13 @@
                 this.onlineConnectionDocDic = {})
             }
             )),
-            vt(this, "checkOnlinePing", (()=>{
+            Wt(this, "checkOnlinePing", (()=>{
                 this._loopCheckOnlinePingTimeout && (clearTimeout(this._loopCheckOnlinePingTimeout),
                 this._loopCheckOnlinePingTimeout = null),
                 this.loopCheckOnlinePing()
             }
             )),
-            vt(this, "loopCheckOnlinePing", (async()=>{
+            Wt(this, "loopCheckOnlinePing", (async()=>{
                 if (!this._UID_)
                     return void (this._loopCheckOnlinePingTimeout = null);
                 const e = [];
@@ -9889,7 +9930,7 @@
                 0 !== Object.keys(this.onlineConnectionDocDic).length ? this._loopCheckOnlinePingTimeout = setTimeout(this.loopCheckOnlinePing, 6e5) : this._loopCheckOnlinePingTimeout = null
             }
             )),
-            vt(this, "loopLocalOnlineHeart", (()=>{
+            Wt(this, "loopLocalOnlineHeart", (()=>{
                 this._loopLocalOnlineHeartTimeout = setTimeout((()=>{
                     if (this._UID_) {
                         if (t.net.online) {
@@ -9903,13 +9944,13 @@
                 ), 864e5)
             }
             )),
-            vt(this, "sendText", ((e,i,n)=>new Promise((o=>{
+            Wt(this, "sendText", ((e,i,n)=>new Promise((o=>{
                 if (!t.net.online || !this._UID_)
                     return o(!1);
                 if (!e.lanip || !e.port)
                     return o(!1);
-                const s = new (Ct().Socket);
-                s.setTimeout(Wt),
+                const s = new (vt().Socket);
+                s.setTimeout(St),
                 s.setEncoding("utf-8"),
                 s.connect(e.port, e.lanip, (()=>{
                     const e = Date.now()
@@ -9944,14 +9985,14 @@
                 ))
             }
             )))),
-            vt(this, "ping", (e=>this.sendText(e, "ping"))),
-            vt(this, "sendFile", ((e,i,n,o)=>new Promise((s=>{
+            Wt(this, "ping", (e=>this.sendText(e, "ping"))),
+            Wt(this, "sendFile", ((e,i,n,o)=>new Promise((s=>{
                 if (!t.net.online || !this._UID_)
                     return s(!1);
                 if (!e.lanip || !e.port)
                     return s(!1);
-                const r = new (Ct().Socket);
-                r.setTimeout(Wt),
+                const r = new (vt().Socket);
+                r.setTimeout(St),
                 r.connect(e.port, e.lanip, (()=>{
                     const e = JSON.stringify({
                         timestamp: o,
@@ -9966,7 +10007,7 @@
                 let a = !1;
                 r.once("data", (e=>{
                     a = !0,
-                    O().createReadStream(n).pipe(r, {
+                    S().createReadStream(n).pipe(r, {
                         end: !0
                     })
                 }
@@ -9987,16 +10028,16 @@
                 ))
             }
             )))),
-            vt(this, "readDirectoryFiles", ((e,i,n)=>{
+            Wt(this, "readDirectoryFiles", ((e,i,n)=>{
                 let o;
                 try {
-                    o = O().readdirSync(i)
+                    o = S().readdirSync(i)
                 } catch (e) {}
                 o && (0 !== o.length ? o.forEach((o=>{
                     const s = c().join(i, o);
                     let r;
                     try {
-                        r = O().lstatSync(s)
+                        r = S().lstatSync(s)
                     } catch (e) {
                         return
                     }
@@ -10020,7 +10061,7 @@
                 }))
             }
             )),
-            vt(this, "sendFiles", (async(e,i)=>{
+            Wt(this, "sendFiles", (async(e,i)=>{
                 const n = [];
                 for (const e of i)
                     if (e.isFile)
@@ -10046,18 +10087,18 @@
                 }
                 if (n.length === s)
                     return new t.Notification({
-                        body: s + " 个文件已发送到远端 " + E(e.platform) + " 「下载」目录"
+                        body: s + " 个文件已发送到远端 " + O(e.platform) + " 「下载」目录"
                     }).show(),
                     void await this.sendText(e, "show-file", o + "-" + i[0].name);
                 0 === s ? new t.Notification({
                     body: "发送失败"
                 }).show() : new t.Notification({
-                    body: "连接中断，" + s + " 个文件已发送到远端 " + E(e.platform) + " 「下载」目录，未发送 " + (n.length - s) + " 个"
+                    body: "连接中断，" + s + " 个文件已发送到远端 " + O(e.platform) + " 「下载」目录，未发送 " + (n.length - s) + " 个"
                 }).show(),
                 this.checkOnlinePing()
             }
             )),
-            vt(this, "mainServices", {
+            Wt(this, "mainServices", {
                 onlineTrigger: ()=>{
                     this.listenServer && (this._onlineTriggerTimeout && clearTimeout(this._onlineTriggerTimeout),
                     this._onlineTriggerTimeout = setTimeout((()=>{
@@ -10073,7 +10114,7 @@
             this.accountCmp = o,
             this.localSocketKey = "socket/" + this.accountCmp.machineId,
             this.windowCmp.isWindow)
-                this.downloadsPath = x().getDownloadsFolderPath();
+                this.downloadsPath = D().getDownloadsFolderPath();
             else
                 try {
                     this.downloadsPath = t.app.getPath("downloads")
@@ -10136,7 +10177,7 @@
                 }
                 if (t.length > 0)
                     return await this.setRemoteSocketFeatures(t),
-                    void (this.listenServer ? (this.localSocketDoc.lanip = await B(),
+                    void (this.listenServer ? (this.localSocketDoc.lanip = await L(),
                     this.localSocketDoc.onlineAt = Date.now(),
                     this.putLocalSocketDoc()) : this.createListenServer())
             }
@@ -10162,7 +10203,7 @@
                     t || (t = !0));
                     continue
                 }
-                const n = "我的 " + E(i.platform) + "「" + i.hostname + "」";
+                const n = "我的 " + O(i.platform) + "「" + i.hostname + "」";
                 this.pluginsCmp.setFeature("", {
                     code: i._id + "@copy",
                     cmds: [{
@@ -10201,10 +10242,10 @@
         }
         async createListenServer() {
             this.listenServer && this.listenServer.close(),
-            this.localSocketDoc.lanip = await B(),
+            this.localSocketDoc.lanip = await L(),
             this.localSocketDoc.hostname = v().hostname(),
-            this.listenServer = Ct().createServer((e=>{
-                e.setTimeout(Wt),
+            this.listenServer = vt().createServer((e=>{
+                e.setTimeout(St),
                 e.once("timeout", (()=>{
                     e.destroy()
                 }
@@ -10229,9 +10270,9 @@
                                     if (this._trySetRemoteOnlineTimeout = null,
                                     n.from in this.onlineConnectionDocDic)
                                         return;
-                                    if (Ct().isIPv6(t)) {
+                                    if (vt().isIPv6(t)) {
                                         const e = t.toLowerCase().replace("::ffff:", "").trim();
-                                        Ct().isIPv4(e) && (t = e)
+                                        vt().isIPv4(e) && (t = e)
                                     }
                                     const e = await this.dbCmp.get("/", n.from);
                                     e && (e.lanip !== t && (e.lanip = t),
@@ -10273,7 +10314,7 @@
                                 if ("folder" === n.method)
                                     return e.on("data", (e=>{
                                         const t = c().join(this.downloadsPath, e.toString());
-                                        O().existsSync(t) || O().mkdirSync(t, {
+                                        S().existsSync(t) || S().mkdirSync(t, {
                                             recursive: !0
                                         })
                                     }
@@ -10283,15 +10324,15 @@
                                     const t = c().join(this.downloadsPath, n.fileName + "." + n.timestamp);
                                     if (n.fileName.includes("/")) {
                                         const e = c().dirname(t);
-                                        O().existsSync(e) || O().mkdirSync(e, {
+                                        S().existsSync(e) || S().mkdirSync(e, {
                                             recursive: !0
                                         })
                                     }
-                                    const i = O().createWriteStream(t);
+                                    const i = S().createWriteStream(t);
                                     return e.once("end", (()=>{
                                         const e = c().join(this.downloadsPath, n.fileName);
                                         try {
-                                            O().existsSync(e) ? O().renameSync(t, c().join(this.downloadsPath, n.timestamp + "-" + n.fileName)) : O().renameSync(t, e)
+                                            S().existsSync(e) ? S().renameSync(t, c().join(this.downloadsPath, n.timestamp + "-" + n.fileName)) : S().renameSync(t, e)
                                         } catch (e) {}
                                     }
                                     )),
@@ -10304,7 +10345,7 @@
                                     return e.on("data", (e=>{
                                         const i = e.toString();
                                         let n;
-                                        (O().existsSync(n = c().join(this.downloadsPath, i)) || O().existsSync(n = c().join(this.downloadsPath, i.substr(14)))) && t.shell.showItemInFolder(n)
+                                        (S().existsSync(n = c().join(this.downloadsPath, i)) || S().existsSync(n = c().join(this.downloadsPath, i.substr(14)))) && t.shell.showItemInFolder(n)
                                     }
                                     )),
                                     void e.write("ok");
@@ -10334,7 +10375,7 @@
             s && (this.windowCmp.hideMainWindow(),
             "over" === i ? this.sendText(s, "text", n).then((e=>{
                 e ? new t.Notification({
-                    body: "文本已复制到远端 " + E(s.platform) + " 剪贴板"
+                    body: "文本已复制到远端 " + O(s.platform) + " 剪贴板"
                 }).show() : (new t.Notification({
                     body: "发送失败"
                 }).show(),
@@ -10342,7 +10383,7 @@
             }
             )) : "img" === i ? this.sendText(s, "image", n).then((e=>{
                 e ? new t.Notification({
-                    body: "图片已复制到远端 " + E(s.platform) + " 剪贴板"
+                    body: "图片已复制到远端 " + O(s.platform) + " 剪贴板"
                 }).show() : (new t.Notification({
                     body: "发送失败"
                 }).show(),
@@ -10351,36 +10392,36 @@
             )) : "files" === i && this.sendFiles(s, n))
         }
     }
-    let Pt = t.app.getPath("userData")
-      , xt = "https://open.u-tools.cn"
-      , kt = {
+    let xt = t.app.getPath("userData")
+      , kt = "https://open.u-tools.cn"
+      , Dt = {
         protocol: "https",
         host: "db.u-tools.cn"
     };
-    s().dev() && (Pt = c().join(t.app.getPath("appData"), "dev-utools"),
-    d().existsSync(Pt) || d().mkdirSync(Pt),
-    xt = "http://open.test.u-tools.cn",
-    kt = {
+    s().dev() && (xt = c().join(t.app.getPath("appData"), "dev-utools"),
+    d().existsSync(xt) || d().mkdirSync(xt),
+    kt = "http://open.test.u-tools.cn",
+    Dt = {
         protocol: "http",
         host: "192.168.2.119",
         port: "5984"
     });
-    const Dt = {
+    const _t = {
         path: {
-            root: Pt,
-            plugins: c().join(Pt, "plugins"),
-            database: c().join(Pt, "database"),
-            settings: c().join(Pt, "settings"),
-            clipboardData: c().join(Pt, "clipboard-data")
+            root: xt,
+            plugins: c().join(xt, "plugins"),
+            database: c().join(xt, "database"),
+            settings: c().join(xt, "settings"),
+            clipboardData: c().join(xt, "clipboard-data")
         },
         app: {
-            redirectURL: xt + "/redirect?target=",
+            redirectURL: kt + "/redirect?target=",
             downloadURL: "https://u.tools",
             feedbackURL: "https://yuanliao.info",
             newestVersionURL: "https://publish.u-tools.cn/version2/newest-version.json"
         },
         database: {
-            sync: kt
+            sync: Dt
         },
         window: {
             backgroundColor: "#FFFFFF",
@@ -10388,37 +10429,37 @@
             initHeight: 56,
             initWidth: 800,
             openPluginHeight: 600,
-            pluginDownloadURL: xt + "/plugins/{query}/download"
+            pluginDownloadURL: kt + "/plugins/{query}/download"
         },
         plugin: {
-            checkUpdateURL: xt + "/plugins/plugin_update_check",
-            hashURL: xt + "/plugins/{query}/hash"
+            checkUpdateURL: kt + "/plugins/plugin_update_check",
+            hashURL: kt + "/plugins/{query}/hash"
         },
         autoupdate: {
             linuxURL: "https://publish.u-tools.cn/version2/",
             linuxDownloadURL: "https://u.tools"
         },
         report: {
-            logsURL: xt + "/logs?access_token=",
+            logsURL: kt + "/logs?access_token=",
             interval: 6e4
         },
         account: {
-            muserURL: xt + "/muser?access_token=",
-            loginURL: xt + "/login",
-            profileURL: xt + "/profile",
-            dbSyncURL: xt + "/database/sync",
-            logoutURL: xt + "/logout",
-            temporaryToken: xt + "/temporary_token"
+            muserURL: kt + "/muser?access_token=",
+            loginURL: kt + "/login",
+            profileURL: kt + "/profile",
+            dbSyncURL: kt + "/database/sync",
+            logoutURL: kt + "/logout",
+            temporaryToken: kt + "/temporary_token"
         },
         voice: {
             contentWidth: 255,
             initContentHeight: 56,
-            translateURL: xt + "/translates?access_token="
+            translateURL: kt + "/translates?access_token="
         },
         pay: {
-            paymentsURL: xt + "/payments?access_token=",
-            payCodeURL: xt + "/payments/{query}/pay_code?access_token=",
-            payStatusURL: xt + "/payments/{query}/pay_status?access_token="
+            paymentsURL: kt + "/payments?access_token=",
+            payCodeURL: kt + "/payments/{query}/pay_code?access_token=",
+            payStatusURL: kt + "/payments/{query}/pay_status?access_token="
         }
     };
     (new class extends class {
@@ -10493,8 +10534,8 @@
             } else
                 s().windows() ? (t.app.disableHardwareAcceleration(),
                 t.app.setAppUserModelId("org.yuanli.utools")) : s().linux() && t.app.disableHardwareAcceleration();
-            const i = !d().existsSync(Dt.path.settings);
-            n().setPath(Dt.path.settings),
+            const i = !d().existsSync(_t.path.settings);
+            n().setPath(_t.path.settings),
             t.app.on("ready", (()=>{
                 new class {
                     constructor(e) {
@@ -10537,13 +10578,13 @@
                                 }
                             }
                             ;
-                            return e.set(Dt),
+                            return e.set(_t),
                             e
                         }
                         ), !0),
                         this.container.set("account", (()=>{
                             const e = this.container.get("config").get("account");
-                            return new Me(e)
+                            return new Ae(e)
                         }
                         ), !0),
                         this.container.set("report", (()=>{
@@ -10594,13 +10635,13 @@
                             const e = this.container.get("config")
                               , t = this.container.get("report")
                               , i = this.container.get("account");
-                            return new de(c().join(__dirname, "plugins"),e.get("path.plugins"),e.get("plugin"),t,i)
+                            return new he(c().join(__dirname, "plugins"),e.get("path.plugins"),e.get("plugin"),t,i)
                         }
                         ), !0),
                         this.container.set("clipboard", (()=>{
                             const e = this.container.get("config")
                               , t = this.container.get("plugins");
-                            return new Ee(e.get("path.clipboardData"),t)
+                            return new Be(e.get("path.clipboardData"),t)
                         }
                         ), !0),
                         this.container.set("window", (()=>{
@@ -10611,7 +10652,7 @@
                               , a = this.container.get("account");
                             return new class {
                                 constructor(e, i, o, r, a) {
-                                    ge(this, "mainServices", {
+                                    fe(this, "mainServices", {
                                         getPluginContainer: e=>{
                                             e.returnValue = this.pluginsCmp.pluginContainer
                                         }
@@ -10669,7 +10710,7 @@
                                         }
                                         ,
                                         sendPluginSomeKeyDownEvent: (e,t,i)=>{
-                                            if (!(t = pe[t]))
+                                            if (!(t = we[t]))
                                                 return void (e.returnValue = !1);
                                             const n = this.mainWindow.getBrowserView();
                                             n ? (Array.isArray(i) && i.length > 0 ? n.webContents.sendInputEvent({
@@ -10687,7 +10728,7 @@
                                             e.returnValue = "FFFFFFFF"in this.runningPluginPool
                                         }
                                     }),
-                                    ge(this, "detachServices", {
+                                    fe(this, "detachServices", {
                                         setPosition: (e,t,i,n,o,s,r)=>{
                                             i.setBounds({
                                                 width: s,
@@ -10698,7 +10739,7 @@
                                         }
                                         ,
                                         sendPluginSomeKeyDownEvent: (e,t,i,n,o)=>{
-                                            if (!(n = pe[n]))
+                                            if (!(n = we[n]))
                                                 return;
                                             const s = i.getBrowserView();
                                             s && (Array.isArray(o) && o.length > 0 ? s.webContents.sendInputEvent({
@@ -10750,7 +10791,7 @@
                                             i.webContents.focus()
                                         }
                                     }),
-                                    ge(this, "ffffffffServices", {
+                                    fe(this, "ffffffffServices", {
                                         autoLoadPlugin: (e,t,i,n)=>{
                                             this.autoLoadPlugin(t, i, n)
                                         }
@@ -10818,7 +10859,7 @@
                                             t && t.webContents === e.sender ? e.returnValue = this.display.nativeWorkWindowInfo : e.returnValue = null
                                         }
                                     }),
-                                    ge(this, "pluginApiServices", {
+                                    fe(this, "pluginApiServices", {
                                         hideMainWindow: (e,t,i)=>{
                                             const n = this.mainWindow.getBrowserView();
                                             n && n.webContents === e.sender ? (this.hideMainWindow(i),
@@ -11017,12 +11058,12 @@
                                             this.isWindow && "FFFFFFFF" !== i && this.setPluginWindowAppDetails(l, r),
                                             e.returnValue = {
                                                 id: l.id,
-                                                methods: me.windowMethods,
-                                                invokes: me.windowInvokes,
+                                                methods: ge.windowMethods,
+                                                invokes: ge.windowInvokes,
                                                 webContents: {
                                                     id: l.webContents.id,
-                                                    methods: me.webContentsMethods,
-                                                    invokes: me.webContentsInvokes
+                                                    methods: ge.webContentsMethods,
+                                                    invokes: ge.webContentsInvokes
                                                 }
                                             }
                                         }
@@ -11033,7 +11074,7 @@
                                                 return "isDestroyed" === s ? void (e.returnValue = !0) : void (e.returnValue = new Error("window no exist"));
                                             if (this.getPluginIdByWebContents(a.webContents) === i)
                                                 if ("webContents" !== o)
-                                                    if (me.windowMethods.includes(s))
+                                                    if (ge.windowMethods.includes(s))
                                                         try {
                                                             e.returnValue = a[s](...r)
                                                         } catch (t) {
@@ -11042,7 +11083,7 @@
                                                     else
                                                         e.returnValue = new Error('BrowserWindow function "' + s + '" no found');
                                                 else {
-                                                    if (!me.webContentsMethods.includes(s))
+                                                    if (!ge.webContentsMethods.includes(s))
                                                         return void (e.returnValue = new Error('webContents function "' + s + '" no found'));
                                                     try {
                                                         e.returnValue = a.webContents[s](...r)
@@ -11073,11 +11114,11 @@
                                                     ));
                                                     return await e()
                                                 }
-                                                if (!me.webContentsInvokes.includes(o))
+                                                if (!ge.webContentsInvokes.includes(o))
                                                     throw new Error('webContents function "' + o + '" no found');
                                                 return await r.webContents[o](...s)
                                             }
-                                            if (!me.windowInvokes.includes(o))
+                                            if (!ge.windowInvokes.includes(o))
                                                 throw new Error('BrowserWindow function "' + o + '" no found');
                                             return await r[o](...s)
                                         }
@@ -11119,9 +11160,9 @@
                                 initNativeIconHandler() {
                                     const e = ["unknow"];
                                     let i = null;
-                                    this.isLinux ? (this.nativeIconHandler = (n,o)=>n in fe ? o({
+                                    this.isLinux ? (this.nativeIconHandler = (n,o)=>n in ye ? o({
                                         mimeType: "image/png",
-                                        data: fe[n]
+                                        data: ye[n]
                                     }) : e.includes(n) ? o({
                                         mimeType: "image/png",
                                         data: i
@@ -11141,7 +11182,7 @@
                                                 mimeType: "image/png",
                                                 data: i
                                             });
-                                        fe[n] = s,
+                                        ye[n] = s,
                                         o({
                                             mimeType: "image/png",
                                             data: s
@@ -11160,18 +11201,18 @@
                                     }).then((e=>{
                                         i = e.toPNG()
                                     }
-                                    ))) : (this.nativeIconHandler = (t,n)=>t in fe ? n({
+                                    ))) : (this.nativeIconHandler = (t,n)=>t in ye ? n({
                                         mimeType: "image/png",
-                                        data: fe[t]
+                                        data: ye[t]
                                     }) : e.includes(t) ? n({
                                         mimeType: "image/png",
                                         data: i
-                                    }) : void x().fetchFileIconAsPng(t, (o=>o ? i.equals(o) ? (o = null,
+                                    }) : void D().fetchFileIconAsPng(t, (o=>o ? i.equals(o) ? (o = null,
                                     e.push(t),
                                     n({
                                         mimeType: "image/png",
                                         data: i
-                                    })) : (fe[t] = o,
+                                    })) : (ye[t] = o,
                                     void n({
                                         mimeType: "image/png",
                                         data: o
@@ -11180,7 +11221,7 @@
                                         mimeType: "image/png",
                                         data: i
                                     })))),
-                                    x().fetchFileIconAsPng("unknow", (e=>{
+                                    D().fetchFileIconAsPng("unknow", (e=>{
                                         i = e || Buffer.alloc(5184, 0)
                                     }
                                     )))
@@ -11199,13 +11240,13 @@
                                         try {
                                             i = decodeURIComponent(i)
                                         } catch (e) {}
-                                        if (i in fe)
+                                        if (i in ye)
                                             return t({
                                                 mimeType: "image/png",
-                                                data: fe[i]
+                                                data: ye[i]
                                             });
                                         this.getDbAttachment("/", i, "icon").then((e=>{
-                                            fe[i] = e,
+                                            ye[i] = e,
                                             t({
                                                 mimeType: "image/png",
                                                 data: e
@@ -11219,7 +11260,7 @@
                                     ))
                                 }
                                 removeDbIconCache(e) {
-                                    e in fe && delete fe[e]
+                                    e in ye && delete ye[e]
                                 }
                                 getWindowBackgroundColor() {
                                     return t.nativeTheme.shouldUseDarkColors ? this.config.darkBackgroundColor : this.config.backgroundColor
@@ -11227,7 +11268,7 @@
                                 getMainWindwoSession() {
                                     const e = t.session.fromPartition("persist:<utools>");
                                     return e.on("will-download", ((e,i,n)=>{
-                                        if (i.setSavePath(c().join(t.app.getPath("temp"), I() + ".upx")),
+                                        if (i.setSavePath(c().join(t.app.getPath("temp"), M() + ".upx")),
                                         !this._updatePluginCmdCache)
                                             return e.preventDefault();
                                         const o = {
@@ -11317,7 +11358,7 @@
                                         autoHideMenuBar: !0,
                                         type: "toolbar",
                                         webPreferences: {
-                                            devTools: true,
+                                            devTools: this.isDev,
                                             nodeIntegration: !1,
                                             sandbox: !1,
                                             contextIsolation: !1,
@@ -11335,8 +11376,8 @@
                                     this.mainWindowNativeWindowHandle = this.mainWindow.getNativeWindowHandle(),
                                     this.isWindow ? this.mainWindow.setAlwaysOnTop(!0, "pop-up-menu") : this.isMacOs && (this.mainWindow.setAlwaysOnTop(!0, "floating"),
                                     this.mainWindow.setWindowButtonVisibility(!1),
-                                    x().windowConvertToPanel(this.mainWindowNativeWindowHandle)),
-                                    this.display = new ue(this.mainWindow,this.mainWindowNativeWindowHandle,this.config.initWidth + 2 * this.mainWindowBorderWidth,this.config.initHeight + 2 * this.mainWindowBorderWidth),
+                                    D().windowConvertToPanel(this.mainWindowNativeWindowHandle)),
+                                    this.display = new pe(this.mainWindow,this.mainWindowNativeWindowHandle,this.config.initWidth + 2 * this.mainWindowBorderWidth,this.config.initHeight + 2 * this.mainWindowBorderWidth),
                                     this.mainWindow.loadURL("file://" + c().join(__dirname, "index.html")),
                                     this.mainWindow.on("blur", this.onMainWindowBlur),
                                     this.mainWindow.on("hide", this.onMainWindowHide),
@@ -11397,7 +11438,7 @@
                                         ))
                                     }
                                     )),
-                                    this.ffffffff = we.call(this)
+                                    this.ffffffff = me.call(this)
                                 }
                                 onMainWindowBlur() {
                                     if (!(this.ignoreMainWindowBlurExpiryTime && Date.now() - this.ignoreMainWindowBlurExpiryTime < 0) && this.mainWindow.isVisible())
@@ -11407,7 +11448,7 @@
                                             this.mainWindow.isFocused() || this.hideMainWindow()
                                         }
                                         ))) : void setTimeout((()=>{
-                                            x().isMouseLeftDown() ? this.win32CheckMouseLeftUp() : this.hideMainWindow()
+                                            D().isMouseLeftDown() ? this.win32CheckMouseLeftUp() : this.hideMainWindow()
                                         }
                                         ), 50)) : void (this.isMacOs && Date.now() - this.display.mainWindowShowTimestamp < 50 || this.hideMainWindow())
                                 }
@@ -11461,9 +11502,9 @@
                                     this.win32CheckMouseLeftUpTimer && clearTimeout(this.win32CheckMouseLeftUpTimer),
                                     this.win32CheckMouseLeftUpTimer = setTimeout((()=>{
                                         if (this.win32CheckMouseLeftUpTimer = null,
-                                        x().isMouseLeftDown())
+                                        D().isMouseLeftDown())
                                             return void this.win32CheckMouseLeftUp();
-                                        const e = x().getCursorPosition();
+                                        const e = D().getCursorPosition();
                                         if (e) {
                                             const t = Math.round(e.x / this.display.currentDisplay.scaleFactor)
                                               , i = Math.round(e.y / this.display.currentDisplay.scaleFactor)
@@ -11486,7 +11527,7 @@
                                     this.display.hide(e)
                                 }
                                 hotKeyAction(e) {
-                                    const t = pe[e.code];
+                                    const t = we[e.code];
                                     if (!t)
                                         return !1;
                                     let i = "";
@@ -11536,7 +11577,7 @@
                                     const s = this.pluginsCmp.pluginContainer[e];
                                     if (!s)
                                         return void this.emptyRecovery();
-                                    /*if (s.illegal)
+                                    /* if (s.illegal)
                                         return new t.Notification({
                                             title: "uTools 安全检测",
                                             body: "当前安装的插件应用「" + s.pluginName + "」未通过安全验证，无法运行"
@@ -11725,7 +11766,7 @@
                                     }
                                     const o = {
                                         textAreasAreResizable: !1,
-                                        devTools: true,
+                                        devTools: e.isDev || e.unsafe,
                                         nodeIntegration: !1,
                                         sandbox: !1,
                                         contextIsolation: !1,
@@ -11966,7 +12007,7 @@
                                         appIconPath: o
                                     }) : (d().existsSync(n) || d().mkdirSync(n),
                                     (0,
-                                    he.png2WindowIco)(i.logo.replace("file://", "")).then((t=>{
+                                    ue.png2WindowIco)(i.logo.replace("file://", "")).then((t=>{
                                         d().writeFileSync(o, t),
                                         e.setAppDetails({
                                             appId: "org.yuanli.utools." + i.name,
@@ -12072,7 +12113,7 @@
                                         height: n.height,
                                         webPreferences: {
                                             partition: "persist:<utools>",
-                                            devTools: !0,
+                                            devTools: !1,
                                             nodeIntegration: !1,
                                             sandbox: !1,
                                             contextIsolation: !1,
@@ -12096,7 +12137,7 @@
                                         label: i.label,
                                         subInput: i.subInput,
                                         featureCode: i.featureCode,
-                                        isDev: true, // chandlerver5
+                                        isDev: a.isDev,
                                         isPluginInfo: "FFFFFFFF" !== e && !a.isDev
                                     })})`).then((([e,t])=>{
                                         e && e[0] > 0 && e[1] > 0 && (n.width = e[0],
@@ -12422,8 +12463,7 @@
                                     if (!i)
                                         return;
                                     const n = this.pluginsCmp.pluginContainer[i];
-                                    // chandlerver5
-                                    if (n)
+                                    if (n && (n.isDev || n.unsafe))
                                         if (e.webContents.isDevToolsOpened())
                                             e.webContents.closeDevTools();
                                         else {
@@ -12460,7 +12500,7 @@
                               , t = this.container.get("account")
                               , i = this.container.get("plugins")
                               , n = this.container.get("window");
-                            return new mt(e,t,i,n)
+                            return new gt(e,t,i,n)
                         }
                         ), !0),
                         this.container.set("database", (()=>{
@@ -12468,30 +12508,30 @@
                               , t = this.container.get("window")
                               , i = this.container.get("account")
                               , n = this.container.get("report");
-                            return new ve(e.get("path.database"),e.get("database"),t,i,n)
+                            return new We(e.get("path.database"),e.get("database"),t,i,n)
                         }
                         ), !0),
                         this.container.set("voice", (()=>{
                             const e = this.container.get("config").get("voice")
                               , t = this.container.get("window")
                               , i = this.container.get("database");
-                            return new je(e,t,i)
+                            return new Je(e,t,i)
                         }
                         ), !0),
                         this.container.set("screencapture", (()=>{
                             const e = this.container.get("window");
-                            return new at(e)
+                            return new ct(e)
                         }
                         ), !0),
                         this.container.set("screencolorpicker", (()=>{
                             const e = this.container.get("window");
-                            return new lt(e)
+                            return new dt(e)
                         }
                         ), !0),
                         this.container.set("helpboot", (()=>{
                             const e = this.container.get("window")
                               , t = this.container.get("database");
-                            return new yt(e,t)
+                            return new bt(e,t)
                         }
                         ), !0),
                         this.container.set("app", (()=>{
@@ -12503,13 +12543,13 @@
                               , s = this.container.get("screencapture")
                               , r = this.container.get("screencolorpicker")
                               , a = this.container.get("helpboot");
-                            return new He(e,t,i,n,o,s,r,a)
+                            return new Ue(e,t,i,n,o,s,r,a)
                         }
                         ), !0),
                         this.container.set("featurehotkey", (()=>{
                             const e = this.container.get("window")
                               , t = this.container.get("database");
-                            return new Ue(e,t)
+                            return new Ke(e,t)
                         }
                         ), !0),
                         this.container.set("autoupdate", (()=>{
@@ -12519,12 +12559,12 @@
                               , o = this.container.get("report");
                             return new class {
                                 constructor(e, i, n, o) {
-                                    _e(this, "noticeUpdate", (e=>{
+                                    Ie(this, "noticeUpdate", (e=>{
                                         this.windowCmp.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.noticeUpdate(${e ? JSON.stringify(e) : ""})`),
                                         this.voiceCmp.voiceWindow && this.voiceCmp.voiceWindow.webContents.executeJavaScript(`window.bridge.noticeUpdate(${e ? JSON.stringify(e) : ""})`)
                                     }
                                     )),
-                                    _e(this, "linuxCheckForUpdate", ((e,i)=>{
+                                    Ie(this, "linuxCheckForUpdate", ((e,i)=>{
                                         if (!t.net.online)
                                             return;
                                         const n = t.app.getVersion()
@@ -12536,7 +12576,7 @@
                                                 if (!/^version: (.*)$/m.test(o))
                                                     return;
                                                 const s = RegExp.$1;
-                                                R().gt(s, n) ? (this.newVersionIsDownloaded = !0,
+                                                N().gt(s, n) ? (this.newVersionIsDownloaded = !0,
                                                 this.noticeUpdate(this.config.linuxDownloadURL),
                                                 e && e(s)) : i && i()
                                             }
@@ -12546,20 +12586,20 @@
                                         s.end()
                                     }
                                     )),
-                                    _e(this, "mainServices", {
+                                    Ie(this, "mainServices", {
                                         appUpdate: ()=>{
                                             this.newVersionIsDownloaded && (this._appUpdating || (this._appUpdating = !0,
                                             t.app.removeAllListeners("before-quit"),
                                             s().windows() ? t.app.once("before-quit", (()=>{
-                                                x().exit()
+                                                D().exit()
                                             }
-                                            )) : s().macOS() && (x().panelRestoreToWindow(this.windowCmp.mainWindow.getNativeWindowHandle()),
-                                            this.voiceCmp.voiceWindow && x().panelRestoreToWindow(this.voiceCmp.voiceWindow.getNativeWindowHandle()),
+                                            )) : s().macOS() && (D().panelRestoreToWindow(this.windowCmp.mainWindow.getNativeWindowHandle()),
+                                            this.voiceCmp.voiceWindow && D().panelRestoreToWindow(this.voiceCmp.voiceWindow.getNativeWindowHandle()),
                                             t.app.dock.hide(),
                                             t.app.hide()),
-                                            x().stopClipboardWatch(),
-                                            x().stopVoicePanelTriggerEvent(),
-                                            x().stopFKeyTapEvent(),
+                                            D().stopClipboardWatch(),
+                                            D().stopVoicePanelTriggerEvent(),
+                                            D().stopFKeyTapEvent(),
                                             t.globalShortcut.unregisterAll(),
                                             setTimeout((()=>{
                                                 t.webContents.getAllWebContents().forEach((e=>{
@@ -12573,7 +12613,7 @@
                                                     e.setClosable(!0)
                                                 }
                                                 )),
-                                                Se.autoUpdater.quitAndInstall()
+                                                Pe.autoUpdater.quitAndInstall()
                                             }
                                             ), 300)))
                                         }
@@ -12596,7 +12636,7 @@
                                     this.windowCmp.pluginsCmp.on("appupdate", this.noticeUpdate)
                                 }
                                 updateWatch() {
-                                    this.newVersionIsDownloaded || (Se.autoUpdater.checkForUpdates().catch((e=>{
+                                    this.newVersionIsDownloaded || (Pe.autoUpdater.checkForUpdates().catch((e=>{
                                         e.message.startsWith("net::ERR_") || this.reportCmp.info("app.checkforupdate.error", {
                                             error: e.message
                                         })
@@ -12605,15 +12645,15 @@
                                     setTimeout((()=>{
                                         this.updateWatch()
                                     }
-                                    ), F(36e5, 36e6)))
+                                    ), E(36e5, 36e6)))
                                 }
                                 registerEvent() {
-                                    Se.autoUpdater.on("update-downloaded", (e=>{
+                                    Pe.autoUpdater.on("update-downloaded", (e=>{
                                         this.newVersionIsDownloaded = !0,
                                         this.noticeUpdate()
                                     }
                                     )),
-                                    Se.autoUpdater.on("error", (e=>{
+                                    Pe.autoUpdater.on("error", (e=>{
                                         e.message.startsWith("net::ERR_") || this.reportCmp.info("app.autoupdate.error", {
                                             error: e.message
                                         })
@@ -12625,26 +12665,26 @@
                                     setTimeout((()=>{
                                         this.linuxUpdateWatch()
                                     }
-                                    ), F(36e5, 36e6)))
+                                    ), E(36e5, 36e6)))
                                 }
                             }
                             (e,i,n,o)
                         }
                         ), !0),
-                        this.container.set("menu", (()=>new We), !0),
-                        this.container.set("preferences", (()=>new Te(this.container.get("window"))), !0),
+                        this.container.set("menu", (()=>new Se), !0),
+                        this.container.set("preferences", (()=>new Fe(this.container.get("window"))), !0),
                         this.container.set("tray", (()=>{
                             const e = this.container.get("config").get("app")
                               , t = this.container.get("window")
                               , i = this.container.get("account");
-                            return new Pe(e,t,i)
+                            return new xe(e,t,i)
                         }
                         ), !0),
-                        this.container.set("pluginmenu", (()=>new De(this.container.get("app"))), !0),
+                        this.container.set("pluginmenu", (()=>new _e(this.container.get("app"))), !0),
                         this.container.set("developer", (()=>{
                             const e = this.container.get("window")
                               , t = this.container.get("app");
-                            return new pt(e,t)
+                            return new wt(e,t)
                         }
                         ), !0),
                         this.container.set("connection", (()=>{
@@ -12652,7 +12692,7 @@
                               , t = this.container.get("window")
                               , i = this.container.get("database")
                               , n = this.container.get("account");
-                            return new St(e,t,i,n)
+                            return new Pt(e,t,i,n)
                         }
                         ), !0),
                         s().macOS() ? this.container.set("nativeapp", (()=>{
@@ -12661,7 +12701,7 @@
                               , i = this.container.get("report")
                               , n = this.container.get("app")
                               , o = this.container.get("connection");
-                            return new Ze(e,t,i,n,o)
+                            return new Xe(e,t,i,n,o)
                         }
                         ), !0) : s().windows() ? this.container.set("nativeapp", (()=>{
                             const e = this.container.get("plugins")
@@ -12669,7 +12709,7 @@
                               , i = this.container.get("report")
                               , n = this.container.get("app")
                               , o = this.container.get("connection");
-                            return new tt(e,t,i,n,o)
+                            return new it(e,t,i,n,o)
                         }
                         ), !0) : s().linux() && this.container.set("nativeapp", (()=>{
                             const e = this.container.get("plugins")
@@ -12677,12 +12717,12 @@
                               , i = this.container.get("report")
                               , n = this.container.get("app")
                               , o = this.container.get("connection");
-                            return new rt(e,t,i,n,o)
+                            return new at(e,t,i,n,o)
                         }
                         ), !0),
                         this.container.set("ipcservices", (()=>{
                             const e = this.container.mget("account", "report", "plugins", "clipboard", "window", "pay", "database", "voice", "screencapture", "app", "featurehotkey", "autoupdate", "preferences", "pluginmenu", "developer", "connection", "nativeapp");
-                            return new dt(e)
+                            return new ht(e)
                         }
                         ), !0)
                     }
