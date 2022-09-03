@@ -97,6 +97,35 @@ $ asar pack ./utools-app/app ./utools-app/app-new.asar && cp -fr ./utools-app/ap
     }, this.cmdLabel(t.cmd, t.indexAt, a), i.name.startsWith('dev_') && e.createElement("span", {
   ```
 
+3. 开启会员专项
+  
+  `dist/main.js` `getAccountInfo`函数调整返回值。
+  ```ts
+    getAccountInfo() {
+            /* 
+            ...
+            */
+            return {
+                cellphone: '1337202454x',
+                avatar: 'xx',
+                nickname: '💰😄',
+                uid: 'chandlerver5',
+                db_secrect_key: 'chandlerver5',
+                // 数据库密钥
+                db_sync: 0,
+                // 账户数据是否开启同步
+                type: 1,
+                // 会员 1 === t.type ? "member" : "user"
+                expired_at: "1666662042164",
+                // 会员到期日
+                token: 'xeeasdgwwefzxcasdvwer',
+                // token
+                access_token: 'asdgwwefzxcasdvwer'
+            }
+        }
+  ```
+
+
 
 # 插件开发
 可以借助我的 asar 插件 对官方插件源码进行修改...

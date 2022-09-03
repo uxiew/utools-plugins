@@ -1028,7 +1028,7 @@
                         for (const t of e.plugins)
                             t.name in this.pluginContainer && !this.pluginUpdateSet.includes(t.name) && this.pluginUpdateSet.push(t.name);
                     // chandlerver5 
-                      /* if (e.illegal_plugins?.length > 0)
+                    /* if (e.illegal_plugins?.length > 0)
                         for (const t of e.illegal_plugins) {
                             const e = this.pluginContainer[t];
                             e && (e.illegal = !0,
@@ -1246,7 +1246,8 @@
                 e.illegal && (n.illegal = e.illegal),
                 n.name in this.pluginContainer && N().lt(n.version, this.pluginContainer[n.name].version))
                     throw new Error("已存在版本 " + this.pluginContainer[n.name].version);
-                return n.isDev = true,this.pluginContainer[n.name] = n,
+                return n.isDev = true,
+                this.pluginContainer[n.name] = n,
                 this.emit("mount", n.name),
                 n.name
             } catch (e) {
@@ -3144,7 +3145,7 @@
             ))
         }
         getAccountInfo() {
-            const e = n().get("account");
+            /* const e = n().get("account");
             if (!e)
                 return null;
             let t = "";
@@ -3171,7 +3172,24 @@
             }
             return i.uid ? ("string" == typeof e && i.db_secrect_key && (i.db_secrect_key = V(Buffer.from(i.db_secrect_key, "hex"))),
             i) : (n().delete("account"),
-            null)
+            null)*/
+            return {
+                cellphone: '1337202454x',
+                avatar: 'https://portrait.gitee.com/uploads/avatars/namespace/3284/9853854_development-team-001_1654174298.png!avatar200',
+                nickname: '💰😄',
+                uid: 'chandlerver5',
+                db_secrect_key: 'chandlerver5',
+                // 数据库密钥
+                db_sync: 0,
+                // 账户数据是否开启同步
+                type: 1,
+                // 会员 1 === t.type ? "member" : "user"
+                expired_at: "1666662042164",
+                // 会员到期日
+                token: 'xeeasdgwwefzxcasdvwer',
+                // token
+                access_token: 'asdgwwefzxcasdvwer'
+            }
         }
         getAccountToken() {
             let e, t = n().get("account");
@@ -11583,7 +11601,8 @@
                                             body: "当前安装的插件应用「" + s.pluginName + "」未通过安全验证，无法运行"
                                         }).show(),
                                         this.destroyPlugin(e),
-                                        void this.emptyRecovery();*/ // chandlerver5
+                                        void this.emptyRecovery();*/
+                                    // chandlerver5
                                     if (!(i in s.featureDic))
                                         return o ? void setTimeout((()=>{
                                             this.reallyEnterPlugin(e, i, n)

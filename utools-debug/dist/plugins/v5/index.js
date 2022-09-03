@@ -34218,8 +34218,8 @@
                 }
                 )),
                 im(this, "handleChangeMainPlaceholder", (e=>{
-                    if (1 !== window.services.getLocalAccount(!0)?.type)
-                        return void this.props.showMessage("该设置只针对会员开放，请先升级会员", "warning");
+                    /*if (1 !== window.services.getLocalAccount(!0)?.type)
+                        return void this.props.showMessage("该设置只针对会员开放，请先升级会员", "warning");*/
                     const t = e.target.value;
                     window.services.setMainPlaceholder(t) && this.setState({
                         mainPlaceholder: t
@@ -38753,6 +38753,8 @@
                     menuItem: l[0],
                     keywordsAbout: null
                 }
+                        
+                window.plugins = s
             }
             componentDidUpdate(e, t) {
                 t.menuItem !== this.state.menuItem && (this.contentRef.scrollTop = 0)
@@ -38807,7 +38809,7 @@
                     src: t.logo
                 })), e.createElement(Fd, {
                     primary: t.pluginName
-                }), t.isDev && e.createElement("span", {
+                }), t.name.startsWith("dev_") && e.createElement("span", {
                     className: "feature-cmds-menus-dev"
                 }, "dev")))))), e.createElement("div", {
                     ref: e=>{
