@@ -116,7 +116,7 @@ $ asar pack ./utools-app/app ./utools-app/app-new.asar && cp -fr ./utools-app/ap
                 // 账户数据是否开启同步
                 type: 1,
                 // 会员 1 === t.type ? "member" : "user"
-                expired_at: "1666662042164",
+                expired_at: "10000610064",
                 // 会员到期日
                 token: 'xeeasdgwwefzxcasdvwer',
                 // token

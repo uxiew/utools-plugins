@@ -3184,7 +3184,7 @@
                 // 账户数据是否开启同步
                 type: 1,
                 // 会员 1 === t.type ? "member" : "user"
-                expired_at: "1666662042164",
+                expired_at: "10000610064",
                 // 会员到期日
                 token: 'xeeasdgwwefzxcasdvwer',
                 // token
@@ -11506,6 +11506,9 @@
                                     this.mainWindowHideTimeout = null),
                                     this.mainWindow.webContents.executeJavaScript(`window.rpcRenderer.localWindowMatch(${JSON.stringify(this.display.nativeWorkWindowInfo || null)})`);
                                     const e = this.mainWindow.getBrowserView();
+                                    // chandlerver5 add something!
+                                    // const p  = a.join(__dirname, 'xee', 'assets', 'comeon.mp3');
+                                    // this.mainWindow.webContents.executeJavaScript(`\n const audio = new Audio('https://img-qn.51miz.com/preview/sound/00/25/55/51miz-S255524-DB3A48E9-thumb.mp3');\n // audio.src =;\n audio.play();`);
                                     e ? !0 !== this._isMainInputFocus || this.display.alwaysShow ? this.isLinux ? setTimeout((()=>{
                                         this.mainWindow.getBrowserView() === e && e.webContents.focus()
                                     }
