@@ -4,9 +4,9 @@
 # 目录结构
 ```
 ---....
----utools-app	# utools(v3.3.0) 的 app.asar 源代码学习分析
----upxs		# 插件合集
----utools-template-react  # react 开发插件的模版
+---utools-app/	# utools(v3.3.0) 的 app.asar 源代码学习分析
+---upxs/		# 插件合集
+---utools-template-react/  # react 开发插件的模版
 ---README.md	# 说明文档
 ```
 
