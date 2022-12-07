@@ -4,7 +4,7 @@
 # 目录结构
 ```
 ---....
----utools-debug	# utools(v3.0.3) 的 app.asar 源代码学习分析
+---utools-app	# utools(v3.3.0) 的 app.asar 源代码学习分析
 ---upxs		# 插件合集
 ---utools-template-react  # react 开发插件的模版
 ---README.md	# 说明文档
@@ -106,8 +106,8 @@ $ asar pack ./utools-app/app ./utools-app/app-new.asar && cp -fr ./utools-app/ap
             ...
             */
             return {
-                cellphone: '1337202454x',
-                avatar: 'xx',
+                cellphone: '1895308808x',
+                avatar: 'https://www.topthink.com/uploads/avatar/20221204/2b25dd261d384a33024b6dac9e327bf2.png',
                 nickname: '💰😄',
                 uid: 'chandlerver5',
                 db_secrect_key: 'chandlerver5',
