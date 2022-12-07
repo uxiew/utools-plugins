@@ -1,4 +1,9 @@
 .DS_Store
-/utools-app/
+
+!/utools-app/
+/utools-app/*
+/utools-app/**/
 !/utools-app/app/
+!/utools-app/app/dist/
+!/utools-app/app/dist/**/
 !/utools-app/app/package.json

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+  <style type="text/css">
+   html, body { width: 100%; height: 100%; margin: 0; font-family: system-ui; overflow: hidden; }
+   body { padding: 20px 0; box-sizing: border-box; }
+   #root { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-around; }
+   #root>div { display: flex; }
+   #root>div>div:first-child { width: 100px; text-align: right; font-weight: 500; }
+   #root>div>div:last-child { flex: 1; word-wrap: break-word; word-break: break-all; padding: 0 20px; }
+   @media (prefers-color-scheme: light) {
+    body { background-color: #fff; }
+   }
+   @media (prefers-color-scheme: dark) {
+    body { background-color: #303133; color: #fff; }
+   }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search)
+    const data = JSON.parse(decodeURIComponent(urlParams.get('data')))
+    const getText = (str) => {
+      if (!str) return ''
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/`/g, '\`')
+    }
+    document.querySelector('#root').innerHTML = `
+      <div>
+        <div>窗口标题</div>
+        <div>${getText(data.title)}</div>
+      </div>
+      <div>
+        <div>窗口 ID</div>
+        <div>${data.id}</div>
+      </div>
+      ${
+        data.class ? `<div>
+          <div>窗口类</div>
+          <div>${getText(data.class)}</div>
+        </div>` : ''
+      }
+      <div>
+        <div>坐标 X</div>
+        <div>${data.x}</div>
+      </div>
+      <div>
+        <div>坐标 Y</div>
+        <div>${data.y}</div>
+      </div>
+      <div>
+        <div>窗口宽度</div>
+        <div>${data.width}</div>
+      </div>
+      <div>
+        <div>窗口高度</div>
+        <div>${data.height}</div>
+      </div>
+      <div>
+        <div>进程 ID</div>
+        <div>${data.pid}</div>
+      </div>
+      <div>
+        <div>应用</div>
+        <div>${getText(data.app)}</div>
+      </div>
+      ${
+        data.bundleId ? `<div>
+          <div>应用 ID</div>
+          <div>${getText(data.bundleId)}</div>
+        </div>` : ''
+      }
+      <div>
+        <div>应用位置</div>
+        <div>${getText(data.appPath)}</div>
+      </div>
+    `
+  </script>
+</body>
+</html>

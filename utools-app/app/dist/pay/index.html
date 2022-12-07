@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+  <style type="text/css">
+    html{ width: 100%; height: 100%; }
+    body { width: 100%; height: 100%; margin: 0; background-color: #F2F4F7; overflow: hidden; font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; }
+    header { width: 100%; display: flex; background-color: #333; color: #fff; justify-content: space-between; height: 88px; padding: 16px; font-size: 14px; box-sizing: border-box;}
+    .close { cursor: pointer; width: 14px; height: 14px; background: center / 13px no-repeat url("../res/pay/icon_pay_close@2x.png") }
+    .nomarl { position: fixed; top: 48px; left: 0; bottom: 0; width: 100%;  display: flex; flex-direction: column; align-items: center;  }
+    .nomarl .top { width: 100%; height: 22px; background: center top / 296px no-repeat url("../res/pay/bg_pay_paper@2x.png"); }
+    .nomarl .content { width: 284px; flex: 3; background-color: #fff; }
+    .nomarl .bottom { width: 284px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0 10px 0; box-sizing: border-box; }
+    .spinner { margin: 50px auto 0; text-align: center; }
+    .spinner > div { width: 8px; height: 8px; background-color: #8e8e8e;border-radius: 100%; display: inline-block; animation: sk-bouncedelay 1s infinite ease-in-out both; }
+    .spinner .bounce1 { animation-delay: -0.32s; }
+    .spinner .bounce2 { animation-delay: -0.16s; }
+    @keyframes sk-bouncedelay { 0%, 80%, 100% { transform: scale(0);} 40% { transform: scale(1.0); } }
+    
+    .title { display: flex; align-items: center; padding: 0 16px; }
+    .title img { width: 24px; height: 24px; margin-right: 8px; }
+    .title > div { flex: 1; min-width: 0; font-size: 16px; font-weight: 600; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .divider { width: 100%; border-bottom: 1px dashed #e6e6e6; padding-top: 16px;  }
+    .qr-body { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .qr-body > div:last-child { padding-top: 4px; color: #666; font-size: 12px; }
+    #qrcode { padding: 8px; box-sizing: border-box; background-color: #fff; }
+    
+    .price { padding: 20px 0; text-align: center; font-size: 24px; font-weight: 600; color: #FF4E2A; border-bottom: 1px dashed #e6e6e6; margin-bottom: 8px; }
+    .price > span { font-size: 14px; padding-right: 4px; }
+    .price > del { font-size: 14px; color: #888; font-weight: normal; }
+    .row { font-size: 14px; display: flex; padding: 8px 20px; box-sizing: border-box; }
+    .row > div:first-child { color: #717171; min-width: 60px; }
+    .row > div:last-child { flex: 1; min-width: 0; text-align: right; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+    .member-price { color: #fb8c00;}
+    .buy-utools-vip { cursor: pointer; color: #1e88e5; font-size: 12px; padding-top: 0; }
+    .pay-btn { width: 100%; height: 44px; line-height: 44px; border-radius: 24px; background-image: linear-gradient(269deg, #39C27F 0%, #36D97F 100%); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; color: #fff; cursor: pointer; }
+    .pay-btn > img { width: 18px; margin-right: 8px; margin-top: 2px; }
+    .pay-remark { width: 100%; font-size: 13px; color: #666; padding-top: 12px; line-height: 1.42; }
+    .footer { height: 20px; }
+
+    .error { width: 100%; height: 100%; text-align: center; color: #FF4E2A; word-wrap: break-word; word-break: break-all; background: center / 120px no-repeat url("../res/pay/bg_pay_warning@2x.png"); }
+    .error > div { font-size: 14px; color: #666; }
+  </style>
+</head>
+<body>
+  <header>uTools 支付<div onclick="window.services.closeWindow()" class="close"></div></header>
+  <div id='root'>
+    <div class="spinner">
+      <div class="bounce1"></div>
+      <div class="bounce2"></div>
+      <div class="bounce3"></div>
+    </div>
+  </div>
+  <script src="qrcode.min.js"></script>
+  <script>
+    const getText = (str) => {
+      if (!str) return ''
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/`/g, '\`')
+    }
+    window.initRender = ({ pluginLogo, pluginName, payCodeURL, order }) => {
+      window._data_ = { payCodeURL, order }
+      document.getElementById('root').innerHTML = `
+        <div class="nomarl">
+          <div class="top"></div>
+          <div class="content">
+            <div class="title">
+              <img src="${pluginLogo}" alt="" draggable="false" />
+              <div>${getText(pluginName)}</div>
+            </div>
+            <div class="divider"></div>
+            <div class="price">
+              ${order.pay_fee > order.total_fee ? ('<del>原价 ￥' + (order.pay_fee/100).toFixed(2) + '</del>') : '' }
+              <span>￥</span>${(order.total_fee / 100).toFixed(2)}
+            </div>
+            <div id="body">
+              <div class="row">
+                <div>购买</div>
+                <div>${getText(order.body)}</div>
+              </div>
+              <div class="row">
+                <div>收款方</div>
+                <div>${getText(order.payee)}</div>
+              </div>
+              ${order.plugin_name === 'FFFFFFFF' ? '' : `
+                <div class="row">
+                  <div>uTools 会员价</div>
+                  <div class="member-price">￥${(order.member_fee / 100).toFixed(2)}</div>
+                </div>
+                ${order.is_member ? '' : '<div class="row buy-utools-vip" onclick="window.services.goBuyMember()">前往购买 uTools 会员</div>'}
+              `}
+            </div>
+          </div>
+          <div class="bottom">
+            <div onclick="handle.wechatPay()" class="pay-btn">
+              <img src="../res/pay/icon_pay_wechat@2x.png" alt="" /><span>微信支付</span>
+            </div>
+            ${order.payee === '福州猿力信息科技有限公司' ? '' : `
+              <div class="pay-remark">本次收款由第三方插件应用「${getText(pluginName)}」发起，uTools 收到款项后将支付给此插件应用开发者</div>
+            `}
+          </div>
+        </div>`
+    }
+    window.initRenderError = (error) => {
+      document.getElementById('root').innerHTML = `
+        <div class="nomarl">
+          <div class="top"></div>
+          <div class="content">
+            <div class="error">
+              <h3>出错了!!!</h3>
+              <div>${getText(error)}</div>
+            </div>
+          </div>
+          <div class="footer"></div>
+        </div>`
+    }
+    window.handle = {
+      wechatPay: async ()  => {
+        const { payCodeURL, order } = window._data_
+        const response = await window.fetch(payCodeURL)
+        if (!response.ok) return
+        const result = await response.json()
+        document.querySelector('.bottom').outerHTML = '<div class="footer"></div>'
+        document.getElementById('body').outerHTML = `<div class="qr-body">
+          <div id="qrcode"></div>
+          <div>微信扫码支付</div>
+        </div>`
+        const qrcodeDom = document.getElementById("qrcode")
+        new QRCode(qrcodeDom, { 
+          text: result.message,
+          width: 168,
+          height: 168,
+          correctLevel : QRCode.CorrectLevel.L
+        })
+        qrcodeDom.removeAttribute('title')
+        window.services.startLoopCheckOrderResult(order.order_id)
+      }
+    }
+  </script>
+</body>
+</html>
