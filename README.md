@@ -174,5 +174,47 @@ asar p utools-dev-tool 85cdaab634dd9e3af404d827c53d2853.asar && mv -f 85cdaab634
 4. 直接查询 gitee,github,gitlab 资源,做 sourceviewer
 
 
-# 官网 Github
-https://github.com/uTools-Labs
+# 其他工具🔧
+
+## 猿如意
+csdn 出品的 https://devbit.csdn.net/
+
+插件基本和 utools 的无差别，简单修改可用；估计借鉴了 utools
+
+
+## 相关配置
+```
+open ~/rubick
+open /Users/bing/Library/Caches/rubick-downloads
+```
+
+## hapigo
+https://hapigo.com/
+
+
+## rubick
+https://github.com/rubickCenter/rubick
+
+## cerebro
+https://github.com/cerebroapp/cerebro
+
+## raycast
+https://www.raycast.com/
+[Raycast搜索和启动软件程序](https://lemon.qq.com/lab/app/Raycast.html)
+https://github.com/egoist/raycast-scripts
+
+## 替代工具
+https://hub.fastgit.org/oliverschwendener/ueli
+https://hub.fastgit.org/tinytacoteam/zazu
+https://hub.fastgit.org/KELiON/cerebro
+https://hub.fastgit.org/hainproject/hain
+https://github.com/hereappdev/Here-Plugins
+[Alfred的免费开源替代品Zazu - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/66481006)
+Fluent Search --windows store
+
+
+
+
+# 开发资源
+[FlatIcon](https://www.flaticon.com/)
+[uTools Github](https://github.com/uTools-Labs)
