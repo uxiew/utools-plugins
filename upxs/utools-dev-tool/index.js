@@ -22209,7 +22209,7 @@
                 Nc(this, "state", {
                     open: !1,
                     submiting: !1,
-                    agreeLicense: !1,
+                    agreeLicense: !0,
                     errors: null,
                     error: ""
                 }),
@@ -22287,7 +22287,7 @@
                 e.project !== this.props.project && this.setState({
                     open: !0,
                     submiting: !1,
-                    agreeLicense: !1,
+                    agreeLicense: !0,
                     errors: null,
                     error: ""
                 })
@@ -34510,6 +34510,7 @@
                         formProject: {
                             id: e.id,
                             enterprise_status: e.enterprise_status,
+                            plugin_id: e.plugin_id || e.id,
                             plugin_name: e.plugin_name || "",
                             description: e.description || "",
                             developer_type: e.developer_type || 0,

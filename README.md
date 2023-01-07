@@ -125,6 +125,29 @@ $ asar pack ./utools-app/app ./utools-app/app-new.asar && cp -fr ./utools-app/ap
         }
   ```
 
+4. 去除 developer 限定错误，搜索`（"developer" !== `
+  ```
+        registerDeveloperServices() {
+            const e = this.instance.developer
+              , i = this.instance.window;
+            t.ipcMain.on("developer.services", ((t,n,...o)=>{
+                // if ("developer" !== i.getPluginIdByWebContents(t.sender))
+                //     return void (t.returnValue = new Error("unauthorized"));
+                const s = e.developerServices[n];
+                "function" == typeof s ? s(t, ...o) : t.returnValue = new Error("未知接口")
+            }
+            )),
+            t.ipcMain.handle("developer.services", (async(t,n,...o)=>{
+                // if ("developer" !== i.getPluginIdByWebContents(t.sender))
+                //     throw new Error("unauthorized");
+                const s = e.developerServices[n];
+                if ("function" != typeof s)
+                    throw new Error("未知接口");
+                return await s(...o)
+            }
+            ))
+        }
+  ```
 
 
 # 插件开发
