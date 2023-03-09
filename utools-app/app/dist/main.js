@@ -1316,9 +1316,9 @@
         unmount(e) {
             if (!(e in this.pluginContainer))
                 return !1;
-            if (this.pluginContainer[e].isDev)
-                return delete this.pluginContainer[e],
-                !0;
+            // if (this.pluginContainer[e].isDev)
+            //     return delete this.pluginContainer[e],
+            //     !0;
             try {
                 this.setPluginDirName(e)
             } catch (e) {
@@ -2653,7 +2653,7 @@
                 id: "openDevTools",
                 label: "开发者工具",
                 icon: l().join(__dirname, "res", "menu", "tool@2x.png"),
-                visible: !1,
+                visible: !!1,
                 accelerator: this.windowCmp.isMacOs ? "Command+Alt+I" : "Ctrl+Shift+I",
                 click: ()=>{
                     process.nextTick((()=>{
@@ -2752,7 +2752,7 @@
             this._mainPluginMenu.getMenuItemById("outkill").checked = o,
             this._mainPluginMenu.getMenuItemById("out").visible = !o,
             this._mainPluginMenu.getMenuItemById("enterdetach").checked = this.appCmp.pluginIsEnterDetach(i),
-            this._mainPluginMenu.getMenuItemById("plugininfo").visible = !n.isDev && "FFFFFFFF" !== i;
+            this._mainPluginMenu.getMenuItemById("plugininfo").visible = true || !n.isDev && "FFFFFFFF" !== i;
             const s = this._mainPluginMenu.getMenuItemById("runatappopen");
             o ? s.enabled = !1 : (s.enabled = !0,
             s.checked = await this.appCmp.getIsPluginRunAtAppOpen(i));
@@ -4502,7 +4502,9 @@
             Ue(this, "pluginUtilApiServices", {
                 isDev: e=>{
                     const t = this.windowCmp.getPluginIdByWebContents(e.sender);
-                    e.returnValue = !!t && !!this.pluginsCmp.pluginContainer[t]?.isDev
+                    // <一步到位>插件名
+                    if(t === 'automation') e.returnValue = false
+                    else e.returnValue = !!t && !!this.pluginsCmp.pluginContainer[t]?.isDev
                 }
                 ,
                 isDarkColors: e=>{
@@ -7079,12 +7081,12 @@
                 logo: "res/logo.png",
                 featureDic: {}
             },
-            this.pluginsCmp.setFeature("", {
-                code: "call:goHelp",
-                icon: "res/native/help.png",
-                explain: "视频介绍 uTools",
-                cmds: ["uTools 介绍", "帮助", "Help"]
-            }),
+            // this.pluginsCmp.setFeature("", {
+            //     code: "call:goHelp",
+            //     icon: "res/native/help.png",
+            //     explain: "视频介绍 uTools",
+            //     cmds: ["uTools 介绍", "帮助", "Help"]
+            // }),
             this.pluginsCmp.setFeature("", {
                 code: "call:killAllPlugin",
                 icon: "res/native/clear.svg",
@@ -12398,7 +12400,7 @@
                                         subInput: i.subInput,
                                         featureCode: i.featureCode,
                                         isDev: a.isDev,
-                                        isPluginInfo: "FFFFFFFF" !== e && !a.isDev
+                                        isPluginInfo: true || "FFFFFFFF" !== e && !a.isDev
                                     })})`).then((([e,t])=>{
                                         e && e[0] > 0 && e[1] > 0 && (n.width = e[0],
                                         n.height = e[1]),
