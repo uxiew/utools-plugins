@@ -2711,7 +2711,19 @@
                         i && (e.checked ? this.appCmp.addPluginRunAtAppOpen(i) : this.appCmp.removePluginRunAtAppOpen(i))
                     }
                 }]
-            }, {
+            },{
+                id: "remove",
+                label: "删除插件",
+                icon: l().join(__dirname, "res", "menu", "close@2x.png"),
+                click: ()=>{
+                    process.nextTick((()=>{
+                        const t = this.windowCmp.getCurrentPluginId();
+                        this.windowCmp.pluginsCmp.unmount(t);
+                        this.windowCmp.destroyPlugin(t);
+                        this.windowCmp.refreshCmdSource();
+                    }))
+                }
+              }, {
                 type: "separator"
             }, {
                 id: "out",
@@ -2734,7 +2746,8 @@
                     }
                     ))
                 }
-            }];
+             }
+            ];
             this._mainPluginMenu = t.Menu.buildFromTemplate(i)
         }
         async mainWindowShowPluginMenu() {
@@ -2748,6 +2761,7 @@
             if (!n)
                 return;
             const o = this.appCmp.pluginIsOutKill(i);
+            this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
             this._mainPluginMenu.getMenuItemById("openDevTools").visible = !!n.isDev,
             this._mainPluginMenu.getMenuItemById("outkill").checked = o,
             this._mainPluginMenu.getMenuItemById("out").visible = !o,

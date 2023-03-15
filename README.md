@@ -195,7 +195,36 @@ unmount(e) {
             //     cmds: ["uTools 介绍", "帮助", "Help"]
             // }),
 ```
-- 显示关于插件
+
+- 添加一个"删除插件"
+方便快速删除
+```
+,{
+    id: "remove",
+    label: "删除插件",
+    icon: l().join(__dirname, "res", "menu", "close@2x.png"),
+    click: ()=>{
+        process.nextTick((()=>{
+            const t = this.windowCmp.getCurrentPluginId();
+            this.windowCmp.pluginsCmp.unmount(t);
+            this.windowCmp.destroyPlugin(t);
+            this.windowCmp.refreshCmdSource();
+        }))
+    }
+  }, {
+    type: "separator"
+}, {
+    id: "out",
+    label: "隐藏后台",
+```
+
+“插件应用市场”不显示该功能
+```
+const o = this.appCmp.pluginIsOutKill(i);
+this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
+```
+
+- 分离窗口时显示“关于插件应用”
 追加：`true ||`
 ```
      u.webContents.executeJavaScript(`window.initRender(${JSON.stringify({
