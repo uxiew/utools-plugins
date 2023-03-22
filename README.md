@@ -1,6 +1,6 @@
 # utools plugins
 
-该项目只做个人学习 utools 使用！请勿用于非法用途！任何非法用户本人在此申明：本人不承担任何责任！
+该项目只做个人学习使用！请勿用于非法用途！本人在此申明：本人不承担任何责任！
 
 # 目录结构
 
@@ -108,7 +108,7 @@ componentDidMount() {
 ```
 
 - 某些插件使用了`isDev`判断
-`dist/index.js`：防止官方借口调用错误，比如《一步到位》插件，
+`dist/index.js`：防止官方接口调用错误，比如《一步到位》插件，
 ```ts
 Ue(this, "pluginUtilApiServices", {
     isDev: e=>{
@@ -218,7 +218,7 @@ unmount(e) {
     label: "隐藏后台",
 ```
 
-“插件应用市场”不显示该功能
+- 不显示“插件应用市场”该功能
 ```
 const o = this.appCmp.pluginIsOutKill(i);
 this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
@@ -240,12 +240,13 @@ this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
 
 # 插件开发
 
-可以借助我的 asar 插件 对官方插件源码进行修改...
+可以借助我的 [asar 插件](https://github.com/ChandlerVer5/utools-plugin-asarer)，对官方插件源码进行查看、修改...
 
 非法插件会包含以下的字段
 
 ```json
 {
+  ...
   "unsafe": true,
   "main": "file:///Users/bing/Library/Application Support/uTools/plugins/unsafe-abe19672c5dd8c297c8a3028e1feea58.asar/index.html",
   "name": "oIeD1z8L",
@@ -283,17 +284,23 @@ asar p utools-dev-tool 85cdaab634dd9e3af404d827c53d2853.asar && mv -f 85cdaab634
 
 # 修改后可能的问题
 
-2. 内部会根据 window.utools.isDev() 判断是否使用内部测试网址：`http://open.test.u-tools.cn/` ，导致某些插件产生问题，例如 一步到位；
-3. 插件删除后打开还是会存在？why？我需要看看...
+~~*. 内部会根据`window.utools.isDev()`判断是否使用内部测试网址：`http://open.test.u-tools.cn/` ，导致某些插件产生问题，例如 一步到位；~~
 
-# TODO
+~~*. 插件删除后打开还是会存在？~~
 
-1. cdn;有些基于纯 Esbuild 来做线上 cjs -> esm 的 CDN 服务，比如 esm.sh 和 skypack:
-2. 快速查询 js、rust 语法
-3. xxxxx
-4. 学习英语的插件
-5. 查询成语，汉字，诗集
-6. 直接查询 gitee,github,gitlab 资源,做 sourceviewer
+# 想做的插件
+
+- cdn;有些基于纯 Esbuild 来做线上 cjs -> esm 的 CDN 服务，比如 esm.sh 和 skypack:
+- 快速查询 js、rust 语法文档--（目前在写的 devdocs-node 版，基本完成）
+- 学习英语的插件
+- 查询成语，汉字，诗集插件
+- 直接查询 gitee,github,gitlab 资源,做 sourceviewer
+- 项目源码分析插件
+- [keepass 密码管理插件](https://github.com/ChandlerVer5/utools-plugin-keepass/)
+- [chatgpt 插件](https://github.com/ChandlerVer5/utools-plugin-chat/)
+- [utools 旧版翻译插件](https://github.com/ChandlerVer5/utools-plugin-translater/)
+
+会陆续发布在 github 上
 
 # 其他工具 🔧
 
