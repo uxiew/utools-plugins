@@ -4,7 +4,7 @@
   "preload": "preload.js",
   "author": "ChandlerVer5",
   "homepage": "https://www.kancloud.cn/@chandler",
-  "description": "uTools react template 😄",
+  "description": "uTools template 😄",
   "development": {
     "main": "http://localhost:3000/"
   },
@@ -13,19 +13,13 @@
   },
   "features": [
     {
-      "code": "passwords",
-      "explain": "uTools 官方开源、安全、简洁的密码管理器",
+      "code": "dev",
+      "explain": "uTools 官方开源、安全、简洁的xxx",
       "cmds": [
-        "Passwords",
-        "密码管理"
+        "dev",
+        "upx",
+        "xxx"
       ]
     },
-    {
-      "code": "random",
-      "explain": "随机密码生成器",
-      "cmds": [
-        "随机密码"
-      ]
-    }
   ]
 }

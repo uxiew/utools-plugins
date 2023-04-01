@@ -2710,20 +2710,21 @@
                         const i = this.windowCmp.getPluginIdByWebContents(t.webContents);
                         i && (e.checked ? this.appCmp.addPluginRunAtAppOpen(i) : this.appCmp.removePluginRunAtAppOpen(i))
                     }
-                }]
-            },{
-                id: "remove",
-                label: "删除插件",
-                icon: l().join(__dirname, "res", "menu", "close@2x.png"),
-                click: ()=>{
-                    process.nextTick((()=>{
-                        const t = this.windowCmp.getCurrentPluginId();
-                        this.windowCmp.pluginsCmp.unmount(t);
-                        this.windowCmp.destroyPlugin(t);
-                        this.windowCmp.refreshCmdSource();
-                    }))
-                }
-              }, {
+                }, {
+                    id: "remove",
+                    label: "删除插件",
+                    icon: l().join(__dirname, "res", "menu", "close@2x.png"),
+                    click: ()=>{
+                        process.nextTick((()=>{
+                            const t = this.windowCmp.getCurrentPluginId();
+                            this.windowCmp.pluginsCmp.unmount(t);
+                            this.windowCmp.destroyPlugin(t);
+                            this.windowCmp.refreshCmdSource();
+                        }))
+                    }
+                  }
+                ]
+            }, {
                 type: "separator"
             }, {
                 id: "out",
