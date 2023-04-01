@@ -1,6 +1,7 @@
 # utools plugins
 
-该项目只做个人学习使用！请勿用于非法用途！本人在此申明：本人不承担任何责任！
+该项目只做个人学习使用！请勿用于非法用途！因使用本项目而产生的一切后果，均由您自行承担。
+本人在此申明：本人不承担任何责任！
 
 # 目录结构
 
@@ -123,7 +124,7 @@ Ue(this, "pluginUtilApiServices", {
     }
 ```
 
-- 所有关键字的插件列表
+- 《所有关键字》中插件列表
 `dist/plugins/v5/index.js` 中：`t.isDev` => `t.unsafe`
 ```ts
                 }), t.unsafe && e.createElement("span", {
@@ -131,7 +132,7 @@ Ue(this, "pluginUtilApiServices", {
 }, "!")))))), e.createElement("div", {
 ```
 
-- 超级面板中插件列表
+- 《超级面板》中插件列表
 `dist/voice/index.js` 中：`a.isDev` => `a.unsafe`
 ```ts
                 }, e.createElement("div", null, this.cmdLabel(t.cmd, t.indexAt, l)), a.unsafe && e.createElement("div", {
@@ -139,7 +140,7 @@ Ue(this, "pluginUtilApiServices", {
 }, e.createElement("span", null, "!"))))
 ```
 
-- ”账号与数据“中的插件列表
+- 《账号与数据》中插件列表
 `n.isDev` =>  `!!n.pluginLogo.search('unsafe')`
 ```ts
         }, e.createElement(dh.Z, null))), e.createElement(Hd, {
