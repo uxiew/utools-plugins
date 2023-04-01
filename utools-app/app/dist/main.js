@@ -2681,7 +2681,7 @@
                 click: ()=>{
                     process.nextTick((()=>{
                         const e = this.windowCmp.getCurrentPluginId();
-                        e && this.windowCmp.ffffffff.goInstalledPluginInfo(e)
+                        e && this.windowCmp.autoLoadPlugin("FFFFFFFF", "installed", "我的插件应用", "@" + e)
                     }
                     ))
                 }

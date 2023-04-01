@@ -256,7 +256,21 @@ this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
 ```
 
 - 新增“查看关键字”菜单
+并且限制不在《插件市场》显示
 ```
+ }, {
+    id: "pluginkeys",
+    label: "查看关键字",
+    icon: l().join(__dirname, "res", "menu", "info@2x.png"),
+    click: ()=>{
+        process.nextTick((()=>{
+            const e = this.windowCmp.getCurrentPluginId();
+            e && this.windowCmp.autoLoadPlugin("FFFFFFFF", "installed", "我的插件应用", "@" + e)
+        }
+        ))
+    }
+}, {
+
 const o = this.appCmp.pluginIsOutKill(i);
 this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
 ```
