@@ -40877,7 +40877,6 @@
             }
             render() {
                 const {accountInfo: t, itemData: n, isInstalling: r} = this.props;
-                        console.log(n,)
                 return e.createElement(Dd, null, e.createElement(ch, null, e.createElement(vi, {
                     variant: "square",
                     src: n.pluginLogo

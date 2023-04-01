@@ -227,7 +227,7 @@ unmount(e) {
             // }),
 ```
 
-- 添加一个"删除插件"
+- 添加一个"删除插件"菜单
 方便快速删除
 ```
 ,{
@@ -249,13 +249,19 @@ unmount(e) {
     label: "隐藏后台",
 ```
 
-- 不显示“插件应用市场”该功能
+*. 《插件市场》不显示”删除该插件“菜单
 ```
 const o = this.appCmp.pluginIsOutKill(i);
 this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
 ```
 
-- 分离窗口时显示“关于插件应用”
+- 新增“查看关键字”菜单
+```
+const o = this.appCmp.pluginIsOutKill(i);
+this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
+```
+
+- 分离窗口时显示“关于应用”菜单
 追加：`true ||`
 ```
      u.webContents.executeJavaScript(`window.initRender(${JSON.stringify({

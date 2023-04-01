@@ -2665,7 +2665,7 @@
                 type: "separator"
             }, {
                 id: "plugininfo",
-                label: "关于插件应用",
+                label: "关于该应用",
                 icon: l().join(__dirname, "res", "menu", "info@2x.png"),
                 click: ()=>{
                     process.nextTick((()=>{
@@ -2675,8 +2675,8 @@
                     ))
                 }
             }, {
-                id: "plugininfo",
-                label: "查看插件关键字",
+                id: "pluginkeys",
+                label: "查看关键字",
                 icon: l().join(__dirname, "res", "menu", "info@2x.png"),
                 click: ()=>{
                     process.nextTick((()=>{
@@ -2773,12 +2773,13 @@
             if (!n)
                 return;
             const o = this.appCmp.pluginIsOutKill(i);
-            this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
             this._mainPluginMenu.getMenuItemById("openDevTools").visible = !!n.isDev,
             this._mainPluginMenu.getMenuItemById("outkill").checked = o,
             this._mainPluginMenu.getMenuItemById("out").visible = !o,
             this._mainPluginMenu.getMenuItemById("enterdetach").checked = this.appCmp.pluginIsEnterDetach(i),
-            this._mainPluginMenu.getMenuItemById("plugininfo").visible = true || !n.isDev && "FFFFFFFF" !== i;
+            this._mainPluginMenu.getMenuItemById("plugininfo").visible = true,
+            this._mainPluginMenu.getMenuItemById("pluginkeys").visible = "FFFFFFFF" !== i,
+            this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i;
             const s = this._mainPluginMenu.getMenuItemById("runatappopen");
             o ? s.enabled = !1 : (s.enabled = !0,
             s.checked = await this.appCmp.getIsPluginRunAtAppOpen(i));
