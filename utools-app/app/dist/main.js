@@ -2675,6 +2675,17 @@
                     ))
                 }
             }, {
+                id: "plugininfo",
+                label: "查看插件关键字",
+                icon: l().join(__dirname, "res", "menu", "info@2x.png"),
+                click: ()=>{
+                    process.nextTick((()=>{
+                        const e = this.windowCmp.getCurrentPluginId();
+                        e && this.windowCmp.ffffffff.goInstalledPluginInfo(e)
+                    }
+                    ))
+                }
+            }, {
                 label: "插件应用设置",
                 icon: l().join(__dirname, "res", "menu", "setting@2x.png"),
                 submenu: [{
@@ -2712,7 +2723,7 @@
                     }
                 }, {
                     id: "remove",
-                    label: "删除插件",
+                    label: "删除该插件",
                     icon: l().join(__dirname, "res", "menu", "close@2x.png"),
                     click: ()=>{
                         process.nextTick((()=>{

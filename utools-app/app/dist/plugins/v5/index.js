@@ -40877,13 +40877,14 @@
             }
             render() {
                 const {accountInfo: t, itemData: n, isInstalling: r} = this.props;
+                        console.log(n,)
                 return e.createElement(Dd, null, e.createElement(ch, null, e.createElement(vi, {
                     variant: "square",
                     src: n.pluginLogo
                 }, e.createElement(dh.Z, null))), e.createElement(Hd, {
-                    primary: n.isDev ? e.createElement("span", null, n.pluginName, e.createElement("span", {
+                    primary: n.pluginLogo.search('unsafe') > 0 ? e.createElement("span", null, n.pluginName, e.createElement("span", {
                         className: "account-db-dev-flag"
-                    }, "dev")) : e.createElement("span", null, n.pluginName),
+                    }, "!")) : e.createElement("span", null, n.pluginName),
                     secondary: n.num + " 份文档"
                 }), e.createElement("div", {
                     className: "account-db-db-plugin-download"
@@ -41598,9 +41599,9 @@
                     src: t.logo
                 })), e.createElement(Hd, {
                     primary: t.pluginName
-                }), t.isDev && e.createElement("span", {
+                }), t.unsafe && e.createElement("span", {
                     className: "feature-cmds-menus-dev"
-                }, "dev")))))), e.createElement("div", {
+                }, "!")))))), e.createElement("div", {
                     ref: e=>{
                         this.contentRef = e
                     }

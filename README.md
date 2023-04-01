@@ -80,6 +80,9 @@ primary: e.createElement("div", {
 > 注意：可能出现格式化的错误，请搜索并更正`let$`为`let $` ！
 
 2. **开放所有插件的 DevTool 调试功能**
+> 所有 非官方商店插件代码更改：`t.isDev` => `t.unsafe`。
+
+> 所有 非官方商店插件标识更改：`dev` =>  `!`。
 
 - `dist/main.js` mount 函数中：**添加的 `n.isDev = true` 是重点**
 
@@ -101,13 +104,14 @@ componentDidMount() {
               let r;
 ```
 
-- `dist/index.js` 主搜索框的 Dev 显示：调整 `i.isDev` 为 `i['name'].startsWith("dev_")` 判断区分 开发中的 插件 及其显示（暂时解决方案）。
+- 区分正在开发中的插件，显示`dev`标识
+`dist/index.js` 主搜索框的 Dev 显示：调整 `i.isDev` 为 `i['name'].startsWith("dev_")`。
 
 ```ts
   }, this.cmdLabel(t.cmd, t.indexAt, a), i.name.startsWith('dev_') && e.createElement("span", {
 ```
 
-- 某些插件使用了`isDev`判断
+- 某些插件使用了`isDev`判断接口调用
 `dist/index.js`：防止官方接口调用错误，比如《一步到位》插件，
 ```ts
 Ue(this, "pluginUtilApiServices", {
@@ -117,6 +121,32 @@ Ue(this, "pluginUtilApiServices", {
         if(t === 'automation') e.returnValue = false
         else e.returnValue = !!t && !!this.pluginsCmp.pluginContainer[t]?.isDev
     }
+```
+
+- 所有关键字的插件列表
+`dist/plugins/v5/index.js` 中：`t.isDev` => `t.unsafe`
+```ts
+                }), t.unsafe && e.createElement("span", {
+    className: "feature-cmds-menus-dev"
+}, "!")))))), e.createElement("div", {
+```
+
+- 超级面板中插件列表
+`dist/voice/index.js` 中：`a.isDev` => `a.unsafe`
+```ts
+                }, e.createElement("div", null, this.cmdLabel(t.cmd, t.indexAt, l)), a.unsafe && e.createElement("div", {
+    className: "dev"
+}, e.createElement("span", null, "!"))))
+```
+
+- ”账号与数据“中的插件列表
+`n.isDev` =>  `!!n.pluginLogo.search('unsafe')`
+```ts
+        }, e.createElement(dh.Z, null))), e.createElement(Hd, {
+primary: n.pluginLogo.search('unsafe') > 0 ? e.createElement("span", null, n.pluginName, e.createElement("span", {
+    className: "account-db-dev-flag"
+}, "!")) : e.createElement("span", null, n.pluginName),
+secondary: n.num + " 份文档"
 ```
 
 - 防止删除插件不了
