@@ -15,9 +15,9 @@
 
 # 文档查看
 
-[修改源码](./docs/crack.md)
-[Debug](./docs/DEBUG.md)
-[TODO](./docs/DEBUG.md)
+- [修改源码](./docs/crack.md)
+- [Debug](./docs/DEBUG.md)
+- [TODO](./docs/DEBUG.md)
 
 # 其他可平替工具 🔧
 
