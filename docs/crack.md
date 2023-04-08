@@ -305,4 +305,4 @@ this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
 
 ~~\*. 插件删除后打开还是会存在？~~
 
-还有其他问题，可提交 issue
+🙏
