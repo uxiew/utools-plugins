@@ -9897,13 +9897,24 @@
                 }
                 ,
                 fetchUserPayments: async e=>{
-                    e.startsWith("dev_") && (e = e.replace("dev_", ""));
+                   return [{
+                        "order_id": "ZsVSwEDoR7PPs6vWdAGplEpEpNjn8xb4", // utools 订单号
+                        "out_order_id": "", // 外部订单号
+                        "open_id": "a331127d654761ac91d086b942aae7b6",  // uTools 用户 ID, 对于此插件应用不变且唯一
+                        "pay_fee": 10, // 支付金额（分）
+                        "body": "会员1年", // 支付内容
+                        "attach": "", // 附加数据
+                        "goods_id": "vRTssLNii4kJe682FaDTUVi7zvEVTKZx", // 商品 ID
+                        "paid_at": "2023-04-13 16:55:26", // 支付时间
+                        "created_at": "2023-04-13 16:55:40" // 订单生成时间
+                      }]
+                    /*e.startsWith("dev_") && (e = e.replace("dev_", ""));
                     const t = this.accountCmp.getAccountToken();
                     if (!t)
                         throw new Error("未登录 uTools 帐号");
                     return await g(this.config.paymentsURL + t, {
                         plugin_name: e
-                    })
+                    })*/
                 }
                 ,
                 isPermanentUser: (e,t)=>{
