@@ -1,9 +1,8 @@
 import React from 'react';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import './index.scss';
 
 const themeDic = {
-  light: createTheme({
+  light: {
     typography: {
       fontFamily: 'system-ui'
     },
@@ -17,8 +16,8 @@ const themeDic = {
         }
       }
     }
-  }),
-  dark: createTheme({
+  },
+  dark: {
     typography: {
       fontFamily: 'system-ui'
     },
@@ -32,7 +31,7 @@ const themeDic = {
         }
       }
     }
-  })
+  }
 };
 
 export default class App extends React.Component {
