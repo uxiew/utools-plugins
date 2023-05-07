@@ -1,6 +1,6 @@
 # 插件开发
 
-可以借助我的 [asar 插件](https://github.com/ChandlerVer5/utools-plugin-asarer)，对官方插件源码进行查看、修改...
+可以借助我的[asar插件](https://github.com/ChandlerVer5/utools-plugin-asarer)，对官方插件源码进行查看、修改...
 
 ## 设置
 

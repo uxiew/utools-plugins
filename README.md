@@ -1,7 +1,7 @@
 # utools plugins
 
-该项目只做个人学习使用！请勿用于非法用途！因使用本项目而产生的一切后果，均由您自行承担。
-本人在此申明：本人不承担任何责任！
+本人在此申明：该项目只做个人学习使用！请勿用于非法用途！因使用本项目而产生的一切后果，均由您自行承担。
+本人不承担任何责任！
 
 # 目录结构
 
@@ -15,9 +15,10 @@
 
 # 文档查看
 
-- [修改源码](./docs/crack.md)
+- [CRACK](./docs/Crack.md)
 - [Debug](./docs/DEBUG.md)
-- [TODO](./docs/DEBUG.md)
+- [Develop Plugin](./docs/Plugin.md)
+- [TODO](./docs/TODO.md)
 
 # 其他可平替工具 🔧
 
