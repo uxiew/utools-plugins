@@ -31,7 +31,7 @@ onExtensionMessage: (e) => {
 ## 使用
 
 1. 安装 chrome 插件
-   考虑过 [nativeMessage](https://developer.chrome.com/docs/extensions/reference/runtime/#method-sendNativeMessage) 但是 electron 应用还不能很好支持。
+   考虑过 [Native messaging](https://developer.chrome.com/docs/extensions/mv3/nativeMessaging/) 但是 electron 应用还不能很好支持。
 
 2. 开发的插件中
    参数 `message` 消息 来自 chrome 插件
