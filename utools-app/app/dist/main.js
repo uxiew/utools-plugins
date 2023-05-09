@@ -20,8 +20,11 @@
         o: (e,t)=>Object.prototype.hasOwnProperty.call(e, t)
     };
     const t = require("electron")
-      , i = require("electron-settings");
+      , i = require("electron-settings")
+      , ws = require("./ws.js");
     var n = e.n(i);
+    ws.startWSS();
+    
     const o = class {
         constructor() {
             this.services = {}
@@ -2546,7 +2549,7 @@
                 click: ()=>{
                     process.nextTick((()=>{
                         t.app.relaunch(),
-                        t.app.emit("exit")
+                        t.app.emit("exit");
                     }
                     ))
                 }
@@ -4894,6 +4897,7 @@
         }
         initGlobalEvent() {
             t.app.on("exit", (()=>{
+                ws.close();
                 this._exitApp || (this._exitApp = !0,
                 t.app.removeAllListeners("before-quit"),
                 this.windowCmp.isLinux || I().stopClipboardWatch(),
@@ -11949,6 +11953,8 @@
                                         return;
                                     const s = e.webContents.id;
                                     let r = this.triggerPluginViewEventQueues[s];
+                                    const j = this.pluginsCmp.pluginContainer[this.getPluginIdByWebContents(e.webContents)];
+                                    
                                     if (r || (r = this.triggerPluginViewEventQueues[s] = []),
                                     r.length > 0 && "PluginOut" === i && r.find((e=>["PluginOut", "PluginEnter", "PluginReady"].includes(e))))
                                         return "function" == typeof o && o(),
@@ -11968,7 +11974,17 @@
                                         }
                                         ));
                                     r.push(i);
-                                    const a = ` if(window.utools && window.utools.__event__ && typeof window.utools.__event__.on${i} === 'function' ) {\n      try { window.utools.__event__.on${i}(${null == n ? "" : JSON.stringify(n)}) } catch(e) {} }`;
+                                    if (i === 'PluginReady') {
+                                      ws.listen(j.name, (msg) =>
+                                        e.webContents.executeJavaScript(
+                                          `if(window.utools && window.utools.__event__ && typeof window.utools.__event__.onExtensionMessage === 'function' ) { try { window.utools.__event__.onExtensionMessage(${msg})} catch(e) {} }`
+                                        )
+                                      );
+                                    }
+                                    if(i === "PluginOut"){
+                                        ws.removeListen(j.name)
+                                    }
+                                    const a = `if(window.utools && window.utools.__event__ && typeof window.utools.__event__.on${i} === 'function' ) {\n try { window.utools.__event__.on${i}(${null == n ? "" : JSON.stringify(n)}) } catch(e) {} }`;
                                     e.webContents.executeJavaScript(a).then((()=>{
                                         const e = r.indexOf(i);
                                         -1 !== e && r.splice(e, 1),
@@ -11976,9 +11992,9 @@
                                     }
                                     ))
                                 }
-                                displayPlugin(e, t, i, n, o=!1) {
-                                    const s = this.pluginIsEnterDetach(t.name)
-                                      , r = this.getEnterPluginWinHeight(t.name);
+                                displayPlugin(e, j, i, n, o=!1) {
+                                    const s = this.pluginIsEnterDetach(j.name)
+                                      , r = this.getEnterPluginWinHeight(j.name);
                                     let a = !1;
                                     "text" === n.type && n.subInputInput && (a = n.subInputInput);
                                     const c = {
@@ -11991,7 +12007,7 @@
                                             ...this.display.mainWindowBounds
                                         };
                                         return i.height = r,
-                                        void this.autoDetachPlugin(t.name, i, e, (t=>{
+                                        void this.autoDetachPlugin(j.name, i, e, (t=>{
                                             o ? this.triggerPluginViewEvent(e, "PluginReady", null, (()=>{
                                                 this.triggerPluginViewEvent(e, "PluginEnter", c, (()=>{
                                                     a && this.detachSubInputAutoInput(t, a),

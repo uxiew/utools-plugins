@@ -105,7 +105,7 @@ Ue(this, "pluginUtilApiServices", {
     isDev: e=>{
         const t = this.windowCmp.getPluginIdByWebContents(e.sender);
         // <一步到位>插件名
-        if(t === 'automation') e.returnValue = false
+        if (t === 'automation') e.returnValue = false
         else e.returnValue = !!t && !!this.pluginsCmp.pluginContainer[t]?.isDev
     }
 ```
@@ -284,6 +284,8 @@ this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
 })})`).then((([e,t])=>{
 ```
 
+# 与 chrome extension 连通
+
 # 其他
 
 如果自己开发的插件（未发布到市场），非法插件会包含以下的字段
@@ -299,10 +301,8 @@ this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
 }
 ```
 
-# 修改后可能的问题
+# 修改后可能的问题 🙏
 
 ~~\*. 内部会根据`window.utools.isDev()`判断是否使用内部测试网址：`http://open.test.u-tools.cn/` ，导致某些插件产生问题，例如 一步到位；~~
 
 ~~\*. 插件删除后打开还是会存在？~~
-
-🙏
