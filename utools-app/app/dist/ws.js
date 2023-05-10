@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 const elc = require('electron');
 const url = require('url');
 
-let ws = null,
+let ws = null, 
   messageEvts = Object.create(null);
 
 function run(msg) {
@@ -20,16 +20,13 @@ exports.startWSS = (port) => {
     if (pathname === '/utools') {
       // ws.on('error', (error) => run(error));
 
-      /* ws.on('close', () => {
-        messageEvts.call(null, 'close');
-        // need ws and messageEvts when it restart
-        // messageEvts = Object.create(null)
-        // ws = null;
-      }); */
+      // ws.on('close', () => {
+      // }); 
 
       ws.on('message', (msg) => run(msg.toString()));
     }
   });
+  
 };
 
 exports.close = () => {
@@ -41,7 +38,18 @@ exports.removeListen = (name) => {
   delete messageEvts[name];
 };
 
+// ----
 exports.listen = (name, onMessage) => {
   if (!name || typeof onMessage !== 'function') return;
   messageEvts[name] = onMessage;
 };
+
+exports.send = (data) => {
+  if (!ws) return;
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify(data));
+  }
+};
+
+
+

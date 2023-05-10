@@ -23,6 +23,9 @@ window.utools = Object.freeze({
   onExtensionMessage: (e) => {
     'function' == typeof e && (window.utools.__event__.onExtensionMessage = e);
   },
+  sendExtensionMessage: (e) => {
+    ipcInvoke('wsSendMessage', e)
+  },
   onPluginReady: (e) => {
     'function' == typeof e && (window.utools.__event__.onPluginReady = e);
   },
