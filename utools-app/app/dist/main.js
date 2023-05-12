@@ -3820,9 +3820,10 @@
       this._browserWindow.setContentSize(e, t)
     }
     async goto(...e) {
-      if (!e[0] || "string" != typeof e[0] || !/^(?:https?|file):\/\//.test(e[0]))
+      // support html string
+      if (!e[0] || "string" != typeof e[0] || !/^(?:https?|file):\/\/|data:text/.test(e[0]))
         throw new Error("url error");
-      let t;
+      let t;g
       this._isShow && !this._isFirstGoto && (this._isFirstGoto = !0,
         this._browserWindow.setTitle(e[0]),
         this._browserWindow.show());
