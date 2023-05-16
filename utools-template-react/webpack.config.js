@@ -72,24 +72,6 @@ module.exports = (_, argv) => {
               plugins: [
                 ['@babel/plugin-proposal-decorators', { legacy: true }],
                 '@babel/plugin-proposal-class-properties',
-                [
-                  'import',
-                  {
-                    libraryName: '@mui/material',
-                    libraryDirectory: 'esm',
-                    camel2DashComponentName: false
-                  },
-                  'material'
-                ],
-                [
-                  'import',
-                  {
-                    libraryName: '@mui/icons-material',
-                    libraryDirectory: 'esm',
-                    camel2DashComponentName: false
-                  },
-                  'icons'
-                ],
                 // this code will evaluate to "false" when
                 // "isDevelopment" is "false"
                 // otherwise it will return the plugin
