@@ -1,4 +1,5 @@
 'use strict';
+const apiVer5 = require('../ver5/api');
 const { ipcRenderer } = require('electron');
 const ws = require('./ws.js');
 
@@ -19,13 +20,8 @@ const ipcInvoke = async (e, n) => {
 };
 
 window.utools = Object.freeze({
+  ...apiVer5,
   __event__: {},
-  onExtensionMessage: (e) => {
-    'function' == typeof e && (window.utools.__event__.onExtensionMessage = e);
-  },
-  sendExtensionMessage: (e) => {
-    ipcInvoke('wsSendMessage', e)
-  },
   onPluginReady: (e) => {
     'function' == typeof e && (window.utools.__event__.onPluginReady = e);
   },
@@ -50,10 +46,10 @@ window.utools = Object.freeze({
   setSubInput: (e, n = '', t = !0) =>
     'function' == typeof e &&
     ((window.utools.__event__.onSubInputChange = e),
-    ipcSendSync('setSubInput', {
-      placeholder: n,
-      isFocus: t
-    })),
+      ipcSendSync('setSubInput', {
+        placeholder: n,
+        isFocus: t
+      })),
   removeSubInput: () => (
     delete window.utools.__event__.onSubInputChange,
     ipcSendSync('removeSubInput')
@@ -66,9 +62,9 @@ window.utools = Object.freeze({
     'function' == typeof t &&
       (window.utools.__event__.createBrowserWindowCallback = t);
     const o = ipcSendSync('createBrowserWindow', {
-        url: e,
-        options: n
-      }),
+      url: e,
+      options: n
+    }),
       i = o.id;
     return (
       o.methods.forEach((e) => {
@@ -232,9 +228,9 @@ window.utools = Object.freeze({
       'simulateMouseClick',
       'number' == typeof e && 'number' == typeof n
         ? {
-            x: e,
-            y: n
-          }
+          x: e,
+          y: n
+        }
         : void 0
     );
   },
@@ -243,9 +239,9 @@ window.utools = Object.freeze({
       'simulateMouseRightClick',
       'number' == typeof e && 'number' == typeof n
         ? {
-            x: e,
-            y: n
-          }
+          x: e,
+          y: n
+        }
         : void 0
     );
   },
@@ -254,9 +250,9 @@ window.utools = Object.freeze({
       'simulateMouseDoubleClick',
       'number' == typeof e && 'number' == typeof n
         ? {
-            x: e,
-            y: n
-          }
+          x: e,
+          y: n
+        }
         : void 0
     );
   },
@@ -313,8 +309,8 @@ window.utools = Object.freeze({
   dbStorage: Object.freeze({
     setItem: (e, n) => {
       const t = {
-          _id: String(e)
-        },
+        _id: String(e)
+      },
         o = ipcSendSync('dbGet', t._id);
       o && (t._rev = o._rev), (t.value = n);
       const i = ipcSendSync('dbPut', t);
@@ -335,6 +331,6 @@ window.utools = Object.freeze({
   }
 });
 
-window.addEventListener('error', function (e) {
+window.addEventListener('error', function(e) {
   ipcSend('reportExceptionError', e.error.stack);
 });

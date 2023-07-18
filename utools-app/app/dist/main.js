@@ -19,6 +19,7 @@
     ,
     o: (e, t) => Object.prototype.hasOwnProperty.call(e, t)
   };
+
   const t = require("electron")
     , i = require("electron-settings")
     , ws = require("./ws.js");
@@ -1784,10 +1785,9 @@
             e.returnValue = await this.bulkDocs(t, i)
           }
           ,
-          dbAllDocs: async (e, t, i) => {
-            e.returnValue = await this.allDocs(t, i)
-          }
-          ,
+          dbAllDocs: async (event, t, i) => {
+            event.returnValue = await this.allDocs(t, i)
+          },
           dbPostAttachment: async (e, t, i) => {
             const { docId: n, attachment: o, type: s } = i;
             e.returnValue = await this.postAttachment(t, n, o, s)
@@ -1896,9 +1896,9 @@
         }
       }
     }
-    async get(e, t) {
+    async get(e, a) {
       try {
-        const i = await this.pouchDB.get(this.getDocId(e, t));
+        const i = await this.pouchDB.get(this.getDocId(e, a));
         return i._id = this.replaceDocId(e, i._id),
           i
       } catch (e) {
@@ -2731,8 +2731,8 @@
             click: () => {
               process.nextTick((() => {
                 const t = this.windowCmp.getCurrentPluginId();
-                this.windowCmp.pluginsCmp.unmount(t);
                 this.windowCmp.destroyPlugin(t);
+                this.windowCmp.pluginsCmp.unmount(t);
                 this.windowCmp.refreshCmdSource();
               }))
             }
@@ -3823,7 +3823,7 @@
       // support html string
       if (!e[0] || "string" != typeof e[0] || !/^(?:https?|file):\/\/|data:text/.test(e[0]))
         throw new Error("url error");
-      let t;g
+      let t; g
       this._isShow && !this._isFirstGoto && (this._isFirstGoto = !0,
         this._browserWindow.setTitle(e[0]),
         this._browserWindow.show());
@@ -9557,12 +9557,14 @@
       }
       )),
         t.ipcMain.on("ffffffff.services", ((t, n, ...o) => {
-          t.sender === i.ffffffff.webContents ? e[n](t, ...o) : t.returnValue = new Error("unauthorized")
+          // t.sender === i.ffffffff.webContents ?
+          e[n](t, ...o)
+          // : t.returnValue = new Error("unauthorized")
         }
         )),
         t.ipcMain.handle("ffffffff.services", (async (t, n, ...o) => {
-          if (t.sender !== i.ffffffff.webContents)
-            throw new Error("unauthorized");
+          /*if (t.sender !== i.ffffffff.webContents)
+            throw new Error("unauthorized");*/
           return await e[n](...o)
         }
         ))
@@ -12822,11 +12824,11 @@
                 }
                 ), !0),
                 this.container.set("database", (() => {
-                  const e = this.container.get("config")
+                  const config = this.container.get("config")
                     , t = this.container.get("window")
-                    , i = this.container.get("account")
+                    , account = this.container.get("account")
                     , n = this.container.get("report");
-                  return new Pe(e.get("path.database"), e.get("database"), t, i, n)
+                  return new Pe(config.get("path.database"), config.get("database"), t, account, n)
                 }
                 ), !0),
                 this.container.set("voice", (() => {
@@ -12853,21 +12855,21 @@
                 }
                 ), !0),
                 this.container.set("app", (() => {
-                  const e = this.container.get("config").get("app")
-                    , t = this.container.get("plugins")
-                    , i = this.container.get("window")
-                    , n = this.container.get("voice")
-                    , o = this.container.get("database")
+                  const config = this.container.get("config").get("app")
+                    , plugins = this.container.get("plugins")
+                    , window = this.container.get("window")
+                    , voice = this.container.get("voice")
+                    , database = this.container.get("database")
                     , s = this.container.get("screencapture")
                     , r = this.container.get("screencolorpicker")
                     , a = this.container.get("helpboot");
-                  return new je(e, t, i, n, o, s, r, a)
+                  return new je(config, plugins, window, voice, database, s, r, a)
                 }
                 ), !0),
                 this.container.set("featurehotkey", (() => {
-                  const e = this.container.get("window")
-                    , t = this.container.get("database");
-                  return new Je(e, t)
+                  const window = this.container.get("window")
+                    , database = this.container.get("database");
+                  return new Je(window, database)
                 }
                 ), !0),
                 this.container.set("autoupdate", (() => {

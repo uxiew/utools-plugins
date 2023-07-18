@@ -20,7 +20,15 @@
 - [Develop Plugin](./docs/Plugin.md)
 - [TODO](./docs/TODO.md)
 
-# 其他可平替工具 🔧
+# 可平替工具 🔧
+
+## raycast
+
+https://www.raycast.com/
+
+[Raycast 搜索和启动软件程序](https://lemon.qq.com/lab/app/Raycast.html)
+
+https://github.com/egoist/raycast-scripts
 
 ## 猿如意
 
@@ -46,14 +54,6 @@ https://github.com/rubickCenter/rubick
 ## cerebro
 
 https://github.com/cerebroapp/cerebro
-
-## raycast
-
-https://www.raycast.com/
-
-[Raycast 搜索和启动软件程序](https://lemon.qq.com/lab/app/Raycast.html)
-
-https://github.com/egoist/raycast-scripts
 
 ## 替代工具
 

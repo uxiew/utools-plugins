@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 const elc = require('electron');
 const url = require('url');
 
-let ws = null, 
+let ws = null,
   messageEvts = Object.create(null);
 
 function run(msg) {
@@ -19,14 +19,11 @@ exports.startWSS = (port) => {
     ws = wst;
     if (pathname === '/utools') {
       // ws.on('error', (error) => run(error));
-
       // ws.on('close', () => {
-      // }); 
-
+      // });
       ws.on('message', (msg) => run(msg.toString()));
     }
   });
-  
 };
 
 exports.close = () => {
@@ -50,6 +47,3 @@ exports.send = (data) => {
     ws.send(JSON.stringify(data));
   }
 };
-
-
-
