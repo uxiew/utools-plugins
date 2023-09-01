@@ -1087,12 +1087,12 @@
               for (const t of e.plugins)
                 t.name in this.pluginContainer && !this.pluginUpdateSet.includes(t.name) && this.pluginUpdateSet.push(t.name);
             /*  chandlerver5 if (e.illegal_plugins?.length > 0)
-                for (const t of e.illegal_plugins) {
-                    const e = this.pluginContainer[t];
-                    e && (e.illegal = !0,
-                    this.setPluginDirNameIllegal(t))
-                }
-                */
+              for (const t of e.illegal_plugins) {
+                  const e = this.pluginContainer[t];
+                  e && (e.illegal = !0,
+                  this.setPluginDirNameIllegal(t))
+              }
+              */
           }
           )).catch((e => {
             402 === e.code && e.message.startsWith("https://") && this.emit("appupdate", e.message)
