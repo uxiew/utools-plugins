@@ -1,143 +1,146 @@
 # 修改 utools 源码
 
+## 4.0
+
+> 注意：utools 从 4.0 开始，增加了检测修改机制，导致直接更改源码的方式不再生效！
+
+其中 addon 插件中，在被加载时，会自动检测 asar 文件的完整性，所以导致无法更改源码。
+
+其中增加的方法：
+
+```
+compareServerSignature: compareYuanliaoSignature（3.0）
+```
+
+> `utools-app/app/node_modules` 中保留着需要的库
+
+## 先行准备
+
 1. 安装 asar 模块：
 
-  ```
-  $ npm install -g @electron/asar
-  ```
+```
+$ bun add -g @electron/asar
+```
 
 2. 解压一个包：
    注意需要拷贝 utools 下`app.asar`、`app.asar.unpacked`目录，然后放置在同一目录下。
 
-  ```
-  $ mkdir ./utools-app && cp -r /Applications/uTools.app/Contents/Resources/app.asar* ./utools-app
-  $ asar extract ./utools-app/app.asar ./utools-app/app
-  ```
+```
+$ mkdir ./utools-app && cp -r /Applications/uTools.app/Contents/Resources/app.asar* ./utools-app
+$ asar extract ./utools-app/app.asar ./utools-app/app
+```
 
 3. 修改内容(查看如下)
 
 4. 再压缩回去
 
-  ```
-  $ asar pack ./utools-app/app ./utools-app/app-new.asar && cp -fr ./utools-app/app-new.asar  /Applications/uTools.app/Contents/Resources/app.asar
-  ```
+```
+$ asar pack ./utools-app/app ./utools-app/app-new.asar && cp -fr ./utools-app/app-new.asar  /Applications/uTools.app/Contents/Resources/app.asar
+```
 
-  用新的包替换原来的!
-
+用新的包替换原来的!
 
 ## 修改内容
 
 借助 chrome DevTools ，修改里面的内容：
 
-1. **取消非官方商店插件的验证及运行限制**
-  `dist/main.js` 修改如下两处为：
-  ```ts
-  /*if (s.illegal)
-                                      return new t.Notification({
-                                          title: "uTools 安全检测",
-                                          body: "当前安装的插件应用「" + s.pluginName + "」未通过安全验证，无法运行"
-                                      }).show(),
-                                      this.destroyPlugin(e),
-                                      void this.emptyRecovery();*/ // chandlerver5
-  ```
+1. 开启会员专项
+   `dist/main.js`：`getAccountInfo`函数调整返回值。
 
-  ```ts
-  /* if (e.illegal_plugins?.length > 0)
-                          for (const t of e.illegal_plugins) {
-                              const e = this.pluginContainer[t];
-                              e && (e.illegal = !0,this.setPluginDirNameIllegal(t))
-                          }
-                          */
-  ```
-
-  `dist/plugins/v5/index.js` 去除 ‘未通过安全验证，无法运行’ 提示
-  ```ts
-  primary: e.createElement("div", {
-                        className: "installed-plugin-name"
-                    }, n.pluginName, e.createElement("span", null, "v", n.version), n.unsafe && e.createElement(ha, {
-                        title: "非安全方式安装"
-                    }, e.createElement(dh.Z, {
-                        color: "warning"
-                    }))),
-  ```
-
-  > 注意：可能出现格式化的错误，请搜索并更正`let$`为`let $` ！
+```js
+  getAccountInfo() {
+          /*
+          ...
+          */
+          return {
+              cellphone: '1895308808x',
+              avatar: 'https://www.topthink.com/uploads/avatar/20221204/2b25dd261d384a33024b6dac9e327bf2.png',
+              nickname: '💰😄',
+              uid: 'chandlerver5',
+              db_secrect_key: 'chandlerver5',
+              // 数据库密钥
+              db_sync: 0,
+              // 账户数据是否开启同步
+              type: 1,
+              // 会员 1 === t.type ? "member" : "user"
+              expired_at: "10000610064",
+              // 会员到期日
+              token: 'xeeasdgwwefzxcasdvwer',
+              // token
+              access_token: 'asdgwwefzxcasdvwer'
+          }
+      }
+```
 
 2. **开放所有插件的 DevTool 调试功能**
    > 所有 非官方商店插件代码更改：`t.isDev` => `t.unsafe`。
    > 所有 非官方商店插件标识更改：`dev` => `!`。
 
-- `dist/main.js` mount 函数中：**添加的 `n.isDev = true` 是重点**
+- **替换 `assemblyPlugin`中的`e.isDev`为`!0`是重点**：
+
+  ```
+  this.pluginSessionPool[e.name] = i,
+  !0 || (R() ? i.webRequest.onBeforeSendHeaders(((e,t)=>{
+      t({
+  ```
+
+- 启用所有`webPreferences` 中的 `devTools: !0,`：
+
+```
+const o = {
+    textAreasAreResizable: !1,
+    // devTools: e.isDev || e.unsafe,
+    devTools: !0,
+    nodeIntegration: !1,
+```
+
+- 插件窗口中显示**开发者工具**按钮
 
   ```js
-  n.name in this.pluginContainer && R().lt(n.version, this.pluginContainer[n.name].version))
-                    throw new Error("已存在版本 " + this.pluginContainer[n.name].version);
-                return n.isDev = true,this.pluginContainer[n.name] = n,
-                this.emit("mount", n.name),
+  const o = this.appCmp.pluginIsOutKill(i);
+  this._mainPluginMenu.getMenuItemById('openDevTools').visible = true; //  设置为 true
   ```
 
-- `dist/plugins/v5/index.js` 插件列表：调整 `!e.isDev` 为 `e.name.startsWith("dev_")` 判断区分 开发中的 插件 及其显示（暂时解决方案）。
-  并且**使不安全插件排在前面**。
+- 分离的插件窗口中显示**开发者工具**按钮，`detachPluginLogic` 方法中
+  ```js
+  isDev: !0, // 设置为 true 或删除
+  isPluginInfo: "FFFFFFFF" !== e && !l.isDev
+  ```
+
+3. 去除`illegal`检测
+
+- 去除`mount`函数中的`illegal`设置
 
   ```js
-  componentDidMount() {
-                const e = window.services.getPluginUpdateSet()
-                  , t = window.services.getPluginContainer()
-                  , n = Object.values(t).filter((e=>e.name && "FFFFFFFF" !== e.name && !e.name.startsWith('dev_'))).sort(((e,t)=> e.unsafe ? -1 : t.updateTime - e.updateTime));
-                let r;
+  if (n.updateTime = e.updateTime,
+    e.upxMd5 && (n.upxMd5 = e.upxMd5),
+    // e.illegal && (n.illegal = e.illegal),
   ```
 
-- 区分正在开发中的插件，显示`dev`标识
-  `dist/index.js` 主搜索框的 Dev 显示：调整 `i.isDev` 为 `i['name'].startsWith("dev_")`。
+- 去除检测修改 `illegal` 字段状态的设置
+  ```
+    /*if (e.illegal_plugins?.length > 0)
+                        for (const t of e.illegal_plugins) {
+                            const e = this.pluginContainer[t];
+                            e && !e.illegal && (e.illegal = !0,
+                            this.setPluginDirNameIllegal(t),
+                            this.emit("illegal", t))
+                        }
+  */
+  ```
+
+4. **使不安全插件排在前面**
+
+- `dist/plugins/ffffffff/index.js`：
 
   ```js
-    }, this.cmdLabel(t.cmd, t.indexAt, a), i.name.startsWith('dev_') && e.createElement("span", {
+  n = Object.values(t)
+    .filter((e) => e.name && 'FFFFFFFF' !== e.name && !e.isDev)
+    .sort((e, t) => (e.unsafe ? -1 : t.updateTime - e.updateTime));
   ```
 
-- 某些插件使用了`isDev`判断接口调用
-  `dist/index.js`：防止官方接口调用错误，比如《一步到位》插件，
-
-  ```js
-  Ue(this, "pluginUtilApiServices", {
-      isDev: e=>{
-          const t = this.windowCmp.getPluginIdByWebContents(e.sender);
-          // <一步到位>插件名
-          if (t === 'automation') e.returnValue = false
-          else e.returnValue = !!t && !!this.pluginsCmp.pluginContainer[t]?.isDev
-      }
-  ```
-
-- 《所有关键字》中插件列表
-  `dist/plugins/v5/index.js` 中：`t.isDev` => `t.unsafe`
-
-  ```ts
-                  }), t.unsafe && e.createElement("span", {
-      className: "feature-cmds-menus-dev"
-  }, "!")))))), e.createElement("div", {
-  ```
-
-- 《超级面板》中插件列表
-  `dist/voice/index.js` 中：`a.isDev` => `a.unsafe`
-
-  ```ts
-                  }, e.createElement("div", null, this.cmdLabel(t.cmd, t.indexAt, l)), a.unsafe && e.createElement("div", {
-      className: "dev"
-  }, e.createElement("span", null, "!"))))
-  ```
-
-  - 《账号与数据》中插件列表
-    `n.isDev` => `!!n.pluginLogo.search('unsafe')`
-
-  ```ts
-          }, e.createElement(dh.Z, null))), e.createElement(Hd, {
-  primary: n.pluginLogo.search('unsafe') > 0 ? e.createElement("span", null, n.pluginName, e.createElement("span", {
-      className: "account-db-dev-flag"
-  }, "!")) : e.createElement("span", null, n.pluginName),
-  secondary: n.num + " 份文档"
-  ```
-
-- 防止删除插件不了
-  `dist/index.js`:
+  - 防止删除插件不了
+    `dist/index.js`:
 
   ```ts
   unmount(e) {
@@ -148,60 +151,61 @@
       //     !0;
   ```
 
-3. 开启会员专项
-  `dist/main.js`：`getAccountInfo`函数调整返回值。
+5. 去除 developer 限定错误，搜索`（"developer" !== `
 
-  ```js
-    getAccountInfo() {
-            /*
-            ...
-            */
-            return {
-                cellphone: '1895308808x',
-                avatar: 'https://www.topthink.com/uploads/avatar/20221204/2b25dd261d384a33024b6dac9e327bf2.png',
-                nickname: '💰😄',
-                uid: 'chandlerver5',
-                db_secrect_key: 'chandlerver5',
-                // 数据库密钥
-                db_sync: 0,
-                // 账户数据是否开启同步
-                type: 1,
-                // 会员 1 === t.type ? "member" : "user"
-                expired_at: "10000610064",
-                // 会员到期日
-                token: 'xeeasdgwwefzxcasdvwer',
-                // token
-                access_token: 'asdgwwefzxcasdvwer'
-            }
-        }
-  ```
+```js
+      registerDeveloperServices() {
+          const e = this.instance.developer
+            , i = this.instance.window;
+          t.ipcMain.on("developer.services", ((t,n,...o)=>{
+              // if ("developer" !== i.getPluginIdByWebContents(t.sender))
+              //     return void (t.returnValue = new Error("unauthorized"));
+              const s = e.developerServices[n];
+              "function" == typeof s ? s(t, ...o) : t.returnValue = new Error("未知接口")
+          }
+          )),
+          t.ipcMain.handle("developer.services", (async(t,n,...o)=>{
+              // if ("developer" !== i.getPluginIdByWebContents(t.sender))
+              //     throw new Error("unauthorized");
+              const s = e.developerServices[n];
+              if ("function" != typeof s)
+                  throw new Error("未知接口");
+              return await s(...o)
+          }
+          ))
+      }
+```
 
-4. 去除 developer 限定错误，搜索`（"developer" !== `
+6. 其他操作
 
-  ```js
-        registerDeveloperServices() {
-            const e = this.instance.developer
-              , i = this.instance.window;
-            t.ipcMain.on("developer.services", ((t,n,...o)=>{
-                // if ("developer" !== i.getPluginIdByWebContents(t.sender))
-                //     return void (t.returnValue = new Error("unauthorized"));
-                const s = e.developerServices[n];
-                "function" == typeof s ? s(t, ...o) : t.returnValue = new Error("未知接口")
-            }
-            )),
-            t.ipcMain.handle("developer.services", (async(t,n,...o)=>{
-                // if ("developer" !== i.getPluginIdByWebContents(t.sender))
-                //     throw new Error("unauthorized");
-                const s = e.developerServices[n];
-                if ("function" != typeof s)
-                    throw new Error("未知接口");
-                return await s(...o)
-            }
-            ))
-        }
-  ```
+- 直接安装插件 `handleOpenDialog` -> `handleInstallPlugin`
 
-5. 其他操作
+```js
+,onClick:this.handleInstallPlugin,startIcon:e.createElement(St.Z,null)},"安装插件应用")
+```
+
+- 添加打开社区，并且隐藏"隐私政策"、"用户协议"菜单。
+
+```js
+label: "uTools 官网",
+click: ()=>{
+    process.nextTick((()=>{
+        t.shell.openExternal("https://u.tools")
+    }
+    ))
+}
+},
+// chandlerver5
+{
+label: "打开社区",
+click: ()=>{
+    process.nextTick((()=>{
+        t.shell.openExternal("https://yuanliao.info/")
+    }
+    ))
+}
+},
+```
 
 - 去除多余信息
   `dist/main.js`的`initFeatures`方法中，注释下面：
@@ -234,6 +238,7 @@
   ```
 
   `dist/main.js`:《插件市场》不显示”删除该插件“菜单：
+
   ```js
   const o = this.appCmp.pluginIsOutKill(i);
   this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
@@ -256,39 +261,80 @@
   this._mainPluginMenu.getMenuItemById("remove").visible = "FFFFFFFF" !== i,
   ```
 
-- 分离窗口时显示“关于应用”菜单
-  `dist/main.js`:追加：`true ||`
+# 扩展插件的 api 时， 需要注意
 
-  ```js
-      u.webContents.executeJavaScript(`window.initRender(${JSON.stringify({
-      pluginId: e,
-      icon: c,
-      label: i.label,
-      subInput: i.subInput,
-      featureCode: i.featureCode,
-      isDev: a.isDev,
-      isPluginInfo: true || "FFFFFFFF" !== e && !a.isDev
-  })})`).then((([e,t])=>{
-  ```
+- 将插件管理中的一些 api 扩展到插件的 api 里：
+  `dist/main.js`：修改 `registerFFFFFFFFServices` 方法中，注释相关 `t.sender` 判断限制。
 
-# 扩展插件 api
-
-- 插件管理中的一些 api 扩展到插件 api 里：
- `dist/main.js`：修改 `registerFFFFFFFFServices` 方法中，注释相关 `sender` 判断限制。
-
-# 与 chrome extension 连通
+```js
+t.ipcMain.handle("ffffffff.services", (async (t, n, ...o) => {
+  /*if (t.sender !== i.ffffffff.webContents)
+    throw new Error("unauthorized");*/
+  return await e[n](...o)
+}
+```
 
 # 其他
 
-如果自己开发的插件（未发布到市场），非法插件会包含以下的字段
+如果自己开发的插件（未发布到市场），非法插件（asarer 插件为例）会包含以下的字段
 
 ```json
 {
-  ...
+  "location": "/Users/bing/Library/Application Support/uTools/plugins/unsafe-19f11c77905b5f96b5f8511f11821cda.asar",
+  "isDev": true,
   "unsafe": true,
-  "main": "file:///Users/bing/Library/Application Support/uTools/plugins/unsafe-abe19672c5dd8c297c8a3028e1feea58.asar/index.html",
-  "name": "oIeD1z8L",
-  "pluginName": "npm-helper",
+  "main": "file:///Users/bing/Library/Application%20Support/uTools/plugins/unsafe-19f11c77905b5f96b5f8511f11821cda.asar/index.html",
+  "name": "C1Bh6Lcx",
+  "pluginName": "asarer",
+  "author": "ChandlerVer5",
+  "homepage": "https://www.kancloud.cn/@chandler",
+  "description": "ChandlerVer5 的upx插件😄",
+  "version": "1.0.0",
+  "preload": "/Users/bing/Library/Application Support/uTools/plugins/unsafe-19f11c77905b5f96b5f8511f11821cda.asar/preload.js",
+  "logo": "file:///Users/bing/Library/Application%20Support/uTools/plugins/unsafe-19f11c77905b5f96b5f8511f11821cda.asar/logo.png",
+  "pluginSetting": {
+    "single": true
+  },
+  "mainPushPower": false,
+  "featureDic": {
+    "asarer": {
+      "code": "asarer",
+      "cmds": [
+        {
+          "trueType": "text",
+          "type": "base",
+          "match": "asar",
+          "label": "asar"
+        },
+        {
+          "trueType": "files",
+          "type": "files",
+          "label": "asar analyse",
+          "match": "/.(asar|upx)$/",
+          "fileType": "file",
+          "maxLength": 1,
+          "labelCmds": [
+            {
+              "trueType": "files",
+              "type": "base",
+              "match": "asar analyse",
+              "label": "asar analyse"
+            },
+            {
+              "trueType": "files",
+              "type": "base",
+              "match": "asaranalyse",
+              "label": "asaranalyse",
+              "weight": -10
+            }
+          ]
+        }
+      ],
+      "explain": "asar助手、分析器"
+    }
+  },
+  "updateTime": 1681615231482.1084,
+  "upxMd5": "1d6c62247621a69b881da408196f6645",
   "illegal": true
 }
 ```

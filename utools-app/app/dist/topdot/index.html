@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style type="text/css">
+    html, body{ margin: 0; user-select: none; overflow: hidden; background-color: rgba(0, 0, 0, 0); font-family: system-ui; width: 100%; height: 100%; }
+    #root {
+      width: 48px;
+      height: 48px;
+      position: relative;
+    }
+    .bg {
+      position: absolute;
+      z-index: 0;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: center/contain no-repeat url(bg.png);
+    }
+    .logo {
+      position: absolute;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      box-sizing: border-box;
+      border: 4px solid transparent;
+      position: relative;
+      display: flex;
+      background-color: rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+    }
+    .logo > img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+    .message-badge {
+      position: absolute;
+      z-index: 2;
+      left: 28px;
+      top: 2px;
+      min-width: 18px;
+      padding: 0 5px;
+      box-sizing: border-box;
+      height: 18px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #e53935;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .message-badge:hover {
+      transform: scale(1.1);
+    }
+    #root:hover > .bg {
+      animation: rotating 0.7s linear infinite;
+    }
+    @keyframes rotating {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div class="bg"></div>
+    <div class="logo"><img alt="" src="logo.png" draggable="false" /></div>
+  </div>
+  <script>
+    const rootDOM = document.getElementById('root')
+    let mousedownInfo = { pageX: 0, pageY: 0, timestamp: 0 }
+
+    function handleMouseMove (event) {
+      window.services.setPosition(event.screenX - mousedownInfo.pageX, event.screenY - mousedownInfo.pageY)
+    }
+
+    function handleMouseUp (event) {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+      if (Date.now() - mousedownInfo.timestamp < 250 || (event.screenX === mousedownInfo.screenX && event.screenY === mousedownInfo.screenY)) {
+        if (mousedownInfo.isDoubleClick) {
+          window.services.mainWindowRestoreInputShow()
+        } else {
+          if (event.button === 2) {
+            window.services.showContextMenu()
+          } else {
+            window.services.mainWindowShow()
+          }
+        }
+      }
+    }
+
+    rootDOM.addEventListener('mousedown', (event) => {
+      const timestamp = Date.now()
+      const isDoubleClick = timestamp - mousedownInfo.timestamp < 300
+      mousedownInfo.pageX = event.pageX
+      mousedownInfo.pageY = event.pageY
+      mousedownInfo.screenX = event.screenX
+      mousedownInfo.screenY = event.screenY
+      mousedownInfo.timestamp = timestamp
+      mousedownInfo.isDoubleClick = isDoubleClick
+      window.addEventListener('mousemove', handleMouseMove)
+      window.addEventListener('mouseup', handleMouseUp)
+    })
+
+    if (window.platform === 'win32') {
+      rootDOM.addEventListener('mouseenter', window.services.mouseEnter)
+      rootDOM.addEventListener('mouseleave', window.services.mouseLeave)
+    }
+
+    window.rpcRenderer = {
+      setMessageBadge: (badge, messageBadgeId) => {
+        if (badge < 0) {
+          if (rootDOM.childElementCount > 2) {
+            const prevBadge = parseInt(rootDOM.lastElementChild.innerText)
+            let newBadge = prevBadge + badge
+            if (newBadge <= 0) {
+              rootDOM.lastElementChild.remove()
+            } else {
+              rootDOM.lastElementChild.innerText = newBadge
+            }
+          }
+          return
+        }
+        if (badge > 0) {
+          if (rootDOM.childElementCount > 2) {
+            rootDOM.lastElementChild.innerText = badge
+          } else {
+            const span = document.createElement('span')
+            span.className = 'message-badge'
+            span.innerText = badge
+            span.addEventListener('mousedown', (event) => {
+              event.stopPropagation()
+            })
+            span.addEventListener('click', () => {
+              window.services.openMessageHub(messageBadgeId)
+            })
+            rootDOM.appendChild(span)
+          }
+        } else if (rootDOM.childElementCount > 2) {
+          rootDOM.lastElementChild.remove()
+        }
+      }
+    }
+  </script>
+</body>
+</html>

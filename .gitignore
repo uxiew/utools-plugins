@@ -1,9 +1,13 @@
 .DS_Store
 
-!/utools-app/
+# !/utools-app/
 /utools-app/*
-/utools-app/**/
+/utools-app/app/node_modules/*
+
 !/utools-app/app/
 !/utools-app/app/dist/
-!/utools-app/app/dist/**/
+
+!/utools-app/app/node_modules/addon
+!/utools-app/app/node_modules/ws
+
 !/utools-app/app/package.json

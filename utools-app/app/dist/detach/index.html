@@ -9,8 +9,8 @@
   .title.darwin { padding-left: 80px; -webkit-app-region: drag; }
   .title.win32 { -webkit-app-region: drag; }
   .title img { width: 36px; height: 36px; margin-right: 10px; }
-  .title input { background-color: #FFFFFF; color: #333333; width: 60%; height: 36px; line-height: 36px; border-radius: 4px; font-size: 14px; border: none; padding: 0 10px; outline: none; -webkit-app-region: no-drag; }
-  .title input::-webkit-input-placeholder { color: #aaa; user-select: none; }
+  .title input { background-color: #FFFFFF; color: #333333; margin-right: 96px; flex: 1; height: 40px; font-size: 15px; border-radius: 4px; border: none; padding: 0 10px; outline: none; -webkit-app-region: no-drag; font-family: system-ui,"PingFang SC","Helvetica Neue","Microsoft Yahei",sans-serif; }
+  .title input::-webkit-input-placeholder { color: #aaa; font-weight: 200; user-select: none; position: relative; top: -1px; }
   .handle { display: flex; -webkit-app-region: no-drag; }
   .handle > div { width: 36px; height: 36px; border-radius: 18px; cursor: pointer; margin-right: 6px; }
   .handle > div:hover { background-color: #dee2e6; }
@@ -48,8 +48,7 @@
 <body><header></header>
 <script>
   const platform = window.services.getPlatform()
-  function initSubInputEvent () {
-    const inputDom = document.querySelector('input')
+  function initSubInputEvent (inputDom) {
     let subInputDelayTimers = null
     const inputChange = (value) => {
       if (subInputDelayTimers) {
@@ -185,12 +184,7 @@
     headerDOM.innerHTML = `
       <div ${platform === 'linux' ? 'onmousedown=\'handleMouseDown(event)\'' : ''} class='title ${platform}'>
         <img alt='' draggable='false' onerror='handleLogoError(event)' src='${icon}' />
-        ${
-          subInput ? `<input type='text' autofocus
-          placeholder=${JSON.stringify(subInput.placeholder || '')}
-          value=${JSON.stringify(subInput.value || '')}
-          onfocus='this.selectionStart = this.selectionEnd = this.value.length;' />` : label
-        }
+        ${subInput ? `<input type='text' autofocus onfocus='this.selectionStart = this.selectionEnd = this.value.length;' />` : label}
       </div>
       <div class='handle'>
         ${isDev ? `<div class='devtool' onclick='handle.openDevTool()' title='开发者工具'></div>` : ''}
@@ -208,7 +202,12 @@
           </div>`
         }
       `
-    if (subInput) initSubInputEvent()
+    if (subInput) {
+      const inputDom = document.querySelector('input')
+      if (subInput.placeholder) inputDom.placeholder = subInput.placeholder
+      if (subInput.value) inputDom.value = subInput.value
+      initSubInputEvent(inputDom)
+    }
     const logedWinSize = localStorage.getItem('ws-' + pluginId)
     const zoomFactor = localStorage.getItem('zoom-' + pluginId)
     return [logedWinSize && logedWinSize.split(',').map(x => parseInt(x)), zoomFactor && parseInt(zoomFactor)]
@@ -243,9 +242,10 @@
       if (!titleDom) return
       window.payload.subInput = subInput
       titleDom.innerHTML = `<img alt='' draggable='false' src='${window.payload.icon}'>
-      <input type='text' autofocus placeholder=${JSON.stringify(subInput.placeholder || '')}
-      onfocus='this.selectionStart = this.selectionEnd = this.value.length;' />`
-      initSubInputEvent()
+      <input type='text' autofocus onfocus='this.selectionStart = this.selectionEnd = this.value.length;' />`
+      const inputDom = document.querySelector('input')
+      if (subInput.placeholder) inputDom.placeholder = subInput.placeholder
+      initSubInputEvent(inputDom)
     },
     removeSubInput: () => {
       const titleDom = document.querySelector('.title')
