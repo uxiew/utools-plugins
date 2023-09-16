@@ -73,9 +73,6 @@ $ asar pack ./utools-app/app ./utools-app/app-new.asar && cp -fr ./utools-app/ap
 ```
 
 2. **开放所有插件的 DevTool 调试功能**
-   > 所有 非官方商店插件代码更改：`t.isDev` => `t.unsafe`。
-   > 所有 非官方商店插件标识更改：`dev` => `!`。
-
 - **替换 `assemblyPlugin`中的`e.isDev`为`!0`是重点**：
 
   ```
@@ -178,8 +175,8 @@ const o = {
 
 6. 其他操作
 
-- 直接安装插件 `handleOpenDialog` -> `handleInstallPlugin`
-
+- `dist/plugins/ffffffff/index.js` 直接安装插件：
+   `handleOpenDialog` -> `handleInstallPlugin`
 ```js
 ,onClick:this.handleInstallPlugin,startIcon:e.createElement(St.Z,null)},"安装插件应用")
 ```
