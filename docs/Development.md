@@ -28,7 +28,17 @@
    }
    ```
 
-4. `api.js` 中加入
+4. `rt(this, "pluginUtilApiServices", {` 代码块中加入：
+
+```js
+      getCopyedFiles: e => {
+        e.returnValue = this.clipboardCmp.getCopyFiles()
+      }
+      ,
+      wsSendMessage: (e) => ws.send(e),
+```
+
+5. `ver5/api.js` 中加入
 
 ```js
 onExtensionMessage: (e) => {
@@ -43,9 +53,11 @@ sendExtensionMessage: (e) => {
 
 1. 安装 chrome 插件
    考虑过 [Native messaging](https://developer.chrome.com/docs/extensions/mv3/nativeMessaging/) 但是 electron 应用还不能很好支持，但是插件支持 ws 通信。
+
    > [Start Electron application from Chrome via Native Messaging? #14438](https://github.com/electron/electron/issues/14438)
 
 2. 开发的插件中
+
    ```js
    // 监听消息，参数 `message` 消息 来自 chrome 插件
    utools.onExtensionMessage((message) => {
@@ -53,7 +65,7 @@ sendExtensionMessage: (e) => {
    });
 
    // 发送消息
-   utools.sendExtensionMessage(data)
+   utools.sendExtensionMessage(data);
    ```
 
 ## TODO

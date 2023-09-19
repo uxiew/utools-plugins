@@ -73,6 +73,7 @@ $ asar pack ./utools-app/app ./utools-app/app-new.asar && cp -fr ./utools-app/ap
 ```
 
 2. **开放所有插件的 DevTool 调试功能**
+
 - **替换 `assemblyPlugin`中的`e.isDev`为`!0`是重点**：
 
   ```
@@ -173,36 +174,56 @@ const o = {
       }
 ```
 
-6. 其他操作
+6. `goto`支持 html string 内容的页面，适用于 《一步到位》插件。
+
+```js
+    async goto(...e) {
+      // chandlerver5 support html string
+      if (!e[0] || "string" != typeof e[0] || !/^(?:https?|file):\/\/|data:text/.test(e[0]))
+        throw new Error("url error");
+      let t;
+```
+
+7. 其他操作
 
 - `dist/plugins/ffffffff/index.js` 直接安装插件：
-   `handleOpenDialog` -> `handleInstallPlugin`
-```js
-,onClick:this.handleInstallPlugin,startIcon:e.createElement(St.Z,null)},"安装插件应用")
-```
+  `handleOpenDialog` -> `handleInstallPlugin`
 
-- 添加打开社区，并且隐藏"隐私政策"、"用户协议"菜单。
+  ```js
+  ,onClick:this.handleInstallPlugin,startIcon:e.createElement(St.Z,null)},"安装插件应用")
+  ```
 
-```js
-label: "uTools 官网",
-click: ()=>{
-    process.nextTick((()=>{
-        t.shell.openExternal("https://u.tools")
+- 添加开发者文档、打开社区，并且隐藏"隐私政策"、"用户协议"菜单。
+
+  ```js
+    label: "uTools 官网",
+    click: ()=>{
+        process.nextTick((()=>{
+            t.shell.openExternal("https://u.tools")
+        }
+        ))
     }
-    ))
-}
-},
-// chandlerver5
-{
-label: "打开社区",
-click: ()=>{
-    process.nextTick((()=>{
-        t.shell.openExternal("https://yuanliao.info/")
+  },
+  // chandlerver5
+  {
+    label: "开发者文档",
+    click: () => {
+      process.nextTick((() => {
+        t.shell.openExternal("https://u.tools/docs/developer/preload.html")
+      }
+      ))
     }
-    ))
-}
-},
-```
+  },
+  {
+    label: "打开社区",
+    click: ()=>{
+        process.nextTick((()=>{
+            t.shell.openExternal("https://yuanliao.info/")
+        }
+        ))
+    }
+  },
+  ```
 
 - 去除多余信息
   `dist/main.js`的`initFeatures`方法中，注释下面：
