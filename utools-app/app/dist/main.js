@@ -1392,48 +1392,45 @@
           const s = {};
           Object.values(e).forEach((e => {
             "object" == typeof e ? s[e.dirName] = e : s[e] = null
-          }
-          )),
-            i.sort(((e, t) => t.updateTime - e.updateTime)).forEach((e => {
-              if (e.dirName in s) {
-                const t = s[e.dirName];
-                if (t) {
-                  if (t.mtimeMs !== e.updateTime) {
-                    if (t.md5)
-                      return void k(e.pluginPath).then((i => {
-                        t.md5 === i && (e.upxMd5 = t.upxMd5,
-                          t.illegal && (e.illegal = t.illegal),
-                          this.mount(e))
-                      }
-                      ));
-                    if (Math.floor(t.mtimeMs / 1e3) !== Math.floor(e.updateTime / 1e3))
-                      return
-                  }
-                  e.upxMd5 = t.upxMd5,
-                    t.illegal && (e.illegal = t.illegal)
+          }))
+          i.sort(((e, t) => t.updateTime - e.updateTime)).forEach((e => {
+            if (e.dirName in s) {
+              const t = s[e.dirName];
+              if (t) {
+                if (t.mtimeMs !== e.updateTime) {
+                  if (t.md5)
+                    return k(e.pluginPath).then((i => {
+                      t.md5 === i && (e.upxMd5 = t.upxMd5,
+                        t.illegal && (e.illegal = t.illegal),
+                        this.mount(e))
+                    }));
+                  if (Math.floor(t.mtimeMs / 1e3) !== Math.floor(e.updateTime / 1e3))
+                    return
                 }
-                this.mount(e)
-              } else {
-                try {
-                  f().unlinkSync(e.pluginPath)
-                } catch { }
-                if (d().existsSync(e.pluginPath + ".unpacked"))
-                  try {
-                    We.rimraf.sync(e.pluginPath + ".unpacked")
-                  } catch { }
+                e.upxMd5 = t.upxMd5
+                t.illegal && (e.illegal = t.illegal)
               }
+              this.mount(e)
+            } else {
+              try {
+                f().unlinkSync(e.pluginPath)
+              } catch { }
+              if (d().existsSync(e.pluginPath + ".unpacked"))
+                try {
+                  We.rimraf.sync(e.pluginPath + ".unpacked")
+                } catch { }
             }
-            ))
+          }))
         }
       }
-      setTimeout(this.checkUpdate, 5e3)
+      // setTimeout(this.checkUpdate, 5e3)
     }
     mount(e, t) {
       const i = e.pluginPath;
       let n = null;
       try {
-        if (n = Ce(c().join(i, "plugin.json"), t),
-          "FFFFFFFF" === n.name && !n.location.startsWith(this.innerPluginsPath) || n.unsafe && ["admin", "developer", "clipboard"].includes(n.name))
+        n = Ce(c().join(i, "plugin.json"), t)
+        if ("FFFFFFFF" === n.name && !n.location.startsWith(this.innerPluginsPath))
           throw new Error("安全限制，无法安装");
         if (n.updateTime = e.updateTime,
           e.upxMd5 && (n.upxMd5 = e.upxMd5),
@@ -5084,7 +5081,7 @@
     }) : e[t] = i,
       e
   }
-  
+
   const at = "localopen:";
   class ct {
     constructor(e, i, o, s, a, l, u, h) {

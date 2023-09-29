@@ -2,13 +2,13 @@
 
 ## 4.0
 
-> 注意：utools 从 4.0 开始，增加了检测修改机制，导致直接更改源码的方式不再生效！
+> 注意：utools 从`4.0`开始，增加了检测修改机制，导致直接更改源码的方式不再生效！
 
 其中 addon 插件中，在被加载时，会自动检测 asar 文件的完整性，所以导致无法更改源码。
 
 其中增加的方法：
 
-```
+```js
 compareServerSignature: compareYuanliaoSignature（3.0）
 ```
 
@@ -18,14 +18,14 @@ compareServerSignature: compareYuanliaoSignature（3.0）
 
 1. 安装 asar 模块：
 
-```
+```sh
 $ bun add -g @electron/asar
 ```
 
 2. 解压一个包：
    注意需要拷贝 utools 下`app.asar`、`app.asar.unpacked`目录，然后放置在同一目录下。
 
-```
+```sh
 $ mkdir ./utools-app && cp -r /Applications/uTools.app/Contents/Resources/app.asar* ./utools-app
 $ asar extract ./utools-app/app.asar ./utools-app/app
 ```
@@ -34,7 +34,7 @@ $ asar extract ./utools-app/app.asar ./utools-app/app
 
 4. 再压缩回去
 
-```
+```sh
 $ asar pack ./utools-app/app ./utools-app/app-new.asar && cp -fr ./utools-app/app-new.asar  /Applications/uTools.app/Contents/Resources/app.asar
 ```
 
@@ -185,6 +185,10 @@ const o = {
 ```
 
 7. 其他操作
+- `main.js` 的 `init()` 中取消检查更新：
+  ```js
+  // setTimeout(this.checkUpdate, 5e3)
+  ```
 
 - `dist/plugins/ffffffff/index.js` 直接安装插件：
   `handleOpenDialog` -> `handleInstallPlugin`
@@ -358,6 +362,8 @@ t.ipcMain.handle("ffffffff.services", (async (t, n, ...o) => {
 ```
 
 # 修改后可能的问题 🙏
+
+- [x] 格式化之后，如果不能正常运行，需要检测 `${XXX}` 这种字符串插值，它可能会出问题！！！
 
 - [x] 内部会根据`window.utools.isDev()`判断是否使用内部测试网址：`http://open.test.u-tools.cn/` ，导致某些插件产生问题，例如 一步到位；
 

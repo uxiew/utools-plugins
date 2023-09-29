@@ -1,39 +1,27 @@
-const { ipcRenderer } = require('electron'),
-  fs = require('fs'),
-  path = require('path'),
-  ipcSendSync = (e, ...n) => {
-    const i = ipcRenderer.sendSync('developer.services', e, ...n);
-    if (i instanceof Error) throw i;
-    return i;
-  },
-  ipcInvoke = async (e, ...n) => {
-    try {
-      return await ipcRenderer.invoke('developer.services', e, ...n);
-    } catch (e) {
-      throw new Error(e.message.replace(/^.*?Error:/, '').trim());
-    }
-  };
-const state = {
-  accountInfo: {
-    _id: 'string',
-    // 数据库中的 id
-    uid: 'string',
-    // user id
-    avatar: 'string',
-    nickname: 'string',
-    cellphone: 'xxxxxx6584',
-    type: 'number',
-    // 1 === t.type ? "member" : "user"
-    avatar: 'string',
-    token: 'boolean',
-    // token
-    expired_at: 'boolean',
-    // 会员到期日
-    db_sync: 'boolean',
-    // 账户数据是否开启同步
-    db_secrect_key: 'string'
-    // 数据库密钥
-  },
+
+// Xee
+window.state = {
+  // accountToken: 'xpV6srcRWsIroyFL4WeMs9jHZRY5q0JHOcTsUJJ1',
+  // accountInfo: {
+  //   _id: 'string',
+  //   // 数据库中的 id
+  //   uid: 'string',
+  //   // user id
+  //   avatar: 'string',
+  //   nickname: 'string',
+  //   cellphone: 'xxxxxx6584',
+  //   type: 'number',
+  //   // 1 === t.type ? "member" : "user"
+  //   avatar: 'string',
+  //   token: 'boolean',
+  //   // token
+  //   expired_at: 'boolean',
+  //   // 会员到期日
+  //   db_sync: 'boolean',
+  //   // 账户数据是否开启同步
+  //   db_secrect_key: 'string'
+  //   // 数据库密钥
+  // },
   getId: (num = 8) => {
     var returnStr = '',
       charStr =
@@ -44,10 +32,9 @@ const state = {
     }
     return returnStr;
   },
-  accountToken: 'xpV6srcRWsIroyFL4WeMs9jHZRY5q0JHOcTsUJJ1',
   formProject: {
     // id: state.getId(),
-    // plugin_id: state.formProject.id,
+    plugin_id: '', // 不能为中文，只能为 字母和数字组合，参考 getId 方法
     plugin_name: '',
     description: 'ChandlerVer5 的upx插件😄',
     developer_type: 0,
@@ -59,9 +46,8 @@ const state = {
   pluginList: []
 };
 
-window.state = state;
-
-window.api = (e, t) => {
+window.requestXee = (m, e, t) => {
+  // if(m === 'GET')
   if (e.indexOf('/releases/') >= 0) {
     return Promise.resolve({
       previews: [
@@ -91,22 +77,41 @@ window.api = (e, t) => {
   }
 
   if (e.indexOf('/developers/plugins') >= 0) {
-    return Promise.resolve(state.pluginList);
+    return Promise.resolve(window.state.pluginList);
   }
   return ajax('GET', e, t);
 };
 
+console.log("uTools 开发者工具修改版---ChandlerVer5!");
+
+const { ipcRenderer } = require('electron')
+const fs = require('fs')
+const path = require('path')
+const ipcSendSync = (e, ...n) => {
+  const i = ipcRenderer.sendSync('developer.services', e, ...n);
+  if (i instanceof Error) throw i;
+  return i;
+}
+const ipcInvoke = async (e, ...n) => {
+  try {
+    return await ipcRenderer.invoke('developer.services', e, ...n);
+  } catch (e) {
+    throw new Error(e.message.replace(/^.*?Error:/, '').trim());
+  }
+};
+
 window.services = {
+  getApiHost: () => ipcSendSync('getApiHost'),
   buildPluginUpxFile: (e, n) => ipcInvoke('buildPluginUpxFile', e, n),
   getAccountToken: () => ipcSendSync('getAccountToken'),
-  getLocalAccount: () => state.accountInfo,
-  //  getLocalAccount: ()=>ipcSendSync("getLocalAccount"),
+  getLocalAccount: () => ipcSendSync('getLocalAccount'),
   isDev: () => ipcSendSync('isDev'),
   runDevPlugin: (e, n) => ipcSendSync('runDevPlugin', e, n),
   isRuningDevPlugin: (e) => ipcSendSync('isRuningDevPlugin', e),
   stopDevPlugin: (e) => ipcSendSync('stopDevPlugin', e),
   isDevPluginOutKill: (e) => ipcSendSync('isDevPluginOutKill', e),
   toggleOutKillDevPlugin: (e, n) => ipcSendSync('toggleOutKillDevPlugin', e, n),
+  launchDevPlugin: (e) => ipcSendSync('launchDevPlugin', e),
   readDevPluginLogo: (e) => {
     if (!fs.existsSync(e)) throw new Error('plugin.json 文件不存在');
     let n;
@@ -137,18 +142,18 @@ window.services = {
   dialogSaveUpxFile: (e, n) => {
     const i = path.basename(e).replace(/^\w+/, n),
       r = window.utools.getPath('downloads'),
-      o = path.join(r, i),
-      t = window.utools.showSaveDialog({
-        defaultPath: o
-      });
-    if (t)
+      t = path.join(r, i),
+      o = window.utools.showSaveDialog({ defaultPath: t });
+    if (o)
       try {
-        fs.writeFileSync(t, fs.readFileSync(e, 'binary'), {
+        fs.writeFileSync(o, fs.readFileSync(e, 'binary'), {
           encoding: 'binary'
         }),
           setTimeout(() => {
-            window.utools.shellShowItemInFolder(t);
+            window.utools.shellShowItemInFolder(o);
           }, 1e3);
-      } catch (e) {}
-  }
+      } catch (e) { }
+  },
+  getPaymentFileContent: () =>
+    fs.readFileSync(path.join(__dirname, 'res', 'payment.md'), 'utf-8')
 };

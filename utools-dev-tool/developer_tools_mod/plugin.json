@@ -1,0 +1,27 @@
+{
+  "name": "developer",
+  "version": "1.2.1",
+  "pluginName": "upx 开发者工具",
+  "description": "开发 uTools 插件应用",
+  "author": "ChandlerVer5",
+  "main": "index.html",
+  "logo": "logo.png",
+  "preload": "preload.js",
+  "features": [
+    {
+      "code": "developer",
+      "explain": "开发 uTools 插件应用",
+      "cmds": [
+        "uTools 开发者工具"
+      ]
+    },
+    {
+      "code": "upx",
+      "explain": "开发 uTools 插件应用",
+      "cmds": [
+        "upx"
+      ]
+    }
+  ],
+  "homepage": null
+}

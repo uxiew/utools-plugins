@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "@electron/asar": "^3.2.7",
+    "@types/node": "^20.7.1"
+  }
+}

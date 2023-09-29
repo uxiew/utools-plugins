@@ -72,4 +72,5 @@ sendExtensionMessage: (e) => {
 
 - [] 在插件退出后，依然可以通过特定操作唤醒。（也许可以通过插件读取所有插件，显示一个插件列表，点击后，可配置插件是否可以直接启动等行为，然后根据）
 
-- [] kepp ws alive
+- [] 需要持久化 Service Worker
+  [Persistent Service Worker in Chrome Extension](https://stackoverflow.com/questions/66618136/persistent-service-worker-in-chrome-extension/66618269#)
