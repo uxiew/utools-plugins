@@ -23971,41 +23971,42 @@
       }
       async function Qc(e, t, n) {
         // Xee
-        return window.requestXee(e, t, n);
-        /*  const r = {
-            method: e,
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json"
-            }
-          };
-          if ("GET" === e) {
-            n && "object" == typeof n || (n = {}),
-              n.access_token = Yc();
-            let e = "";
-            for (const t in n)
-              void 0 !== n[t] && null !== n[t] && (e && (e += "&"),
-                e += t + "=" + encodeURIComponent(n[t]));
-            t += (t.includes("?") ? "&" : "?") + e
-          } else
-            t += (t.includes("?") ? "&" : "?") + "access_token=" + Yc(),
-              n && "object" == typeof n && (r.body = JSON.stringify(n));
-          let o;
-          try {
-              o = await window.fetch(Xc() + t, r)
-          } catch (e) {
-              throw new Error("网络请求失败！请检查本地网络是否正常")
+        return window.requestXee(e, Xc() + t, n);
+      }
+      async function Qc_bak(e, t, n) {
+        const r = {
+          method: e,
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
           }
-          const a = await o.json();
-          if (o.ok)
-              return a;
+        };
+        if ("GET" === e) {
+          n && "object" == typeof n || (n = {}),
+            n.access_token = Yc();
+          let e = "";
+          for (const t in n)
+            void 0 !== n[t] && null !== n[t] && (e && (e += "&"),
+              e += t + "=" + encodeURIComponent(n[t]));
+          t += (t.includes("?") ? "&" : "?") + e
+        } else
+          t += (t.includes("?") ? "&" : "?") + "access_token=" + Yc(),
+            n && "object" == typeof n && (r.body = JSON.stringify(n));
+        let o;
+        try {
+          o = await window.fetch(Xc() + t, r)
+        } catch (e) {
+          throw new Error("网络请求失败！请检查本地网络是否正常")
+        }
+        const a = await o.json();
+        if (o.ok)
+          return a;
 
-          a.errors && (a.message = Object.values(a.errors).join("\n"));
-          const i = new Error(a.message || "返回 " + o.status + " 错误");
-          throw i.code = o.status,
-          a.errors && (i.errors = a.errors),
-          i
-          */
+        a.errors && (a.message = Object.values(a.errors).join("\n"));
+        const i = new Error(a.message || "返回 " + o.status + " 错误");
+        throw i.code = o.status,
+        a.errors && (i.errors = a.errors),
+        i
       }
       function Jc(e, t) {
         return Qc("GET", e, t)
@@ -38394,10 +38395,10 @@
               showMessage: this.showMessage
             }) : void 0)),
             wx(this, "handleOpenResourcesDrawer", (e => {
-              e.currentTarget.blur(),
-                this.setState({
-                  openResources: !0
-                })
+              e.currentTarget.blur()
+              this.setState({
+                openResources: !0
+              })
             }
             )),
             wx(this, "handdleCloseResourcesDrawer", (() => {

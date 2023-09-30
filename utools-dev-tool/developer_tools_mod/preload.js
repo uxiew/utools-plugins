@@ -57,7 +57,7 @@ window.requestXee = (m, e, t) => {
   }
 
   if (e.indexOf('/payments') >= 0) {
-    return Promise.resolve([
+    return Promise.resolve(
       {
         payments: {
           count: 110,
@@ -73,13 +73,13 @@ window.requestXee = (m, e, t) => {
           ]
         }
       }
-    ]);
+   );
   }
 
   if (e.indexOf('/developers/plugins') >= 0) {
     return Promise.resolve(window.state.pluginList);
   }
-  return ajax('GET', e, t);
+  return fetch(e, t);
 };
 
 console.log("uTools 开发者工具修改版---ChandlerVer5!");

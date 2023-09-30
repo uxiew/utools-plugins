@@ -22,6 +22,6 @@ const build = (inputDir: string, outFileName: string, reject: (err: any) => any)
 };
 
 
-build("/Users/bing/Projects/utools-plugins/utools-dev-tool", "/Users/bing/Downloads/upx_upx_000.upx", (error) => {
+build("/Users/bing/Projects/utools-plugins/utools-dev-tool/developer_tools_mod", `/Users/bing/Projects/utools-plugins/upxs/upx_dev_tools_v${require('../developer_tools_mod/plugin.json').version}.upx`, (error) => {
   console.log(error)
 })
