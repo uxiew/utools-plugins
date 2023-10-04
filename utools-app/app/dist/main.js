@@ -5544,8 +5544,7 @@
               e.returnValue = !1
             }
             ))
-          }
-          ,
+          },
           runUBrowser: this.runUBrowser,
           ubrowserLogin: async e => {
             if (R())
@@ -12746,8 +12745,7 @@
                           ,
                           outPlugin: (e, i) => {
                             const n = t.BrowserWindow.fromWebContents(e.sender);
-                            if (!n)
-                              return;
+                            if (!n) return;
                             const o = this.triggerPluginViewEventQueues[e.sender.id]
                               , s = o && 1 === o.length && "PluginEnter" === o[0];
                             if (n === this.mainWindow)
@@ -12756,25 +12754,21 @@
                                   e?.pluginId === i && this.outPlugin()
                                 }
                                 ))
-                              }
-                              ), 250) : this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.getEnterFeatureCmd()").then((e => {
+                              }), 250) : this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.getEnterFeatureCmd()").then((e => {
                                 e?.pluginId === i && this.outPlugin()
                               }
                               )));
                             const r = this.runningPluginPool[i];
-                            if (!r)
-                              return;
-                            if (!r.detachWindows.includes(n))
-                              return;
+                            if (!r) return;
+                            if (!r.detachWindows.includes(n)) return;
                             const a = this.pluginIsOutKill(i);
                             s ? setTimeout((() => {
                               a || n.setBrowserView(null),
                                 n.close()
                             }
-                            ), 250) : (a || n.setBrowserView(null),
-                              n.close())
-                          }
-                          ,
+                            ), 250)
+                              : (a || n.setBrowserView(null), n.close())
+                          },
                           createBrowserWindow: (e, i, { url: n, options: o }) => {
                             const s = n.split("?");
                             if (!/\.html$/i.test(s[0]))
@@ -13183,7 +13177,7 @@
                             if ("detach" !== i)
                               return "setting" === i ? (e.preventDefault(),
                                 void this.ffffffff.goSetting()) : "select" === i ? (e.preventDefault(),
-                                  void this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.mainInputSelect()")) : void (true && (e.preventDefault(),
+                                  void this.mainWindow.webContents.executeJavaScript("window.rpcRenderer.mainInputSelect()")) : void ("dev" === i && (e.preventDefault(),
                                     this.openPluginDevTools()));
                             this.mainWindow.getBrowserView() && (e.preventDefault(),
                               process.nextTick((() => {
@@ -13583,7 +13577,7 @@
                       if (i === 'PluginOut') {
                         ws.removeListen(j.name);
                       }
-                      const a = ` if(window.utools?.__event__ && typeof window.utools.__event__.on${i} === 'function' ) {\n      try { window.utools.__event__.on${i}(${null == n ? "" : JSON.stringify(n)}) } catch(e) {} }`;
+                      const a = `if(window.utools?.__event__ && typeof window.utools.__event__.on${i} === 'function' ) {\n      try { window.utools.__event__.on${i}(${null == n ? "" : JSON.stringify(n)}) } catch(e) {} }`;
                       e.webContents.executeJavaScript(a).then((() => {
                         const e = r.indexOf(i);
                         -1 !== e && r.splice(e, 1),
@@ -13877,7 +13871,7 @@
                                   if ("setting" === n)
                                     return e.preventDefault(),
                                       void this.ffffffff.goSetting();
-                                  true && (e.preventDefault(),
+                                  "dev" === n && (e.preventDefault(),
                                     this.openPluginDevTools(s))
                                 } else {
                                   e.preventDefault();

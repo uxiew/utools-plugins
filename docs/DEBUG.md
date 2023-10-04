@@ -2,7 +2,7 @@
    需要运行：
 
    ```sh
-   sudo /Applications/uTools.app --remote-debugging-port=9222
+   sudo /Applications/uTools.app/Contents/MacOS/uTools --remote-debugging-port=9222
    ```
 
 2. 通过 VSCode 启动调试
