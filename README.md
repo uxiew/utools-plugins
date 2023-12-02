@@ -31,18 +31,17 @@ https://www.raycast.com/
 
 https://github.com/egoist/raycast-scripts
 
-## 猿如意
+## fluentsearch
+https://www.fluentsearch.net/
 
-csdn 出品的 https://devbit.csdn.net/
+## Flow-Launcher
+https://github.com/Flow-Launcher/Flow.Launcher
 
-插件基本和 utools 的无差别，简单修改可用；估计借鉴了 utools
+## PowerToys Run 实用工具
+https://learn.microsoft.com/zh-cn/windows/powertoys/run
 
-## 相关配置
-
-```
-open ~/rubick
-open /Users/bing/Library/Caches/rubick-downloads
-```
+## Quicker
+https://github.com/cuiliang/QuickerConnectorExtension/
 
 ## hapigo
 
@@ -51,6 +50,19 @@ https://hapigo.com/
 ## rubick
 
 https://github.com/rubickCenter/rubick
+
+## 猿如意
+
+csdn 出品的 https://devbit.csdn.net/
+
+插件基本和 utools 的无差别，简单修改可用；估计借鉴了 utools
+
+### 相关配置
+
+```
+open ~/rubick
+open /Users/bing/Library/Caches/rubick-downloads
+```
 
 ## cerebro
 
