@@ -1,3 +1,5 @@
+> 配置文件在：`/Users/XXX/Library/Application\ Support/uTools/plugin`
+
 1. 通过 `chrome://inspect` 启动调试
    需要运行：
 

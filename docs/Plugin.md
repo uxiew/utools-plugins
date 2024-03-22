@@ -1,6 +1,6 @@
 # 插件开发
 
-可以借助我的[asar插件](https://github.com/ChandlerVer5/utools-plugin-asarer)，对官方插件源码进行查看、修改...
+可以借助我的[asar 插件](https://github.com/ChandlerVer5/utools-plugin-asarer)，对官方插件源码进行查看、修改...
 
 ## 设置
 
@@ -20,33 +20,43 @@ plugin.json 中加入开发模式热重载：
 
 为了方便快捷的开发，可以借助插件：[@ver5/vite-plugin-utools](https://github.com/ChandlerVer5/-ver5-vite-plugin-utools)，所有基于 vite 的项目都可以轻松转换为 utools 插件项目
 
-
 ## 插件安装后不能被篡改
 
 `main.js`中的`setPluginDirName`方法会在，插件目录下生成了`install`文件
+
 ```js
-   const a = c().join(this.userPluginsPath, "install");
+const a = c().join(this.userPluginsPath, 'install');
 ```
 
 然后在 `init()` 方法中进行检测：
+
 ```js
 const i = c().join(this.userPluginsPath, "install");
 if (d().existsSync(i)) {
 ```
 
+> [在 main.js 中对插件的 md5 做了校验](https://www.horosama.com/archives/288)
 
 ## uTools 开发者工具
 
 1. 由于`main.js`中的 `registerDeveloperServices` 函数中，限制了调用`developer.service`的插件名称
+
 ```js
-if ("developer" !== s && "admin" !== s && "dev_developer" !== s && "dev_admin" !== s)
-    throw new Error("unauthorized");
+if (
+  'developer' !== s &&
+  'admin' !== s &&
+  'dev_developer' !== s &&
+  'dev_admin' !== s
+)
+  throw new Error('unauthorized');
 ```
+
 所以需要保持插件的`plugins.json`的`name`字段为这些字段名。
 
 3. "安全限制，无法安装"。在 `mount` 函数中的 `if` 中去除下面条件：
+
 ```js
-n.unsafe && ["admin", "developer", "clipboard"].includes(n.name)
+n.unsafe && ['admin', 'developer', 'clipboard'].includes(n.name);
 ```
 
 反编译：
@@ -60,8 +70,6 @@ $ asar p utools-dev-tool 85cdaab634dd9e3af404d827c53d2853.asar && mv -f 85cdaab6
 ## buildPluginUpxFile
 
 `buildPluginUpxFile` 是构建 upx 插件文件的方法。
-
-
 
 ## 注意 ⚠️
 

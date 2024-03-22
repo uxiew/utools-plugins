@@ -13,3 +13,8 @@
   直接查询 gitee,github,gitlab 资源,做 sourceviewer
 
 ---- 会陆续发布在 github 上
+
+# 可二次开发的开源项目
+
+https://github.com/srsholmes/yal
+https://github.com/ParthJadhav/Verve

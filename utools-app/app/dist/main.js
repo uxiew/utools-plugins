@@ -3735,8 +3735,9 @@
       */
       return {
         cellphone: '1895308808x',
-        avatar: 'https://www.topthink.com/uploads/avatar/20221204/2b25dd261d384a33024b6dac9e327bf2.png',
-        nickname: '💰😄',
+        avatar:
+          'https://www.topthink.com/uploads/avatar/20221204/2b25dd261d384a33024b6dac9e327bf2.png',
+        nickname: 'Bing😄',
         uid: 'chandlerver5',
         db_secrect_key: 'chandlerver5',
         // 数据库密钥
@@ -3749,7 +3750,7 @@
         token: 'xeeasdgwwefzxcasdvwer',
         // token
         access_token: 'asdgwwefzxcasdvwer'
-      }
+      };
     }
     getAccountToken() {
       let e, t = n().get("account");
@@ -6307,7 +6308,7 @@
       e && Array.isArray(e.data) && e.data.forEach((e => {
         const t = this.pluginsCmp.pluginContainer[e];
         t && (this.pluginIsOutKill(e) || this.windowCmp.assemblyPlugin(t))
-        //t && !t.illegal && (this.pluginIsOutKill(e) || this.windowCmp.assemblyPlugin(t))
+        //chandlerve5 t && !t.illegal && (this.pluginIsOutKill(e) || this.windowCmp.assemblyPlugin(t))
       }
       ))
     }
@@ -13775,7 +13776,7 @@
                       ), 2e4);
                       s.webContents.once("dom-ready", (() => {
                         clearTimeout(d);
-                        let t = "\n        window.__EscTimestamp = 0;\n        window.addEventListener('keydown',(e)=>{\n          if(e.code==='Escape') window.__EscTimestamp=Date.now();\n        });\n        window.onpopstate = () => { history.pushState(null, null, null) }\n      ";
+                        let t = "\n window.__EscTimestamp = 0;\n        window.addEventListener('keydown',(e)=>{\n          if(e.code==='Escape') window.__EscTimestamp=Date.now();\n        });\n        window.onpopstate = () => { history.pushState(null, null, null) }\n      ";
                         if (e.isTpl && (this.isWindow ? t += `window.__WorkDir = ${JSON.stringify(e.location.replace(/\\/g, "/"))};` : t += `window.__WorkDir = ${JSON.stringify(e.location)};`),
                           s.webContents.executeJavaScript(t).catch((() => { }
                           )),

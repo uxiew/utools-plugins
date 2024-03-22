@@ -14,6 +14,9 @@ compareServerSignature: compareYuanliaoSignature（3.0）
 
 > `utools-app/app/node_modules` 中保留着需要的库
 
+_. 根据 `main.js`中的`chandlerver5`标记，进行注释。
+_. `_showLogic` 中`this.mainWindow.show()`代码块可能会有问题...
+
 ## 先行准备
 
 1. 安装 asar 模块：
@@ -27,7 +30,7 @@ $ bun add -g @electron/asar
 
 ```sh
 $ mkdir ./utools-app && cp -r /Applications/uTools.app/Contents/Resources/app.asar* ./utools-app
-$ asar extract ./utools-app/app.asar ./utools-app/app
+$ asar e ./utools-app/app.asar ./utools-app/app
 ```
 
 3. 修改内容(查看如下)
@@ -35,7 +38,7 @@ $ asar extract ./utools-app/app.asar ./utools-app/app
 4. 再压缩回去
 
 ```sh
-$ asar pack ./utools-app/app ./utools-app/app-new.asar && cp -fr ./utools-app/app-new.asar  /Applications/uTools.app/Contents/Resources/app.asar
+$ asar p ./utools-app/app ./utools-app/app-new.asar && cp -fr ./utools-app/app-new.asar  /Applications/uTools.app/Contents/Resources/app.asar
 ```
 
 用新的包替换原来的!
@@ -82,15 +85,23 @@ $ asar pack ./utools-app/app ./utools-app/app-new.asar && cp -fr ./utools-app/ap
       t({
   ```
 
+- `openPluginDevTools`方法中，注释掉下面这行：
+
+  ```
+  // if (n && (n.isDev || n.unsafe))
+        if (e.webContents.isDevToolsOpened())
+            e.webContents.closeDevTools();
+  ```
+
 - 启用所有`webPreferences` 中的 `devTools: !0,`：
 
-```
-const o = {
-    textAreasAreResizable: !1,
-    // devTools: e.isDev || e.unsafe,
-    devTools: !0,
-    nodeIntegration: !1,
-```
+  ```
+  const o = {
+      textAreasAreResizable: !1,
+      // devTools: e.isDev || e.unsafe,
+      devTools: !0,
+      nodeIntegration: !1,
+  ```
 
 - 插件窗口中显示**开发者工具**按钮
 
@@ -101,11 +112,12 @@ const o = {
 
 - 分离的插件窗口中显示**开发者工具**按钮，`detachPluginLogic` 方法中
   ```js
+  subInput: i.subInput,
+  featureCode: i.featureCode,
   isDev: !0, // 设置为 true 或删除
-  isPluginInfo: "FFFFFFFF" !== e && !l.isDev
   ```
 
-3. 去除`illegal`检测
+1. 去除`illegal`检测
 
 - 去除`mount`函数中的`illegal`设置
 
@@ -127,6 +139,53 @@ const o = {
   */
   ```
 
+3. 对需要二次购买的插件，会员判断破解：
+   搜索`isPurchasedUser`和`getUser`，对照修改为：
+
+   ```js
+     getUser: e => {
+
+       const t = this.accountCmp.getAccountInfo()
+
+       e.returnValue = {
+
+         avatar: t?.avatar || '',
+
+         nickname: t?.nickname || '',
+
+         type: 1
+
+       }
+
+     }
+     ...
+     isPurchasedUser: (e, t) => {
+
+         const i = this.accountCmp.getAccountInfo()
+
+         if (i) {
+
+           if ((t.startsWith('dev_') && (t = t.replace('dev_', '')), i.purchased_apps)) {
+
+             const n = i.purchased_apps[t]
+
+             if (!n) return void (e.returnValue = 1)
+
+             if (!0 === n) return void (e.returnValue = !0)
+
+             if (new Date(n) > new Date()) return void (e.returnValue = 1)
+
+           } else if (i.purchased && Array.isArray(i.purchased) && i.purchased.includes(t))
+
+             return void (e.returnValue = !0)
+
+           e.returnValue = 1
+
+         } else e.returnValue = 1
+
+       }
+   ```
+
 4. **使不安全插件排在前面**
 
 - `dist/plugins/ffffffff/index.js`：
@@ -138,7 +197,7 @@ const o = {
   ```
 
   - 防止删除插件不了
-    `dist/index.js`:
+    `dist/main.js`:
 
   ```ts
   unmount(e) {
@@ -156,14 +215,16 @@ const o = {
           const e = this.instance.developer
             , i = this.instance.window;
           t.ipcMain.on("developer.services", ((t,n,...o)=>{
-              // if ("developer" !== i.getPluginIdByWebContents(t.sender))
-              //     return void (t.returnValue = new Error("unauthorized"));
+              // const s = i.getPluginIdByWebContents(t.sender);
+              // if ("developer" !== s && "admin" !== s && "dev_developer" !== s && "dev_admin" !== s)
+              //    return void (t.returnValue = new Error("unauthorized"));
               const s = e.developerServices[n];
               "function" == typeof s ? s(t, ...o) : t.returnValue = new Error("未知接口")
           }
           )),
           t.ipcMain.handle("developer.services", (async(t,n,...o)=>{
-              // if ("developer" !== i.getPluginIdByWebContents(t.sender))
+              // const s = i.getPluginIdByWebContents(t.sender);
+              // if ("developer" !== s && "admin" !== s && "dev_developer" !== s && "dev_admin" !== s)
               //     throw new Error("unauthorized");
               const s = e.developerServices[n];
               if ("function" != typeof s)
@@ -179,13 +240,15 @@ const o = {
 ```js
     async goto(...e) {
       // chandlerver5 support html string
-      if (!e[0] || "string" != typeof e[0] || !/^(?:https?|file):\/\/|data:text/.test(e[0]))
+      if (!e[0] || "string" != typeof e[0])
         throw new Error("url error");
       let t;
 ```
 
 7. 其他操作
+
 - `main.js` 的 `init()` 中取消检查更新：
+
   ```js
   // setTimeout(this.checkUpdate, 5e3)
   ```
@@ -227,18 +290,6 @@ const o = {
         ))
     }
   },
-  ```
-
-- 去除多余信息
-  `dist/main.js`的`initFeatures`方法中，注释下面：
-
-  ```js
-              this.pluginsCmp.setFeature("", {
-                  code: "call:goHelp",
-                  icon: "res/native/help.png",
-                  explain: "视频介绍 uTools",
-                  cmds: ["uTools 介绍", "帮助", "Help"]
-              }),
   ```
 
 - 添加一个"删除插件"菜单
